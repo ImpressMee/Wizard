@@ -10,7 +10,7 @@ import scala.io.StdIn._
 // TODO: Spielpunkte werden berechnen
 
 //lol
-
+//ululululu
 @main def hello(): Unit =
   val start = new start
   val number_of_players = start.getPlayerCount
