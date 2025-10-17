@@ -2,6 +2,8 @@ package de.htwg.wizard
 
 import scala.io.StdIn._
 
+// @author Justin-Jay Balaba
+// @author Nikita Kusch
 // TODO: var -> val machen.
 // TODO: Speichere Prediction in eine Map mit dem Spieler
 // TODO: Spielpunkte werden berechnen
