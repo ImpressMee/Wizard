@@ -10,7 +10,7 @@ import scala.io.StdIn._
 // TODO: Speichere Prediction in eine Map mit dem Spieler
 // TODO: Spielpunkte werden berechnen
 
-//I am a chickennuggie
+//Test conflict push
 
 @main def hello(): Unit =
   val start = new start
