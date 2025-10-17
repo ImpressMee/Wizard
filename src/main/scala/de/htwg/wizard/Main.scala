@@ -4,6 +4,7 @@ import scala.io.StdIn._
 
 // @author Justin-Jay Balaba
 // @author Nikita Kusch
+// test developer branch
 // TODO: var -> val machen.
 // TODO: Speichere Prediction in eine Map mit dem Spieler
 // TODO: Spielpunkte werden berechnen
