@@ -9,6 +9,8 @@ import scala.io.StdIn._
 // TODO: Speichere Prediction in eine Map mit dem Spieler
 // TODO: Spielpunkte werden berechnen
 
+//lol
+
 @main def hello(): Unit =
   val start = new start
   val number_of_players = start.getPlayerCount
