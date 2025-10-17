@@ -2,6 +2,10 @@ package de.htwg.wizard
 
 import scala.io.StdIn._
 
+// TODO: var -> val machen.
+// TODO: Speichere Prediction in eine Map mit dem Spieler
+// TODO: Spielpunkte werden berechnen
+
 @main def hello(): Unit =
   val start = new start
   val number_of_players = start.getPlayerCount
