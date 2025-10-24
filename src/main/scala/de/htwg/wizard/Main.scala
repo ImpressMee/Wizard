@@ -5,9 +5,28 @@ import scala.io.StdIn._
 // @author Justin-Jay Balaba
 // @author Nikita Kusch
 // test developer branch
+// Test contribution
 // TODO: var -> val machen.
 // TODO: Speichere Prediction in eine Map mit dem Spieler
 // TODO: Spielpunkte werden berechnen
+/**
+ * Idea:  Was ist wenn wir alle Karten auslagern in eine CSV datei?
+ *        Damit kann man sicher stellen, dass alle Karten dynamisch hinzugefügt
+ *        und entfernt werden können. Dann könnte man die Datei einlesen und Iterativ
+ *        diese Karten den Spielern verteilen. Damit vermeidet man hartes coding und
+ *        der code bleibt damit skalierbar und leserlich.
+ *
+ *        Wie die karten ausgeteilt werden könnten:
+ *
+ *        for i <- 0 to number_of_players do
+ *            for j <- to runde do:
+ *                player[i].cards = cards.pop()
+ *
+ *        ungefähr so.
+ */
+
+
+//Test conflict push
 
 //lol
 //ululululu
@@ -23,6 +42,14 @@ import scala.io.StdIn._
   // Start der runde:
   println(s"Runde: $runde")
   println(s"Trumpf ist: $trumpf\n")
+
+  for i <- 1 to number_of_players do {
+    println("\n-----------")
+    println(Console.RED + s"| Player $i |" + Console.RESET)
+    println("+-----------")
+    println("| Karten: -")
+    println("+-----------")
+  }
 
   // Stich vorhersage:
   var prediction = -1
@@ -43,11 +70,5 @@ import scala.io.StdIn._
         case _: NumberFormatException =>
 
 
-  for i <- 1 to number_of_players do {
-    println("\n-----------")
-    println(s"| Player $i |")
-    println("+-----------")
-    println("| Karten: -")
-    println("+-----------")
-  }
+
 
