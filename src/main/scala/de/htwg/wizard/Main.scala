@@ -20,7 +20,7 @@ import scala.io.StdIn._
  *
  *        for i <- 0 to number_of_players do
  *            for j <- to runde do:
- *                player[i].cards = append.cards[i]
+ *                player[i].cards = cards.pop()
  *
  *        ungefähr so.
  */
