@@ -1,72 +1,74 @@
 package de.htwg.wizard
 
-import scala.io.StdIn._
+import scala.io.StdIn.*
 
-// @author Justin-Jay Balaba
-// @author Nikita Kusch
-// test developer branch
-// Test contribution
-// TODO: var -> val machen.
-// TODO: Speichere Prediction in eine Map mit dem Spieler
-// TODO: Spielpunkte werden berechnen
 /**
- * Idea:  Was ist wenn wir alle Karten auslagern in eine CSV datei?
- *        Damit kann man sicher stellen, dass alle Karten dynamisch hinzugefügt
- *        und entfernt werden können. Dann könnte man die Datei einlesen und Iterativ
- *        diese Karten den Spielern verteilen. Damit vermeidet man hartes coding und
- *        der code bleibt damit skalierbar und leserlich.
+ * @author Justin-Jay Balaba
+ * @author Nikita Kusch
+ *         TODO: Es sollte noch alles ins englische übersetzt werden
+ *         TODO: var -> val machen.
+ *         TODO: Speichere Prediction in eine Map mit dem Spieler
+ *         TODO: Spielpunkte werden berechnen
+ *         TODO: Runden anzahl auf Spieleranzahl anpassen (3s = 20r; 4s = 15r; 5s = 12r; 6s = 10r)
  *
- *        Wie die karten ausgeteilt werden könnten:
- *
- *        for i <- 0 to number_of_players do
- *            for j <- to runde do:
- *                player[i].cards = cards.pop()
- *
- *        ungefähr so.
  */
 
-
-//Test conflict push
-
 @main def hello(): Unit =
-  val start = new start
-  val number_of_players = start.getPlayerCount
+  val number_of_players = getPlayerCount
+  val tui: Unit = print_tui(number_of_players, 1)
+  val stitch_pred: Unit = stitch_prediction(number_of_players, 1)
 
-  // Die rundenzahl gibt auch gleichzeitig die Anzahl der Karten an
-  val runde = 1
-  val trumpf = "Karte x,y"
-  println(s"Es spielen $number_of_players Spieler mit.\n")
 
-  // Start der runde:
-  println(s"Runde: $runde")
-  println(s"Trumpf ist: $trumpf\n")
+def getPlayerCount: Int =
+  print("Wie viele Spieler machen mit? (3-6): ")
+  try
+    val player_count = readLine().toInt
+    if player_count >= 3 && player_count <= 6 then {
+      player_count // <- Rückgabewert
+    } else
+      println(Console.RED + "\nFalsche Anzahl! Bitte erneut versuchen.\n" + Console.RESET)
+      getPlayerCount // <- Rekursion, es wird erneut versucht
+  catch
+    case _: NumberFormatException =>
+      println(Console.RED + "\nUngültige Eingabe! Bitte eine Zahl eingeben.\n" + Console.RESET)
+      getPlayerCount // <- Rekursion, es wird erneut versucht
 
-  for i <- 1 to number_of_players do {
-    println("\n-----------")
-    println(Console.RED + s"| Player $i |" + Console.RESET)
-    println("+-----------")
-    println("| Karten: -")
-    println("+-----------")
-  }
+def print_tui(number_of_players: Int, rounds: Int): Unit =
+  val round = rounds
+  val trump = "Card x,y"
+  println(s"There are $number_of_players players.\n")
 
-  // Stich vorhersage:
-  var prediction = -1
+  // Start der Runde
+  println(s"round: $round")
+  println(s"Trump is: $trump\n")
+
   for i <- 1 to number_of_players do
-    prediction = -1
-    while prediction < 0 do
-      println("+-----------")
-      println(s"Spieler $i, was ist deine Stich vorhersage?")
-      try
-        prediction = readLine().toInt
-        if prediction <= runde then
-          println(s"Spieler $i sagt $prediction Stiche vor")
-        else
-          println("Ungültige Eingabe! Bitte eine Zahl eingeben\n" +
-            "! Die vorhersage darf nicht größer als die Rundenzahl sein !.\n")
-          prediction = -1
-      catch
-        case _: NumberFormatException =>
+    println("\n+-----------+")
+    println(Console.GREEN + s"| Player $i |" + Console.RESET)
+    println("+-----------+")
+    println("| Cards: -")
+    println("+-----------+")
 
+def stitch_prediction(number_of_players: Int, round: Int): Unit =
+  // win predictions
+  def askPlayer(player: Int): Int =
+    println("+-----------")
+    println(s"\nPlayer $player, what is your prediction?")
+    try
+      val prediction = readLine().toInt
+      if prediction <= round then {
+        println(s"\nPlayer $player predicts $prediction wins")
+        prediction // <- Rückgabe wert
+      } else
+        println(Console.RED + "\nInvalid number! Please enter a number.\n" +
+          "! The prediction should not be bigger than the current round !.\n" + Console.RESET)
+        askPlayer(player) // <- recursion in case of failure
+    catch
+      case _: NumberFormatException =>
+        println(Console.RED + "\nPlease enter a number fitting for the current round!\n" + Console.RESET);
+        askPlayer(player) // <- recursion in case of failure
 
+  for player <- 1 to number_of_players do
+    val prediction = askPlayer(player)
 
 
