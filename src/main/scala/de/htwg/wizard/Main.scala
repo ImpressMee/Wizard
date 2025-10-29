@@ -14,25 +14,34 @@ import scala.io.StdIn.*
  */
 
 @main def main(): Unit =
-  val number_of_players = getPlayerCount
+  val number_of_players = getPlayerCount()
   val tui: Unit = print_tui(number_of_players, 1)
   val stitch_pred: Unit = stitch_prediction(number_of_players, 1)
 
-
-def getPlayerCount: Int =
+/**
+ * @param input
+ * @return
+ * nimmt einen String an der beim aufrufen eingelesen wird.
+ * Hinzugefügt um das testen möglich zu machen.
+ */
+def getPlayerCount(input: => String = readLine()): Int =
   print("Wie viele Spieler machen mit? (3-6): ")
   try
-    val player_count = readLine().toInt
+    val player_count = input.toInt
     if player_count >= 3 && player_count <= 6 then {
       player_count // <- Rückgabewert
     } else
       println(Console.RED + "\nFalsche Anzahl! Bitte erneut versuchen.\n" + Console.RESET)
-      getPlayerCount // <- Rekursion, es wird erneut versucht
+      getPlayerCount(input) // <- Rekursion, es wird erneut versucht
   catch
     case _: NumberFormatException =>
       println(Console.RED + "\nUngültige Eingabe! Bitte eine Zahl eingeben.\n" + Console.RESET)
-      getPlayerCount // <- Rekursion, es wird erneut versucht
+      getPlayerCount(input) // <- Rekursion, es wird erneut versucht
 
+/**
+ * @param number_of_players
+ * @param rounds
+ */
 def print_tui(number_of_players: Int, rounds: Int): Unit =
   val round = rounds
   val trump = "Card x,y"
@@ -49,6 +58,10 @@ def print_tui(number_of_players: Int, rounds: Int): Unit =
     println("| Cards: -")
     println("+-----------+")
 
+/**
+ * @param number_of_players
+ * @param round
+ */
 def stitch_prediction(number_of_players: Int, round: Int): Unit =
   // win predictions
   def askPlayer(player: Int): Int =
