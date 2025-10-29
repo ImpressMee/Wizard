@@ -13,7 +13,7 @@ import scala.io.StdIn.*
  *
  */
 
-@main def hello(): Unit =
+@main def main(): Unit =
   val number_of_players = getPlayerCount
   val tui: Unit = print_tui(number_of_players, 1)
   val stitch_pred: Unit = stitch_prediction(number_of_players, 1)
