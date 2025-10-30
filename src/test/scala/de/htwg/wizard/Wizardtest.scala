@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class Wizardtest extends AnyWordSpec with Matchers {
+  //getPlayerCount tests MAIN
   "getPlayerCount" when {
     "receives valid input between 3 and 6" should {
       "return the same number" in {
@@ -21,7 +22,7 @@ class Wizardtest extends AnyWordSpec with Matchers {
      *   - Nimmt nächste Eingabe -> "4"
      *   - Passt -> return 4
      */
-    "receives invalid input below 3 or above 6 or other it" should {
+    "getPlayerCount receives invalid input below 3 or above 6 or other it" should {
       "reject the value and retry" in {
         var inputs = List("abc", "4") // first invalid, then valid
         val result = getPlayerCount({
@@ -34,8 +35,11 @@ class Wizardtest extends AnyWordSpec with Matchers {
     }
   }
 
-  /**
-   * TODO: print_tui Test_cases
-   * TODO: stitch_prediction Test_cases
-   */
+  //stringBeginningRound tests MAIN
+  
+
+  //stringPlayerAndCards tests MAIN
+
+  //stitch_prediction tests MAIN
+
 }

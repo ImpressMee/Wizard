@@ -14,9 +14,14 @@ import scala.io.StdIn.*
  */
 
 @main def main(): Unit =
+  val rounds =1
   val number_of_players = getPlayerCount()
-  val tui: Unit = print_tui(number_of_players, 1)
-  val stitch_pred: Unit = stitch_prediction(number_of_players, 1)
+  println(stringBeginningRound(number_of_players, rounds))
+  stringPlayerAndCards(number_of_players, rounds).foreach(println)
+
+  //val tui: Unit = print_tui(number_of_players, 1)
+  val stitch_pred: Unit = stitch_prediction(number_of_players, rounds)
+  
 
 /**
  * @param input
@@ -42,21 +47,46 @@ def getPlayerCount(input: => String = readLine()): Int =
  * @param number_of_players
  * @param rounds
  */
-def print_tui(number_of_players: Int, rounds: Int): Unit =
+def stringBeginningRound(number_of_players: Int, rounds: Int): String =
   val round = rounds
   val trump = "Card x,y"
+  val returnString = s"""There are $number_of_players players. \n
+                     |round: $round \n
+                     |Trump is: $trump\n\n
+                     |    """.stripMargin
+  returnString
+ 
+  /**
   println(s"There are $number_of_players players.\n")
 
   // Start der Runde
   println(s"round: $round")
   println(s"Trump is: $trump\n")
+*/
+def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
+  val playerStrings = new Array[String](number_of_players)
+  for (i <- 1 to number_of_players){
+    val eachPlayerString =
+      s"""
+         |+-----------+ 
+         |${Console.GREEN}| Player $i|${Console.RESET} 
+         |+-----------+
+         || Cards: -
+         |+-----------+
+         |""".stripMargin
+    playerStrings(i - 1) = eachPlayerString
+  }
+  playerStrings
+  
 
+  /**
   for i <- 1 to number_of_players do
     println("\n+-----------+")
     println(Console.GREEN + s"| Player $i |" + Console.RESET)
     println("+-----------+")
     println("| Cards: -")
     println("+-----------+")
+*/
 
 /**
  * @param number_of_players
