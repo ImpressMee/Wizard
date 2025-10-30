@@ -21,7 +21,7 @@ import scala.io.StdIn.*
 
   //val tui: Unit = print_tui(number_of_players, 1)
   val stitch_pred: Unit = stitch_prediction(number_of_players, rounds)
-  
+
 
 /**
  * @param input
@@ -55,7 +55,7 @@ def stringBeginningRound(number_of_players: Int, rounds: Int): String =
                      |Trump is: $trump\n\n
                      |    """.stripMargin
   returnString
- 
+
   /**
   println(s"There are $number_of_players players.\n")
 
@@ -68,8 +68,8 @@ def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
   for (i <- 1 to number_of_players){
     val eachPlayerString =
       s"""
-         |+-----------+ 
-         |${Console.GREEN}| Player $i|${Console.RESET} 
+         |+-----------+
+         |${Console.GREEN}| Player $i|${Console.RESET}
          |+-----------+
          || Cards: -
          |+-----------+
@@ -77,7 +77,7 @@ def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
     playerStrings(i - 1) = eachPlayerString
   }
   playerStrings
-  
+
 
   /**
   for i <- 1 to number_of_players do
