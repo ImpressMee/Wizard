@@ -14,15 +14,11 @@ import scala.io.StdIn.*
  */
 
 @main def main(): Unit =
-  val rounds =1
+  val rounds = 1 // aktuell magic number, wird noch dynamisch angepasst an Spieleranzahl
   val number_of_players = getPlayerCount()
+
   println(stringBeginningRound(number_of_players, rounds))
   stringPlayerAndCards(number_of_players, rounds).foreach(println)
-
-  //val tui: Unit = print_tui(number_of_players, 1)
-  val stitch_pred: Unit = stitch_prediction(number_of_players, rounds)
-
-
 /**
  * @param input
  * @return
@@ -50,22 +46,23 @@ def getPlayerCount(input: => String = readLine()): Int =
 def stringBeginningRound(number_of_players: Int, rounds: Int): String =
   val round = rounds
   val trump = "Card x,y"
-  val returnString = s"""There are $number_of_players players. \n
-                     |round: $round \n
-                     |Trump is: $trump\n\n
-                     |    """.stripMargin
+  val returnString =
+    s"""There are $number_of_players players. \n
+       |round: $round \n
+       |Trump is: $trump\n\n
+       |    """.stripMargin
   returnString
 
-  /**
-  println(s"There are $number_of_players players.\n")
-
-  // Start der Runde
-  println(s"round: $round")
-  println(s"Trump is: $trump\n")
-*/
+/**
+ * println(s"There are $number_of_players players.\n")
+ *
+ * // Start der Runde
+ * println(s"round: $round")
+ * println(s"Trump is: $trump\n")
+ */
 def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
   val playerStrings = new Array[String](number_of_players)
-  for (i <- 1 to number_of_players){
+  for (i <- 1 to number_of_players) {
     val eachPlayerString =
       s"""
          |+-----------+
@@ -77,41 +74,3 @@ def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
     playerStrings(i - 1) = eachPlayerString
   }
   playerStrings
-
-
-  /**
-  for i <- 1 to number_of_players do
-    println("\n+-----------+")
-    println(Console.GREEN + s"| Player $i |" + Console.RESET)
-    println("+-----------+")
-    println("| Cards: -")
-    println("+-----------+")
-*/
-
-/**
- * @param number_of_players
- * @param round
- */
-def stitch_prediction(number_of_players: Int, round: Int): Unit =
-  // win predictions
-  def askPlayer(player: Int): Int =
-    println("+-----------")
-    println(s"\nPlayer $player, what is your prediction?")
-    try
-      val prediction = readLine().toInt
-      if prediction <= round then {
-        println(s"\nPlayer $player predicts $prediction wins")
-        prediction // <- Rückgabe wert
-      } else
-        println(Console.RED + "\nInvalid number! Please enter a number.\n" +
-          "! The prediction should not be bigger than the current round !.\n" + Console.RESET)
-        askPlayer(player) // <- recursion in case of failure
-    catch
-      case _: NumberFormatException =>
-        println(Console.RED + "\nPlease enter a number fitting for the current round!\n" + Console.RESET);
-        askPlayer(player) // <- recursion in case of failure
-
-  for player <- 1 to number_of_players do
-    val prediction = askPlayer(player)
-
-

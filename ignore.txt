@@ -1,0 +1,33 @@
+Konzept für Stichvorhersagen, welche aber nicht ganz implementierbar sind wegen vielen gründen.
+-> Abwarten wie das Programm strukturiert werden soll, damit man sowas elegant lösen kann, bevor man
+über eifrig wird und man es am ende eh komplett umschreiben muss.
+
+
+  val stitch_pred: Unit = stitchPrediction(number_of_players, rounds)
+
+
+/**
+ * @param number_of_players
+ * @param round
+ */
+def stitchPrediction(number_of_players: Int, round: Int): Unit =
+  for player <- 1 to number_of_players do
+    val prediction = askPlayer(readLine(), player)
+
+  def askPlayer(input: => String = readLine(), player: Int): Int =
+    println("+-----------")
+    println(s"\nPlayer $player, what is your prediction?")
+    try
+      val prediction = input.toInt
+      if prediction <= round then
+        println(s"\nPlayer $player predicts $prediction wins")
+        prediction
+      else
+        println(Console.RED + "\nInvalid number! Please enter a number.\n" +
+          "! The prediction should not be bigger than the current round !\n" + Console.RESET)
+        askPlayer(input, player)
+    catch
+      case _: NumberFormatException =>
+        println(Console.RED + "\nPlease enter a number fitting for the current round!\n" + Console.RESET)
+        askPlayer(input, player)
+

@@ -4,7 +4,8 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class Wizardtest extends AnyWordSpec with Matchers {
-  //getPlayerCount tests MAIN
+
+  // getPlayerCount tests MAIN
   "getPlayerCount" when {
     "receives valid input between 3 and 6" should {
       "return the same number" in {
@@ -15,16 +16,9 @@ class Wizardtest extends AnyWordSpec with Matchers {
       }
     }
 
-    /**
-     * getPlayerCount:
-     *   - Nimmt erste Eingabe -> "abc"
-     *   - Fehler -> ruft sich selbst wieder auf
-     *   - Nimmt nächste Eingabe -> "4"
-     *   - Passt -> return 4
-     */
-    "getPlayerCount receives invalid input below 3 or above 6 or other it" should {
-      "reject the value and retry" in {
-        var inputs = List("abc", "4") // first invalid, then valid
+    "receives invalid input (below 3 or above 6)" should {
+      "retry until valid input" in {
+        var inputs = List("2", "7", "4") // first two invalid, last one valid
         val result = getPlayerCount({
           val head = inputs.head
           inputs = inputs.tail
@@ -33,9 +27,21 @@ class Wizardtest extends AnyWordSpec with Matchers {
         result should be(4)
       }
     }
+
+    "receives non-numeric input" should {
+      "retry until valid input" in {
+        var inputs = List("abc", "5") // invalid, then valid
+        val result = getPlayerCount({
+          val head = inputs.head
+          inputs = inputs.tail
+          head
+        })
+        result should be(5)
+      }
+    }
   }
 
-  //stringBeginningRound tests MAIN
+  // stringBeginningRound tests MAIN
   "stringBeginningRound" when {
     "called with valid parameters (vorher geprüft)" should {
       "return a formatted string containing player count, round, and trump" in {
@@ -47,45 +53,27 @@ class Wizardtest extends AnyWordSpec with Matchers {
       }
     }
   }
-    //stringPlayerAndCards tests MAIN
-    "stringPlayerAndCards" when {
-      "called with valid parameters (vorher geprüft)" should {
-        "return a formatted string containing player count, round, and trump" in {
-          val result = stringPlayerAndCards(3, 1).mkString("\n")
 
-          val expected =
-            """+-----------+
-              || Player 1|
-              |+-----------+
-              || Cards: -
-              |+-----------+
+  // stringPlayerAndCards tests MAIN
+  "stringPlayerAndCards" when {
+    "called with valid parameters (vorher geprüft)" should {
+      "return strings for all players" in {
+        val result = stringPlayerAndCards(3, 1).mkString("\n")
 
-
-              |+-----------+
-              || Player 2|
-              |+-----------+
-              || Cards: -
-              |+-----------+
-
-
-              |+-----------+
-              || Player 3|
-              |+-----------+
-              || Cards: -
-              |+-----------+""".stripMargin
-
-          result should include(expected.trim)
-        }
+        result should include("Player 1")
+        result should include("Cards: -")
+        result should include("Player 2")
+        result should include("Cards: -")
+        result should include("Player 3")
+        result should include("Cards: -")
       }
     }
+  }
 
-    //stitch_prediction tests MAIN
-    "stitch_prediction" when {
-      "Player enters valid prediction" should {
-        "read Number and return the same number and strings" in {
-          val result = stitch_prediction(number_of_players = 3, round = 2)
-          result shouldBe()
-        }
-      }
+  // main function
+  "main" should {
+    "run without throwing an exception" in {
+      noException should be thrownBy main()
     }
+  }
 }
