@@ -1,53 +1,76 @@
 package de.htwg.wizard
 
-import scala.io.StdIn._
+import scala.io.StdIn.*
 
-// @author Justin-Jay Balaba
-// @author Nikita Kusch
-// test developer branch
-// TODO: var -> val machen.
-// TODO: Speichere Prediction in eine Map mit dem Spieler
-// TODO: Spielpunkte werden berechnen
+/**
+ * @author Justin-Jay Balaba
+ * @author Nikita Kusch
+ *         TODO: Es sollte noch alles ins englische übersetzt werden
+ *         TODO: var -> val machen.
+ *         TODO: Speichere Prediction in eine Map mit dem Spieler
+ *         TODO: Spielpunkte werden berechnen
+ *         TODO: Runden anzahl auf Spieleranzahl anpassen (3s = 20r; 4s = 15r; 5s = 12r; 6s = 10r)
+ *
+ */
 
-//lol
-//ululululu
-@main def hello(): Unit =
-  val start = new start
-  val number_of_players = start.getPlayerCount
+@main def main(): Unit =
+  val rounds = 1 // aktuell magic number, wird noch dynamisch angepasst an Spieleranzahl
+  val number_of_players = getPlayerCount()
 
-  // Die rundenzahl gibt auch gleichzeitig die Anzahl der Karten an
-  val runde = 1
-  val trumpf = "Karte x,y"
-  println(s"Es spielen $number_of_players Spieler mit.\n")
+  println(stringBeginningRound(number_of_players, rounds))
+  stringPlayerAndCards(number_of_players, rounds).foreach(println)
+/**
+ * @param input
+ * @return
+ * nimmt einen String an der beim aufrufen eingelesen wird.
+ * Hinzugefügt um das testen möglich zu machen.
+ */
+def getPlayerCount(input: => String = readLine()): Int =
+  print("Wie viele Spieler machen mit? (3-6): ")
+  try
+    val player_count = input.toInt
+    if player_count >= 3 && player_count <= 6 then {
+      player_count // <- Rückgabewert
+    } else
+      println(Console.RED + "\nFalsche Anzahl! Bitte erneut versuchen.\n" + Console.RESET)
+      getPlayerCount(input) // <- Rekursion, es wird erneut versucht
+  catch
+    case _: NumberFormatException =>
+      println(Console.RED + "\nUngültige Eingabe! Bitte eine Zahl eingeben.\n" + Console.RESET)
+      getPlayerCount(input) // <- Rekursion, es wird erneut versucht
 
-  // Start der runde:
-  println(s"Runde: $runde")
-  println(s"Trumpf ist: $trumpf\n")
+/**
+ * @param number_of_players
+ * @param rounds
+ */
+def stringBeginningRound(number_of_players: Int, rounds: Int): String =
+  val round = rounds
+  val trump = "Card x,y"
+  val returnString =
+    s"""There are $number_of_players players. \n
+       |round: $round \n
+       |Trump is: $trump\n\n
+       |    """.stripMargin
+  returnString
 
-  // Stich vorhersage:
-  var prediction = -1
-  for i <- 1 to number_of_players do
-    prediction = -1
-    while prediction < 0 do
-      println("+-----------")
-      println(s"Spieler $i, was ist deine Stich vorhersage?")
-      try
-        prediction = readLine().toInt
-        if prediction <= runde then
-          println(s"Spieler $i sagt $prediction Stiche vor")
-        else
-          println("Ungültige Eingabe! Bitte eine Zahl eingeben\n" +
-            "! Die vorhersage darf nicht größer als die Rundenzahl sein !.\n")
-          prediction = -1
-      catch
-        case _: NumberFormatException =>
-
-
-  for i <- 1 to number_of_players do {
-    println("\n-----------")
-    println(s"| Player $i |")
-    println("+-----------")
-    println("| Karten: -")
-    println("+-----------")
+/**
+ * println(s"There are $number_of_players players.\n")
+ *
+ * // Start der Runde
+ * println(s"round: $round")
+ * println(s"Trump is: $trump\n")
+ */
+def stringPlayerAndCards(number_of_players: Int, rounds: Int): Array[String] =
+  val playerStrings = new Array[String](number_of_players)
+  for (i <- 1 to number_of_players) {
+    val eachPlayerString =
+      s"""
+         |+-----------+
+         |${Console.GREEN}| Player $i|${Console.RESET}
+         |+-----------+
+         || Cards: -
+         |+-----------+
+         |""".stripMargin
+    playerStrings(i - 1) = eachPlayerString
   }
-
+  playerStrings
