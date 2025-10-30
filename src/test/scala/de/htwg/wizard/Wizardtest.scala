@@ -4,7 +4,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class Wizardtest extends AnyWordSpec with Matchers {
-
   "getPlayerCount" when {
     "receives valid input between 3 and 6" should {
       "return the same number" in {
