@@ -18,7 +18,7 @@ class Wizardtest extends AnyWordSpec with Matchers {
 
     "receives invalid input (below 3 or above 6)" should {
       "retry until valid input" in {
-        var inputs = List("2", "7", "4") // first two invalid, last one valid
+        var inputs = List("2", "7", "4")
         val result = getPlayerCount({
           val head = inputs.head
           inputs = inputs.tail
@@ -30,7 +30,7 @@ class Wizardtest extends AnyWordSpec with Matchers {
 
     "receives non-numeric input" should {
       "retry until valid input" in {
-        var inputs = List("abc", "5") // invalid, then valid
+        var inputs = List("abc", "5")
         val result = getPlayerCount({
           val head = inputs.head
           inputs = inputs.tail
@@ -43,8 +43,8 @@ class Wizardtest extends AnyWordSpec with Matchers {
 
   // stringBeginningRound tests MAIN
   "stringBeginningRound" when {
-    "called with valid parameters (vorher geprüft)" should {
-      "return a formatted string containing player count, round, and trump" in {
+    "called with valid parameters" should {
+      "return a formatted string" in {
         val result = stringBeginningRound(4, 1)
 
         result should include("There are 4 players")
@@ -54,18 +54,24 @@ class Wizardtest extends AnyWordSpec with Matchers {
     }
   }
 
-  // stringPlayerAndCards tests MAIN
-  "stringPlayerAndCards" when {
-    "called with valid parameters (vorher geprüft)" should {
-      "return strings for all players" in {
-        val result = runde(3, 1).mkString("\n")
+  // stringPlayerAndCards → round() test
+  "round" when {
+    "called with valid parameters" should {
+      "return player strings for all players" in {
 
+        val cardarray = Array(
+          "blue 1", "blue 2", "blue 3",
+          "green 1", "green 2", "green 3",
+          "red 1", "red 2", "red 3",
+          "yellow 1", "yellow 2", "yellow 3"
+        )
+
+        val result = round(3, 1, cardarray).mkString("\n")
+
+        result should include("Player 0")
         result should include("Player 1")
-        result should include("Cards: -")
         result should include("Player 2")
-        result should include("Cards: -")
-        result should include("Player 3")
-        result should include("Cards: -")
+        result should include("Cards:")
       }
     }
   }
