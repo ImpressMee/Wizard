@@ -1,3 +1,14 @@
+error id: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/main/scala/de/htwg/wizard/Main.scala:`<none>`.
+file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/main/scala/de/htwg/wizard/Main.scala
+empty definition using pc, found symbol in pc: `<none>`.
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 3637
+uri: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/main/scala/de/htwg/wizard/Main.scala
+text:
+```scala
 package de.htwg.wizard
 import scala.collection.mutable.Stack
 import scala.io.StdIn.*
@@ -40,24 +51,21 @@ def getPlayerCount(input: => String = readLine()): Int =
  * @param number_of_players
  * @param rounds
  */
-def stringBeginningRound(number_of_players: Int, rounds: Int): (String,String) =
-  val colors = Array("red", "green", "blue", "yellow")
-  val randomColor = colors(scala.util.Random.nextInt(colors.length))
+def stringBeginningRound(number_of_players: Int, rounds: Int): String =
   val round = rounds
-  val trump = s"${randomColor}"
+  val trump = "Card x,y"
   val returnString =
-    s"""//////////////////////////////////////////
-       |There are $number_of_players players. \n
-       |round: $round \n
-       |Trump is: $trump\n\n
-       |""".stripMargin
-  (returnString, trump)
+    s"""-----------------------------------------------------
+There are $number_of_players players. \n
+round: $round \n
+Trump is: $trump\n\n
+    """.stripMargin
+  returnString
 
 def shuffle(cardarray: Array[String]): Stack[String] = {
   val mixed =Stack.from(scala.util.Random.shuffle(cardarray.toList))
   return mixed
 }
-
 def dealcards(number_of_players:Int, rounds:Int, cardStack: Stack[String]): Array[Array[String]] = {
   val playerarrays = Array.ofDim[String](number_of_players, rounds)
   for (r <- 0 until rounds) {
@@ -74,49 +82,46 @@ def dealcards(number_of_players:Int, rounds:Int, cardStack: Stack[String]): Arra
  * println(s"round: $round")
  * println(s"Trump is: $trump\n")
  */
-def round(number_of_players: Int, rounds: Int, cardarray:Array[String]): Array[Int] =
+def round(number_of_players: Int, rounds: Int, cardarray:Array[String]): Array[String] =
   val shuffeledCardStack=shuffle(cardarray)
   val playercards = dealcards(number_of_players, rounds, shuffeledCardStack)
-  val (beginString, trump) = stringBeginningRound(number_of_players, rounds)
-  println(beginString)
+  println(stringBeginningRound(number_of_players, rounds))
 
   val playerStrings = new Array[String](number_of_players)
   for (i <- 0 to number_of_players-1) {
     val eachPlayerString =
-      s"""-----------------------------------------------
-         |+-----------+
-         |${Console.GREEN}| Player $i|${Console.RESET}
-         |+-----------+
-         || Cards: ${playercards(i).mkString(", ")}
-         |+-----------+
-         |""".stripMargin.trim
+      s"""
++-----------+
+${Console.GREEN}| Player $i|${Console.RESET}
++-----------+
+ Cards: ${playercards(i).mkString(", ")}
++-----------+
+""".stripMargin.trim
     playerStrings(i) = eachPlayerString
-    println(eachPlayerString)
   }
-
   val stitchprediction = stitchPrediction(number_of_players = number_of_players)
-  val stitches = stitchgame(number_of_players, rounds, playercards, trump)
-  val points = stitchPointsCalculator(stitchprediction, stitches, number_of_players)
-  println(s"Punkte: ${points.mkString(", ")}")
-  points
+  val stitches = stitchgame(number_of_players, rounds, playercards)
+  stitchPointsCalculator(stichprediction, stitches, number_of_players)
+  println(s"stitches: ${stitches.mkString(", ")}")
+  playerStrings
 
-def stitchPointsCalculator(stitchprediction: Array[Int], stitches: Array[Int], number_of_players: Int): Array[Int] = {
-  val stitchpoints = Array.ofDim[Int](number_of_players)
-
-  for (i <- 0 until number_of_players) {
-    if (stitchprediction(i) == stitches(i)) {
-      stitchpoints(i) = 20 + stitches(i) * 10
-    } else {
-      stitchpoints(i) = -10 * (stitches(i) - stitchprediction(i)).abs
+def stitchPointsCalculator(stichprediction, stitches, number_of_players):  Array[Int] Int ={
+  val stitchpoints = Array.ofDim[Int](number_of_players,1)
+  for (i <- 0 to number_of_players-1) {
+    if(stitches(i)-stitchprediction(i)==0 && stitches(i)!=0){
+      stitchpoints(i)= stitches(i)*10 +20
     }
+    if(sti@@tches(i)-stitchprediction(i)<0 && stitches(i)!=0){
+      val punkteZuVielAbgezogen=stitches(i)+(stitches(i)-stitchprediction(i))
+      stitchpoints(i)= punkteZuVielAbgezogen*10
+    }
+     
   }
-  stitchpoints
 }
 
 def stitchPrediction(input: => String = readLine(),number_of_players:Int): Array[Int] = {
   val playerguess = Array.ofDim[Int](number_of_players)
   for (i <- 0 to number_of_players-1) {
-    println("==========================================")
     print(s"How many Stitches will you make player${i}?\n")
     try
       val stitchguess = input.toInt
@@ -128,43 +133,7 @@ def stitchPrediction(input: => String = readLine(),number_of_players:Int): Array
   playerguess
 }
 
-def stitchgame(
-                number_of_players: Int,
-                rounds: Int,
-                playercards: Array[Array[String]],
-                trump: String,
-                input: => String = readLine()
-              ): Array[Int] ={
-  val playedCards = Array.ofDim[String](number_of_players)
-  for (i <- 0 to number_of_players-1) {
-    val eachPlayerString =
-      s"""_____________________________________________
-         |+-----------+
-         |${Console.GREEN}| Player $i|${Console.RESET}
-         |+-----------+
-         || Cards: ${playercards(i).mkString(", ")}
-         |+-----------+
-         |""".stripMargin.trim
-    println(eachPlayerString)
-    println(s"Which card do you wanna play Player${i}? (Index starts by 0)")
-    var valid= false
-    while (!valid) {
-      try
-        val index = input.toInt
-        if (index >= 0 && index < playercards(i).length) {
-          playedCards(i)= playercards(i)(index)
-          valid = true
-        } else {
-          println(Console.RED + "Index out of range!" + Console.RESET)
-        }
-      catch
-        case _: NumberFormatException =>
-          println(Console.RED + "\nUngültige Eingabe! Bitte eine Zahl eingeben.\n" + Console.RESET)
-    }
-    println(s"Player${i} played ${playedCards(i)}")
-  }
-  
-
+def stitchgame(number_of_players: Int, rounds: Int, playercards:Array[Array[String]]):Array[Int]={
   Array.ofDim[Int](number_of_players)
 }
 
@@ -180,15 +149,16 @@ def game(): Int = {
   //val roundvalue = Array(20, 15, 12, 10 )
   val roundvalue = Array(4, 3, 2, 2 )
   val roundcount = roundvalue(playercount-3)
-  val totalPoints = Array.fill(playercount)(0)
 
   for (i <- 1 until roundcount) {
-    val roundPoints = round(playercount, i, cardarray)
-    for (j <- 0 until playercount) {
-      totalPoints(j) += roundPoints(j)
-      println(s"Spieler ${j} hat ${totalPoints(j)}")
-    }
+        round(playercount,i,cardarray).foreach(println)
   }
 
   return 0
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: `<none>`.
