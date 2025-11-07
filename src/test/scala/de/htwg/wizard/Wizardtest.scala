@@ -58,7 +58,7 @@ class Wizardtest extends AnyWordSpec with Matchers {
   "stringPlayerAndCards" when {
     "called with valid parameters (vorher geprüft)" should {
       "return strings for all players" in {
-        val result = stringPlayerAndCards(3, 1).mkString("\n")
+        val result = runde(3, 1).mkString("\n")
 
         result should include("Player 1")
         result should include("Cards: -")
