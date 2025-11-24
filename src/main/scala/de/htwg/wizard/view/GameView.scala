@@ -1,78 +1,137 @@
 package de.htwg.wizard.view
-
-import de.htwg.wizard.model.{Card, CardColor, Player}
+import de.htwg.wizard.model.*
 import de.htwg.wizard.util.Observer
-
+import scala.io.StdIn.readLine
 /**
  * The order of the methods reflect the order of the gameflow
  */
 
 class GameView extends Observer{
-  def askPlayerAmount(): Unit =
-    print("How many Players are playing? (3-6): ")
+  def askPlayerAmount(): Unit = 
+    println(s"${Console.RED}/////////----Game Start----/////////")
+    print(s"How many Players are playing? (3-6): ${Console.RESET}")
 
-  def showRoundInfo(round: Int, trump: CardColor, numberOfPlayers: Int): Unit =
+  def readPlayerAmount(): Int =
+    val input = readLine()
+    try
+      val playerCount = input.toInt
+      if playerCount < 3 || playerCount > 6 then
+        showError("Wrong amount! Try again.")
+        readPlayerAmount()
+      else
+        playerCount
+        
+    catch
+      case _: NumberFormatException =>
+        println("Please enter a valid number!")
+        readPlayerAmount()  
+  
+  def showRoundInfo(round: Int, trump: CardColor, numberOfPlayers: Int): Unit = 
     println(
-      s"""//////////////////////////////////////////
+      s"""\n\n${Console.MAGENTA}////////////////////////////////////////////////////////////
+         |/////----Round $round start----//////
+         |----Rundeninfo-------------------
          |There are $numberOfPlayers players. \n
          |round: $round \n
-         |Trump is: $trump\n\n
+         |Trump is: $trump\n
+         |---------------------------------${Console.RESET}
          |""".stripMargin
     )
 
-  def showPlayerCards(players: List[Player]): Unit =
-    for p <- players do
+  def colorize(card: Card): String = 
+    val color = card.color match
+      case CardColor.Red => Console.RED
+      case CardColor.Blue => Console.BLUE
+      case CardColor.Green => Console.GREEN
+      case CardColor.Yellow => Console.YELLOW
+      case _ => Console.WHITE
+
+    s"$color$card${Console.RESET}"
+  
+  def showPlayerCards(player :Player): Unit = 
+    val coloredCards = player.hand.map(colorize).mkString(", ")
       println(
-        s"""-----------------------------------------------
-           |+-----------+
-           |${Console.GREEN}| Player ${p.id}|${Console.RESET}
-           |+-----------+
-           || Cards: ${p.hand.mkString(", ")}
-           |+-----------+
+        s"""\n\n-----------------------------------------------
+           |${Console.CYAN}| Player${player.id}|${Console.RESET}
+           |+---------------------------------+
+           || Cards: $coloredCards
+           |+---------------------------------+
+           |-----------------------------------------------
            |""".stripMargin
       )
+  
+  def askHowManyTricks(player: Player): Unit =
+    showPlayerCards(player)
+    print(s"\nHow many tricks will you make player${player.id}?\n")
 
-  def askNewStitches(player: Player): Unit =
-    println("==========================================")
-    print(s"How many Stitches will you make player${player.id}?\n")
+  
+  def readPositiveInt(): Int =
+    val input = readLine()
+    try
+      val value = input.toInt
+      if value >= 0 then
+        value
+      else
+        println("Index out of range! Try again.")
+        readPositiveInt()
+    catch
+      case _: NumberFormatException =>
+        println("Please enter a valid number!")
+        readPositiveInt()
+    
+    
+  
+  def showTrickStart(trickNr: Int): Unit = 
+    println(s"${Console.BLUE}//////////////////////////////")
+    println(s"\n\n///----Trick ${trickNr} start----///\n${Console.RESET}")
 
-  def showStitchStart(): Unit =
-    println("\n\n//////----Stitch start----//////\n")
+  def askPlayerCard(player: Player): Unit = 
+    showPlayerCards(player)
+    println(s"Which card do you wanna play Player${player.id}? (Index starts by 1)")
+    
+  def readIndex(player: Player): Int =
+    val input = readLine()
+    try
+      val index = input.toInt-1
+      if index >= 0 && index < player.hand.length then
+        index
+      else
+        println("Index out of range! Try again.")
+        readIndex(player)
+    catch
+      case _: NumberFormatException =>
+        println("Please enter a valid number!")
+        readIndex(player)
 
-  def askPlayerCard(player: Player): Unit =
-    println(
-      s"""_____________________________________________
-         |+-----------+
-         |${Console.GREEN}| Player ${player.id}|${Console.RESET}
-         |+-----------+
-         || Cards: ${player.hand.mkString(", ")}
-         |+-----------+
-         |""".stripMargin.trim
-    )
-    println(s"Which card do you wanna play Player ${player.id}? (Index starts by 0)")
-
-  def showStitchWinner(player: Player, winningCard: Card): Unit =
-    println(s"\n--Player ${player.id} won this stitch with $winningCard")
+  def showTrickWinner(player: Player, winningCard: Card): Unit =
+    println(s"${Console.BLUE_B}///----Trick Winner----///")
+    println(s"\n--Player${player.id} won this trick with $winningCard")
+    println(s"//////////////////////////////${Console.RESET}")
 
   def showRoundEvaluation(round: Int, players: List[Player]): Unit =
-    println(s"\n--Round $round -- Evaluation --")
+    println(s"\n${Console.MAGENTA}//////--Round $round -- Evaluation --//////")
     for p <- players do
       println(
         s"""
-           |------ Player ${p.id} -------
-           |stitches predicted: ${p.predictedStitches}
-           |actual stitches:    ${p.stitches}
+           |${Console.CYAN}------ Player ${p.id} -------
+           |tricks predicted: ${p.predictedTricks}
+           |actual tricks:    ${p.tricks}
            |=> Player ${p.id} has ${p.totalPoints} points in Round $round
+           |////////////////////////////////////////////////////////////${Console.RESET}
            |""".stripMargin
       )
-
+  
   def showGameWinner(player: Player): Unit =
-    println(s"\nAnd the winner is Player${player.id} mit ${player.totalPoints}")
+    println(s"${Console.RED}/////////----Game Winner----/////////")
+    println(s"\nAnd the winner is Player${player.id} with ${player.totalPoints} points${Console.RESET}")
 
-  def showError(msg: String): Unit =
-    println(Console.RED + msg + Console.RESET)
+  def showError(message: String): Unit =
+    println(Console.RED + message + Console.RESET)
 
-  override def update(): Unit =
-    print("Do sumthin, idk?")
+  override def update(): Unit=
+    println("override")
+  
+  
+  
 }
 

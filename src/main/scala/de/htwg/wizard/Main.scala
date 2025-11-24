@@ -1,8 +1,8 @@
 package de.htwg.wizard
 
-import de.htwg.wizard.control.GameController
+import de.htwg.wizard.control.*
 import de.htwg.wizard.view.GameView
-import scala.io.StdIn.*
+
 
 /**
  * @author Justin-Jay Balaba
@@ -11,6 +11,6 @@ import scala.io.StdIn.*
 
 @main def main(): Unit =
   val view = new GameView()
-  val controller = new GameController(view)
+  val controller = new GameControl(view)
 
   controller.runGame()

@@ -1,5 +1,6 @@
 package de.htwg.wizard.model
 
+
 import de.htwg.wizard.util.Observable
 
 /**
@@ -7,14 +8,16 @@ import de.htwg.wizard.util.Observable
  */
 
 case class GameState(
-                    amountOfPlayers: Int,
-                    players: List[Player],
-                    deck: Deck,
-                    currentRound: Int,
-                    totalRounds: Int,
-                    currentTrump: CardColor,
-                    currentStitch: Option[Stitch] = None
+                      amountOfPlayers: Int,
+                      players: List[Player],
+                      deck: Deck,
+                      currentRound: Int,
+                      totalRounds: Int,
+                      currentTrump: CardColor,
+                      currentTrick: Option[Trick] = None
                     ) extends Observable
+// extends Observable makes GameState observable, 
+// allowing other parts of the program to automatically 
+// react to changes.
 
-case class Stitch(played: Map[Int, Card])
 

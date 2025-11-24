@@ -5,9 +5,9 @@ package de.htwg.wizard.model
 */
 
 case class Player(
-                 id: Int,
-                 hand: List[Card] = List(),
-                 stitches: Int = 0,
-                 totalPoints: Int = 0,
-                 predictedStitches: Int = 0
+                   id: Int,
+                   hand: List[Card]=List(),
+                   tricks: Int=0,
+                   totalPoints: Int=0,
+                   predictedTricks: Int=0
                  )

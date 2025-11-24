@@ -1365,3 +1365,175 @@ org.eclipse.lsp4j.jsonrpc.ResponseErrorException: Request window/showMessageRequ
 	at java.lang.Thread.run(Thread.java:1474)
 
 2025.11.07 08:26:32 INFO  Exiting server
+2025.11.21 13:53:57 INFO  Started: Metals version 1.6.3 in folders 'C:\Users\Nikita\Desktop\Wizard_Repo\Wizard' for client Visual Studio Code 1.106.0.
+2025.11.21 13:53:57 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2025.11.21 13:53:57 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:00 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:21 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:36 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:36 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:36 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:37 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:38 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:43 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:43 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:44 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:43 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:43 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:45 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:45 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:45 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:45 INFO  Created report: Optional[file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/main/scala/de/htwg/wizard/model/Card.scala]
+2025.11.21 13:54:45 INFO  empty definition using pc, found symbol in pc: `<none>`. (full report at: "C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\.metals\.reports\metals-full\2025-11-21\r_empty-definition_13-54-45-725.md")
+2025.11.21 13:54:46 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:52 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:52 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:54 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:54 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:54:56 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:01 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Deck.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:01 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:01 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:05 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\GameState.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:18 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:18 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:19 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Player.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\util\Observer.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\util\Observer.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:27 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\util\Observer.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:41 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\util\Observer.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:58 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\util\Observer.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:58 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:58 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:58 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:59 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:55:59 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:01 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:11 INFO  Created report: Optional[file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/DeckTest.scala]
+2025.11.21 13:56:11 INFO  empty definition using pc, found symbol in pc: `<none>`. (full report at: "C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\.metals\.reports\metals-full\2025-11-21\r_empty-definition_13-56-11-267.md")
+2025.11.21 13:56:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\DeckTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:16 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:17 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:17 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameControllerTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:25 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:40 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:41 INFO  Created report: Optional[file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/GameView.scala]
+2025.11.21 13:56:41 INFO  empty definition using pc, found symbol in pc: `<none>`. (full report at: "C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\.metals\.reports\metals-full\2025-11-21\r_empty-definition_13-56-41-229.md")
+2025.11.21 13:56:41 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:44 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\GameView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:44 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MainTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:44 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MainTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:50 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MainTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:54 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MainTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:54 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:55 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:54 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:56:56 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:04 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\MySuite.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:04 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\MySuite.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\MySuite.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:10 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 13:57:17 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:10:17 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\control\GameControlSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:10:17 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/control/GameControlSpec.scala
+2025.11.21 14:12:38 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\CardSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:12:38 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/CardSpec.scala
+2025.11.21 14:13:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\DeckSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:13:12 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/DeckSpec.scala
+2025.11.21 14:13:52 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\GameStateSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:13:52 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/GameStateSpec.scala
+2025.11.21 14:14:32 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\PlayerSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:14:32 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/PlayerSpec.scala
+2025.11.21 14:15:32 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\view\GameViewSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:15:32 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/view/GameViewSpec.scala
+2025.11.21 14:16:06 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\view\GameViewSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:06 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\PlayerSpec.scala
+2025.11.21 14:16:06 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\PlayerSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:06 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/PlayerSpec.scala
+2025.11.21 14:16:06 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\PlayerSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:07 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\GameStateSpec.scala
+2025.11.21 14:16:07 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\GameStateSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:07 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/GameStateSpec.scala
+2025.11.21 14:16:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\GameStateSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:08 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\DeckSpec.scala
+2025.11.21 14:16:07 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\DeckSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:07 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/DeckSpec.scala
+2025.11.21 14:16:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\DeckSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:08 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\CardSpec.scala
+2025.11.21 14:16:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\CardSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:08 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/model/CardSpec.scala
+2025.11.21 14:16:08 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\model\CardSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:09 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\control\GameControlSpec.scala
+2025.11.21 14:16:09 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\control\GameControlSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:09 WARN  Could not find semantic tokens for: file:///C:/Users/Nikita/Desktop/Wizard_Repo/Wizard/src/test/scala/de/htwg/wizard/control/GameControlSpec.scala
+2025.11.21 14:16:09 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\control\GameControlSpec.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:09 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:09 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt
+2025.11.21 14:16:09 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:09 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\build.sbt. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\MockView.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala
+2025.11.21 14:16:11 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\test\scala\de\htwg\wizard\CardModelTest.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala
+2025.11.21 14:16:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:12 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:14 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:14 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\control\GameController.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:13 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:14 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala
+2025.11.21 14:16:14 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:15 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\Main.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:18 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:18 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:16:18 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:44:52 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:44:52 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:44:53 WARN  no build target for: C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala
+2025.11.21 14:44:53 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 14:44:53 INFO  no build target found for C:\Users\Nikita\Desktop\Wizard_Repo\Wizard\src\main\scala\de\htwg\wizard\model\Card.scala. Using presentation compiler with project's scala-library version: 3.3.6
+2025.11.21 15:04:25 INFO  Shutting down server
+2025.11.21 15:04:25 INFO  shutting down Metals
+2025.11.21 15:04:25 INFO  Exiting server

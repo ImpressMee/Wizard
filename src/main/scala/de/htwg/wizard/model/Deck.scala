@@ -2,18 +2,35 @@ package de.htwg.wizard.model
 
 import scala.util.Random
 
-class Deck:
+case class Deck(cards: List[Card]=List()):
   private val colors = CardColor.values.toVector
-  private val values = 1 to 3   // testweise: nur 1, 2, 3
+  private val values = 1 to 3
 
-  // generate 12 Cardobjects. 3 values × 4 colors
-  private var cards: List[Card] =
-    (for c <- colors; v <- values yield Card(c, v)).toList
+  // returns new Deck with random shuffled cards
+  def shuffle(): Deck =
+    Deck(Random.shuffle(cards))
 
-  def shuffle(): Unit =
-    cards = Random.shuffle(cards)
-
-  def deal(n: Int): List[Card] =
-    val hand = cards.take(n)
-    cards = cards.drop(n)
-    hand
+  // returns a new Hand with size n for a player 
+  // and a new Deck with the rest of the Cards
+  def deal(handsize: Int): (List[Card], Deck) =
+    val hand = cards.take(handsize)
+    val rest = cards.drop(handsize)
+    (hand, Deck(rest))
+    
+//The companion object Deck can provide factory methods
+object Deck:
+  // apply() seems to be like a Constructor, 
+  // but it is a normal method, that builds a new Object
+  def apply(): Deck =
+    val colors = CardColor.values.toVector
+    val values = 1 to 3
+    val cards = (for c <- colors; v <- values yield Card(c, v)).toList
+    new Deck(cards)
+    
+// When we call Deck(List[Card]), 
+// it is not overwritten by the code in apply()
+// instead, it is handled by the case class, 
+// because the custom apply method takes no parameters.
+    
+// The case class automatically generates 
+// an additional apply method with parameters

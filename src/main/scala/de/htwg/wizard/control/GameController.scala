@@ -2,13 +2,13 @@ package de.htwg.wizard.control
 
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.*
+
 import scala.io.StdIn.readLine
 
 class GameController(view: GameView) {
 
   def initGame(input: => String = readLine()): GameState =
     view.askPlayerAmount()
-
     try
       val playerCount = input.toInt
       if playerCount < 3 || playerCount > 6 then
@@ -18,7 +18,7 @@ class GameController(view: GameView) {
         val deck = new Deck()
         deck.shuffle()
 
-        // Spieler starten mit LEERER Hand
+        // All players are starting with empty hands
         val players = (0 until playerCount)
           .map(id => Player(id, hand = List()))
           .toList
@@ -33,7 +33,6 @@ class GameController(view: GameView) {
           totalRounds = Array(4, 3, 2, 2)(playerCount - 3),
           currentTrump = trump
         )
-
         state.add(view)
         state
 
@@ -42,16 +41,15 @@ class GameController(view: GameView) {
         view.showError("Invalid entry! Try again.")
         initGame(input)
 
-  def startRound(gs: GameState): GameState =
+  def startRound(gs: GameState, input: => String = readLine()): GameState =
     view.showRoundInfo(gs.currentRound, gs.currentTrump, gs.amountOfPlayers)
-    view.showPlayerCards(gs.players)
-
+    
     val updatedPlayers = gs.players.map { p =>
-      view.askNewStitches(p)
+      view.showPlayerCards(p)
+      view.askHowManyTricks(p)
       val prediction = readPositiveInt(readLine(), view)
-      p.copy(predictedStitches = prediction)
+      p.copy(predictedTricks = prediction)
     }
-
     gs.copy(players = updatedPlayers)
 
   def readPositiveInt(input: => String, view: GameView): Int =
@@ -65,7 +63,8 @@ class GameController(view: GameView) {
     -1
 
   def playOneStitch(gs: GameState, input: => String = readLine()): GameState =
-    view.showStitchStart()
+    val size = gs.players.head.hand.size
+    view.showTrickStart(size)
     val (updatedPlayers, playedPairs) =
       (for p <- gs.players yield
         view.askPlayerCard(p)
@@ -76,11 +75,11 @@ class GameController(view: GameView) {
         (p.copy(hand = newHand), p.id -> playedCard)
         ).unzip
 
-    val newStitch = Stitch(played = playedPairs.toMap)
+    val newStitch = Trick(played = playedPairs.toMap)
 
     gs.copy(
       players = updatedPlayers,
-      currentStitch = Some(newStitch)
+      currentTrick = Some(newStitch)
     )
 
   def readValidIndex(p: Player, input: => String, view: GameView): Int =
@@ -93,7 +92,7 @@ class GameController(view: GameView) {
         view.showError("Please enter a valid number!")
     -1 // shouldnt be reached
 
-  def whoWonStitch(stitch: Stitch, trump: CardColor): (Int, Card) =
+  def whoWonStitch(stitch: Trick, trump: CardColor): (Int, Card) =
     val played = stitch.played
 
     var bestId = -1
@@ -117,7 +116,7 @@ class GameController(view: GameView) {
     (bestId, bestCard)
 
   def finishStitch(gs: GameState): GameState =
-    gs.currentStitch match
+    gs.currentTrick match
       case None =>
         view.showError("No active stitch!")
         gs
@@ -126,14 +125,14 @@ class GameController(view: GameView) {
         val (winnerId, winningCard) = whoWonStitch(stitch, gs.currentTrump)
 
         val updatedPlayers = gs.players.map { p =>
-          if p.id == winnerId then p.copy(stitches = p.stitches + 1)
+          if p.id == winnerId then p.copy(tricks = p.tricks + 1)
           else p
         }
 
         val winner = updatedPlayers.find(_.id == winnerId).get
-        view.showStitchWinner(winner, winningCard)
+        view.showTrickWinner(winner, winningCard)
 
-        gs.copy(players = updatedPlayers, currentStitch = None)
+        gs.copy(players = updatedPlayers, currentTrick = None)
 
   def playFullRound(gs: GameState): GameState =
     var state = gs
@@ -147,8 +146,8 @@ class GameController(view: GameView) {
     state
 
   def calculateRoundPoints(p: Player): Int =
-    if p.predictedStitches == p.stitches then 20 + p.stitches * 10
-    else -10 * (p.stitches - p.predictedStitches).abs
+    if p.predictedTricks == p.tricks then 20 + p.tricks * 10
+    else -10 * (p.tricks - p.predictedTricks).abs
 
   def finishRound(gs: GameState): GameState =
     val updated = gs.players.map { p =>
@@ -163,8 +162,8 @@ class GameController(view: GameView) {
     val updated2 = gs.players.map { p =>
       p.copy(
         totalPoints = p.totalPoints + calculateRoundPoints(p),
-        stitches = 0,
-        predictedStitches = 0
+        tricks = 0,
+        predictedTricks = 0
       )
     }
     gs.copy(players = updated2)
@@ -177,8 +176,10 @@ class GameController(view: GameView) {
       val deck = new Deck()
       deck.shuffle()
 
+      // for each player in map
       val players = gs.players.map { p =>
-        p.copy(hand = deck.deal(newRound))
+        val (hand, restDeck) = deck.deal(newRound)
+        p.copy(hand = hand)
       }
 
       gs.copy(
