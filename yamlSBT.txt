@@ -1,0 +1,56 @@
+Erklärung zur Umsetzung der Anforderungen
+
+Für die plattformunabhängige Entwicklung wird das Build-Tool sbt verwendet.
+Damit ist das Projekt unabhängig vom lokalen Betriebssystem ausführbar.
+Zur Einrichtung eines Continuous-Integration-Systems wurde ein
+GitHub-Actions-Workflow unter .github/workflows/scala.yml erstellt.
+Dieser Workflow wird automatisch bei jedem Push oder Pull-Request
+auf den Branches main und test ausgeführt.
+
+Der Workflow führt die folgenden Schritte aus: Auschecken des Repositories,
+Einrichten der Scala- und sbt-Umgebung, automatisches Kompilieren und
+Testen des Projekts sowie Erzeugen von Code-Coverage-Daten mittels scoverage.
+Die Coverage-Ergebnisse werden anschließend mit dem sbt-Plugin
+sbt-coveralls an den externen Dienst Coveralls übertragen.
+Der dafür benötigte Zugangstoken wird als geschütztes
+GitHub-Secret (COVERALLS_REPO_TOKEN) gespeichert.
+Zur Visualisierung der Testergebnisse wurden Coveralls-Badges in die
+README-Datei integriert, die die aktuelle Testabdeckung der
+jeweils geprüften Branches anzeigen.
+
+Erklärung scala.yml
+
+Die Datei scala.yml steuert die Continuous-Integration-Pipeline auf GitHub.
+Sie legt fest, dass der Workflow bei jedem Push oder Pull-Request auf den
+Branches main und test ausgeführt wird.
+Der Job läuft in einer Ubuntu-Umgebung, checkt das Repository aus und
+installiert sbt über die coursier-Action.
+Anschließend werden die Tests inklusive Code-Coverage ausgeführt
+(sbt coverage test coverageReport coverageAggregate).
+Zum Schluss lädt sbt coveralls die Coverage-Ergebnisse an Coveralls hoch,
+wobei der notwendige Zugriffstoken über ein GitHub-Secret bereitgestellt wird.
+
+https://coveralls.io/github/ImpressMee/Wizard
+
+Erklärung zur build.sbt
+
+Die Datei build.sbt definiert die grundlegende Projektkonfiguration.
+Zunächst werden die Projektversion und die verwendete Scala-Version
+festgelegt. Danach folgen die benötigten Bibliotheken: scalactic für
+zusätzliche Testunterstützung und scalatest als Testframework.
+Das Projekt wird unter dem Namen Wizard eingerichtet, und in den
+Projekteinstellungen werden weitere Abhängigkeiten ergänzt,
+darunter scalatest für Tests sowie commons-lang3 und commons-io für
+Hilfsfunktionen. Abschließend wird mit coverageEnabled := true
+die Code-Coverage aktiviert, sodass scoverage während des Testlaufs
+die Testabdeckung messen kann.
+
+Erklärung zur plugins.sbt
+
+Die Datei project/plugins.sbt aktiviert zwei notwendige sbt-Plugins.
+Das Plugin sbt-scoverage ermöglicht die Erzeugung von Code-Coverage-Berichten
+während des Testlaufs.
+Das Plugin sbt-coveralls sorgt dafür, dass diese Coverage-Daten
+automatisch an Coveralls übertragen werden können.
+Beide Plugins sind erforderlich, damit die GitHub-Actions-Pipeline
+zuverlässig Coverage messen und hochladen kann.
