@@ -1,6 +1,7 @@
 package de.htwg.wizard.view
+
+import de.htwg.wizard.control.Observer
 import de.htwg.wizard.model.*
-import de.htwg.wizard.util.Observer
 import scala.io.StdIn.readLine
 /**
  * The order of the methods reflect the order of the gameflow
@@ -20,11 +21,11 @@ class GameView extends Observer{
         readPlayerAmount()
       else
         playerCount
-        
+
     catch
       case _: NumberFormatException =>
         println("Please enter a valid number!")
-        readPlayerAmount()  
+        readPlayerAmount()
   
   def showRoundInfo(round: Int, trump: CardColor, numberOfPlayers: Int): Unit = 
     println(
@@ -44,7 +45,6 @@ class GameView extends Observer{
       case CardColor.Blue => Console.BLUE
       case CardColor.Green => Console.GREEN
       case CardColor.Yellow => Console.YELLOW
-      case _ => Console.WHITE
 
     s"$color$card${Console.RESET}"
   
@@ -64,7 +64,7 @@ class GameView extends Observer{
     showPlayerCards(player)
     print(s"\nHow many tricks will you make player${player.id}?\n")
 
-  
+
   def readPositiveInt(): Int =
     val input = readLine()
     try
@@ -78,8 +78,8 @@ class GameView extends Observer{
       case _: NumberFormatException =>
         println("Please enter a valid number!")
         readPositiveInt()
-    
-    
+
+
   
   def showTrickStart(trickNr: Int): Unit = 
     println(s"${Console.BLUE}//////////////////////////////")
@@ -129,7 +129,7 @@ class GameView extends Observer{
     println(Console.RED + message + Console.RESET)
 
   override def update(): Unit=
-    println("override")
+    println("update display")   // update display
   
   
   

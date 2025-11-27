@@ -1,23 +1,24 @@
 package de.htwg.wizard.control
-
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.*
 
-import scala.io.StdIn.readLine
 class GameControl (view: GameView) {
-
+  
+  
   def runGame(): Unit =
     var state = initGame()
 
-    // Runde 1 vorbereiten (1 Karte austeilen)
     state = prepareNextRound(state.copy(currentRound = 0))
+    state.notifyObservers()
 
     for (i <- 1 to state.totalRounds) do
-
       state = playRound(state)
+      state.notifyObservers()
       state = prepareNextRound(state)
+      state.notifyObservers()
 
     finishGame(state)
+    state.notifyObservers()
 
   private def initGame(): GameState =
     view.askPlayerAmount()
@@ -42,6 +43,7 @@ class GameControl (view: GameView) {
         currentTrump = trump
       )
       state.add(view)
+      state.notifyObservers()
       state
 
     catch
@@ -53,20 +55,20 @@ class GameControl (view: GameView) {
     val winner = gameState.players.maxBy(_.totalPoints)
     view.showGameWinner(winner)
 
-  private def prepareNextRound(gs: GameState): GameState =
-    if gs.currentRound >= gs.totalRounds then gs
+  private def prepareNextRound(gameState: GameState): GameState =
+    if gameState.currentRound >= gameState.totalRounds then gameState
     else
-      val newRound = gs.currentRound + 1
+      val newRound = gameState.currentRound + 1
 
       var deck = Deck().shuffle()
-      
-      val players = gs.players.map { p =>
+
+      val players = gameState.players.map { p =>
         val (hand, restDeck) = deck.deal(newRound)
         deck = restDeck
         p.copy(hand = hand)
       }
 
-      gs.copy(
+      gameState.copy(
         currentRound = newRound,
         players = players,
         deck = deck,
@@ -82,31 +84,36 @@ class GameControl (view: GameView) {
       val prediction = view.readPositiveInt()
       player.copy(predictedTricks = prediction)
     }
-    gameState.copy(players = updatedPlayers)
+    val afterPrediction = gameState.copy(players = updatedPlayers)
+    afterPrediction.notifyObservers()
+    var state = afterPrediction
 
-    var state = gameState
-    val tricksThisRound = math.min(state.currentRound, 3) // Für Testzwecke reduziert
+    val tricksThisRound = state.players.head.hand.size
 
     for (round <- 1 to tricksThisRound) do
       state = playOneTrick(state)
+      state.notifyObservers()
 
-    val updated = state.players.map { p =>
-      p.copy(
-        totalPoints = p.totalPoints + calculateRoundPoints(p)
+    val updated = state.players.map { player =>
+      player.copy(
+        totalPoints = player.totalPoints + calculateRoundPoints(player)
       )
     }
-    state.copy(players = updated)
+    state = state.copy(players = updated)
+    state.notifyObservers()
 
     view.showRoundEvaluation(state.currentRound, updated)
 
-    val updated2 = state.players.map { p =>
-      p.copy(
-        totalPoints = p.totalPoints + calculateRoundPoints(p),
+    val updated2 = state.players.map { player =>
+      player.copy(
         tricks = 0,
         predictedTricks = 0
       )
     }
-    state.copy(players = updated2)
+    state = state.copy(players = updated2)
+    state.notifyObservers()
+
+    state
 
   private def calculateRoundPoints(p: Player): Int =
     if p.predictedTricks == p.tricks then 20 + p.tricks * 10
@@ -114,45 +121,44 @@ class GameControl (view: GameView) {
 
 
   private def playOneTrick(gameState: GameState): GameState =
+    // Fehlerfall: irgendein Spieler hat keine Karten → kein aktiver Stich
+    if gameState.players.exists(_.hand.isEmpty) then
+      view.showError("No active stitch!")
+      return gameState
+
     val handSize = gameState.players.head.hand.size
     view.showTrickStart(handSize)
-    // map with updated players
-    // and playedFrom map that contains player.id and playedCard
+
+    // Spieler spielen Karten
     val (updatedPlayers, playedFrom) =
       gameState.players.map { player =>
-
         view.askPlayerCard(player)
         val index = view.readIndex(player)
         val playedCard = player.hand(index)
         val newHand = player.hand.patch(index, Nil, 1)
-
         (player.copy(hand = newHand), (player.id, playedCard))
       }.unzip
 
-    val newTrick = Trick(played = playedFrom.toMap)
+    val newTrick = Trick(playedFrom.toMap)
 
-    gameState.copy(
+    val state = gameState.copy(
       players = updatedPlayers,
       currentTrick = Some(newTrick)
     )
-    //finish Trick
-    gameState.currentTrick match
-      case None =>
-        view.showError("No active stitch!")
-        gameState
+    state.notifyObservers()
 
-      case Some(trick) =>
-        val (winnerId, winningCard) = whoWonStitch(trick, gameState.currentTrump)
+    val (winnerId, winningCard) = whoWonStitch(newTrick, state.currentTrump)
 
-        val updatedPlayers = gameState.players.map { player =>
-          if player.id == winnerId then player.copy(tricks = player.tricks + 1)
-          else player
-        }
+    val updatedPlayers2 = state.players.map { player =>
+      if player.id == winnerId then player.copy(tricks = player.tricks + 1)
+      else player
+    }
 
-        val winner = updatedPlayers.find(_.id == winnerId).get
-        view.showTrickWinner(winner, winningCard)
+    val winner = updatedPlayers2.find(_.id == winnerId).get
+    view.showTrickWinner(winner, winningCard)
 
-        gameState.copy(players = updatedPlayers, currentTrick = None)
+    state.copy(players = updatedPlayers2, currentTrick = None)
+
 
   private def whoWonStitch(stitch: Trick, trump: CardColor): (Int, Card) =
     var bestId = -1

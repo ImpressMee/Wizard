@@ -1,7 +1,7 @@
 package de.htwg.wizard.model
 
 
-import de.htwg.wizard.util.Observable
+import de.htwg.wizard.control.Observable
 
 /**
  * GameState is a Snapshot of the game
@@ -19,5 +19,6 @@ case class GameState(
 // extends Observable makes GameState observable, 
 // allowing other parts of the program to automatically 
 // react to changes.
+
 
 

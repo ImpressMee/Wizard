@@ -1,16 +1,14 @@
 package de.htwg.wizard
 
 import de.htwg.wizard.control.*
-import de.htwg.wizard.view.GameView
+import de.htwg.wizard.view.*
 
+object Main:
 
-/**
- * @author Justin-Jay Balaba
- * @author Nikita Kusch
-*/
+  def main(): Unit =
+    startWizard()
 
-@main def main(): Unit =
-  val view = new GameView()
-  val controller = new GameControl(view)
-
-  controller.runGame()
+  def startWizard(): Unit =
+    val view = new GameView()
+    val controller = new GameControl(view)
+    controller.runGame()

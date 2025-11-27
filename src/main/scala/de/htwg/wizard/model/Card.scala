@@ -10,4 +10,3 @@ case class Card(color: CardColor, value: Int)
 // returns the Color of the new trump
 def trumpColor(): CardColor=
   CardColor.values(Random.nextInt(CardColor.values.length))
- 
