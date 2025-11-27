@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, test, pattern ]
   pull_request:
-    branches: [ main, test, pattern ]
+    branches: [ main, test, pattern ] 
 
 jobs:
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
