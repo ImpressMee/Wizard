@@ -5,3 +5,6 @@ https://coveralls.io/github/ImpressMee/Wizard
 
 #### Test Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=test)](https://coveralls.io/github/ImpressMee/Wizard?branch=test)
+
+#### Pattern Branch
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=pattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=pattern)
