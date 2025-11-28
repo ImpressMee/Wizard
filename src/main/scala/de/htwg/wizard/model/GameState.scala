@@ -13,7 +13,7 @@ case class GameState(
                       deck: Deck,
                       currentRound: Int,
                       totalRounds: Int,
-                      currentTrump: CardColor,
+                      currentTrump: Option[CardColor],
                       currentTrick: Option[Trick] = None
                     ) extends Observable
 // extends Observable makes GameState observable, 

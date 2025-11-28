@@ -23,10 +23,21 @@ object Deck:
   // but it is a normal method, that builds a new Object
   def apply(): Deck =
     val colors = CardColor.values.toVector
-    val values = 1 to 3
-    val cards = (for c <- colors; v <- values yield Card(c, v)).toList
-    new Deck(cards)
-    
+    val values = 1 to 13
+
+    val normalCards =
+      for color <- colors; v <- values
+        yield CardFactory(color, v)
+
+    val wizards =
+      for color <- colors
+        yield CardFactory(color,"wizard")
+
+    val jokers  =
+      for color <- colors
+        yield CardFactory(color,"joker")
+    Deck((normalCards ++ wizards ++ jokers).toList)
+
 // When we call Deck(List[Card]), 
 // it is not overwritten by the code in apply()
 // instead, it is handled by the case class, 

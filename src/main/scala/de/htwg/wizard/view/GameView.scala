@@ -8,9 +8,31 @@ import scala.io.StdIn.readLine
  */
 
 class GameView extends Observer{
-  def askPlayerAmount(): Unit = 
+  def writeOneCard(card: Card): String =
+    card.cardType match
+      case CardType.Wizard => s"${card.color} WIZARD"
+      case CardType.Joker => s"${card.color} JOKER"
+      case CardType.Normal(v) => s"${card.color} $v"
+
+
+  def askPlayerAmount(): Unit =
     println(s"${Console.RED}/////////----Game Start----/////////")
     print(s"How many Players are playing? (3-6): ${Console.RESET}")
+
+  def chooseTrump(): CardColor =
+    println("Trumpfkarte ist ein WIZARD – Du darfst die Trumpffarbe bestimmen:")
+    println("Wähle die Farbe:")
+    println("1 = Red, 2 = Green, 3 = Blue, 4 = Yellow")
+
+    readLine().trim match
+      case "1" => CardColor.Red
+      case "2" => CardColor.Green
+      case "3" => CardColor.Blue
+      case "4" => CardColor.Yellow
+      case _ =>
+        println("Ungültige Eingabe – bitte erneut wählen.")
+        chooseTrump()
+
 
   def readPlayerAmount(): Int =
     val input = readLine()
@@ -26,18 +48,23 @@ class GameView extends Observer{
       case _: NumberFormatException =>
         println("Please enter a valid number!")
         readPlayerAmount()
-  
-  def showRoundInfo(round: Int, trump: CardColor, numberOfPlayers: Int): Unit = 
+
+  def showRoundInfo(round: Int, trump: Option[CardColor], numberOfPlayers: Int): Unit =
+    val trumpText = trump match
+      case Some(color) => s"Trump color is: $color"
+      case None => "there is no trump"
+
     println(
       s"""\n\n${Console.MAGENTA}////////////////////////////////////////////////////////////
          |/////----Round $round start----//////
          |----Rundeninfo-------------------
-         |There are $numberOfPlayers players. \n
-         |round: $round \n
-         |Trump is: $trump\n
+         |There are $numberOfPlayers players.
+         |round: $round
+         |$trumpText
          |---------------------------------${Console.RESET}
          |""".stripMargin
     )
+
 
   def colorize(card: Card): String = 
     val color = card.color match
@@ -46,7 +73,7 @@ class GameView extends Observer{
       case CardColor.Green => Console.GREEN
       case CardColor.Yellow => Console.YELLOW
 
-    s"$color$card${Console.RESET}"
+    s"$color${writeOneCard(card)}${Console.RESET}"
   
   def showPlayerCards(player :Player): Unit = 
     val coloredCards = player.hand.map(colorize).mkString(", ")
@@ -104,8 +131,8 @@ class GameView extends Observer{
         readIndex(player)
 
   def showTrickWinner(player: Player, winningCard: Card): Unit =
-    println(s"${Console.BLUE_B}///----Trick Winner----///")
-    println(s"\n--Player${player.id} won this trick with $winningCard")
+    println(s"${Console.BLUE}///----Trick Winner----///")
+    println(s"\n--Player${player.id} won this trick with ${writeOneCard(winningCard)}")
     println(s"//////////////////////////////${Console.RESET}")
 
   def showRoundEvaluation(round: Int, players: List[Player]): Unit =
@@ -116,7 +143,7 @@ class GameView extends Observer{
            |${Console.CYAN}------ Player ${p.id} -------
            |tricks predicted: ${p.predictedTricks}
            |actual tricks:    ${p.tricks}
-           |=> Player ${p.id} has ${p.totalPoints} points in Round $round
+           |=> Player ${p.id} has ${p.totalPoints} points in total in Round $round
            |////////////////////////////////////////////////////////////${Console.RESET}
            |""".stripMargin
       )

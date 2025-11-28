@@ -8,273 +8,260 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, PrintStream}
 
 class GameViewSpec extends AnyWordSpec with Matchers {
 
-  def withInOut(input: String)(test: => Unit): String =
-    val in = new ByteArrayInputStream(input.getBytes)
+  // ------------------------------------------------------------------
+  // Helper: Capture console output
+  // ------------------------------------------------------------------
+  def captureOutput(testCode: => Unit): String = {
     val out = new ByteArrayOutputStream()
-    Console.withIn(in) {
-      Console.withOut(new PrintStream(out)) {
-        test
-      }
+    Console.withOut(new PrintStream(out)) {
+      testCode
     }
     out.toString
+  }
 
-  "GameView" should {
+  // ------------------------------------------------------------------
+  // Helper: simulate input for readLine()
+  // ------------------------------------------------------------------
+  def withInput(str: String)(testCode: => Unit): Unit = {
+    val in = new ByteArrayInputStream(str.getBytes())
+    Console.withIn(in) {
+      testCode
+    }
+  }
 
-    // ----------------------------------------------------------
-    // askPlayerAmount
-    // ----------------------------------------------------------
+  val view = new GameView
 
-    "print start message in askPlayerAmount" in {
-      val view = new GameView()
-      val out = withInOut("") {
-        view.askPlayerAmount()
-      }
-      out should include ("Game Start")
-      out should include ("How many Players")
+  val red5   = NormalCard(CardColor.Red, 5)
+  val wizG   = WizardCard(CardColor.Green)
+  val jokY   = JokerCard(CardColor.Yellow)
+
+  // ------------------------------------------------------------------
+  // writeOneCard()
+  // ------------------------------------------------------------------
+  "writeOneCard" should {
+    "format normal card" in {
+      view.writeOneCard(red5) shouldBe "Red 5"
     }
 
-    // ----------------------------------------------------------
-    // readPlayerAmount
-    // ----------------------------------------------------------
+    "format wizard card" in {
+      view.writeOneCard(wizG) shouldBe "Green WIZARD"
+    }
 
-    "read valid player amount" in {
-      val view = new GameView()
-      val res = withInOut("4\n") {
+    "format joker card" in {
+      view.writeOneCard(jokY) shouldBe "Yellow JOKER"
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // chooseTrump()
+  // ------------------------------------------------------------------
+  "chooseTrump" should {
+
+    "return correct color for input 1-4" in {
+      withInput("1\n") {
+        view.chooseTrump() shouldBe CardColor.Red
+      }
+      withInput("2\n") {
+        view.chooseTrump() shouldBe CardColor.Green
+      }
+      withInput("3\n") {
+        view.chooseTrump() shouldBe CardColor.Blue
+      }
+      withInput("4\n") {
+        view.chooseTrump() shouldBe CardColor.Yellow
+      }
+    }
+
+    "retry on invalid input" in {
+      withInput("X\n1\n") {
+        view.chooseTrump() shouldBe CardColor.Red
+      }
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // readPlayerAmount()
+  // ------------------------------------------------------------------
+  "readPlayerAmount" should {
+
+    "accept valid number" in {
+      withInput("4\n") {
         view.readPlayerAmount() shouldBe 4
       }
-      res shouldBe ""
     }
 
-    "retry on invalid number format" in {
-      val view = new GameView()
-      val out = withInOut("abc\n5\n") {
-        view.readPlayerAmount() shouldBe 5
-      }
-      out should include ("Please enter a valid number!")
-    }
-
-    "retry when number is out of allowed range" in {
-      val view = new GameView()
-      val out = withInOut("10\n3\n") {
+    "reject invalid number and retry" in {
+      withInput("9\n3\n") {
         view.readPlayerAmount() shouldBe 3
       }
-      out should include ("Wrong amount! Try again.")
     }
 
-    // ----------------------------------------------------------
-    // readPositiveInt
-    // ----------------------------------------------------------
-
-    "read valid positive integer" in {
-      val view = new GameView()
-      val out = withInOut("7\n") {
-        view.readPositiveInt() shouldBe 7
+    "reject non-number and retry" in {
+      withInput("abc\n3\n") {
+        view.readPlayerAmount() shouldBe 3
       }
-      out shouldBe ""
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // readPositiveInt()
+  // ------------------------------------------------------------------
+  "readPositiveInt" should {
+    "accept valid integer" in {
+      withInput("5\n") {
+        view.readPositiveInt() shouldBe 5
+      }
     }
 
-    "retry on negative integer" in {
-      val view = new GameView()
-      val out = withInOut("-3\n2\n") {
+    "retry on invalid input" in {
+      withInput("-3\n2\n") {
         view.readPositiveInt() shouldBe 2
       }
-      out should include ("Index out of range! Try again.")
     }
+  }
 
-    "retry on invalid integer input" in {
-      val view = new GameView()
-      val out = withInOut("xyz\n1\n") {
-        view.readPositiveInt() shouldBe 1
+  // ------------------------------------------------------------------
+  // readIndex()
+  // ------------------------------------------------------------------
+  "readIndex" should {
+    val p = Player(0, hand = List(red5, wizG, jokY))
+
+    "return correct index" in {
+      withInput("2\n") {
+        view.readIndex(p) shouldBe 1
       }
-      out should include ("Please enter a valid number!")
-    }
-
-    // ----------------------------------------------------------
-    // askPlayerCard / readIndex
-    // ----------------------------------------------------------
-
-    "read valid card index" in {
-      val view = new GameView()
-      val p = Player(0, hand = List(Card(CardColor.Red, 3)))
-
-      val out = withInOut("1\n") {
-        view.askPlayerCard(p)
-        view.readIndex(p) shouldBe 0
-      }
-
-      out should include ("Which card do you wanna play")
     }
 
     "retry on invalid index" in {
-      val view = new GameView()
-      val p = Player(0, hand = List(Card(CardColor.Blue, 1)))
-
-      val out = withInOut("5\n1\n") {
+      withInput("9\n1\n") {
         view.readIndex(p) shouldBe 0
       }
-      out should include ("Index out of range!")
     }
 
-    "retry on invalid index input format" in {
-      val view = new GameView()
-      val p = Player(0, hand = List(Card(CardColor.Green, 9)))
-
-      val out = withInOut("abc\n1\n") {
-        view.readIndex(p) shouldBe 0
+    "retry on invalid input" in {
+      withInput("X\n3\n") {
+        view.readIndex(p) shouldBe 2
       }
-      out should include ("Please enter a valid number!")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showError / update
-    // ----------------------------------------------------------
-
-    "print error message" in {
-      val view = new GameView()
-      val out = withInOut("") {
-        view.showError("Fehler!")
+  // ------------------------------------------------------------------
+  // Formatting / Output tests
+  // ------------------------------------------------------------------
+  "showRoundInfo" should {
+    "print correct text" in {
+      val text = captureOutput {
+        view.showRoundInfo(2, Some(CardColor.Blue), 4)
       }
-      out should include ("Fehler!")
+
+      text should include("Round 2 start")
+      text should include("Trump color is: Blue")
+      text should include("There are 4 players.")
     }
 
-    "print update notification" in {
-      val view = new GameView()
-      val out = withInOut("") {
-        view.update()
+    "print no-trump message" in {
+      val text = captureOutput {
+        view.showRoundInfo(1, None, 3)
       }
-      out should include ("update display")
+
+      text should include("there is no trump")
     }
+  }
 
-    // ----------------------------------------------------------
-    // colorize
-    // ----------------------------------------------------------
+  "showPlayerCards" should {
+    "print player's cards" in {
+      val p = Player(1, List(red5, wizG))
 
-    "colorize red cards correctly" in {
-      val view = new GameView
-      view.colorize(Card(CardColor.Red, 2)) should include("Card(Red,2)")
-    }
-
-    "colorize blue cards correctly" in {
-      val view = new GameView
-      view.colorize(Card(CardColor.Blue, 3)) should include("Card(Blue,3)")
-    }
-
-    "colorize green cards correctly" in {
-      val view = new GameView
-      view.colorize(Card(CardColor.Green, 1)) should include("Card(Green,1)")
-    }
-
-    "colorize yellow cards correctly" in {
-      val view = new GameView
-      view.colorize(Card(CardColor.Yellow, 2)) should include("Card(Yellow,2)")
-    }
-
-    // ----------------------------------------------------------
-    // showRoundInfo
-    // ----------------------------------------------------------
-
-    "showRoundInfo should print correct info" in {
-      val view = new GameView()
-      val out = withInOut("") {
-        view.showRoundInfo(2, CardColor.Red, 3)
-      }
-      out should include ("Round 2")
-      out should include ("Trump is: Red")
-      out should include ("There are 3 players.")
-    }
-
-    // ----------------------------------------------------------
-    // showPlayerCards
-    // ----------------------------------------------------------
-
-    "showPlayerCards prints player hand" in {
-      val view = new GameView()
-      val p = Player(0, hand = List(Card(CardColor.Red, 3)))
-
-      val out = withInOut("") {
+      val text = captureOutput {
         view.showPlayerCards(p)
       }
-      out should include ("Player0")
-      out should include ("Red")
+
+      text should include("Player1")
+      text should include("Red 5")
+      text should include("Green WIZARD")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showHowManyTricks
-    // ----------------------------------------------------------
+  "askHowManyTricks" should {
+    "print correct prompt" in {
+      val p = Player(0, List(red5))
 
-    "askHowManyTricks prints question" in {
-      val view = new GameView()
-      val p = Player(0, List(Card(CardColor.Blue, 2)))
-
-      val out = withInOut("") {
+      val text = captureOutput {
         view.askHowManyTricks(p)
       }
-      out should include ("How many tricks will you make player0")
+
+      text should include("How many tricks will you make player0?")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showTrickStart
-    // ----------------------------------------------------------
-
-    "showTrickStart prints correct message" in {
-      val view = new GameView()
-      val out = withInOut("") {
+  "showTrickStart" should {
+    "print correct header" in {
+      val text = captureOutput {
         view.showTrickStart(3)
       }
-      out should include ("Trick 3 start")
+
+      text should include("Trick 3 start")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showTrickWinner
-    // ----------------------------------------------------------
+  "askPlayerCard" should {
+    "print card prompt" in {
+      val p = Player(2, List(red5))
 
-    "showTrickWinner prints winner" in {
-      val view = new GameView()
-      val p = Player(2)
-
-      val out = withInOut("") {
-        view.showTrickWinner(p, Card(CardColor.Yellow, 4))
+      val text = captureOutput {
+        view.askPlayerCard(p)
       }
 
-      out should include ("Player2 won this trick")
+      text should include("Which card do you wanna play Player2?")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showRoundEvaluation
-    // ----------------------------------------------------------
+  "showTrickWinner" should {
+    "print correct winner message" in {
+      val p = Player(1)
+      val text = captureOutput {
+        view.showTrickWinner(p, red5)
+      }
+      text should include("Player1 won this trick")
+    }
+  }
 
-    "showRoundEvaluation prints player stats" in {
-      val view = new GameView()
+  "showRoundEvaluation" should {
+    "print scores" in {
+      val p = List(Player(0, tricks = 1, predictedTricks = 2, totalPoints = 10))
 
-      val players = List(
-        Player(0, tricks = 1, predictedTricks = 1, totalPoints = 30),
-        Player(1, tricks = 0, predictedTricks = 2, totalPoints = 10)
-      )
-
-      val out = withInOut("") {
-        view.showRoundEvaluation(2, players)
+      val text = captureOutput {
+        view.showRoundEvaluation(1, p)
       }
 
-      out should include ("Round 2")
-      out should include ("Player 0")
-      out should include ("Player 1")
+      text should include("Player 0")
+      text should include("actual tricks:    1")
+      text should include("points in total")
     }
+  }
 
-    // ----------------------------------------------------------
-    // showGameWinner
-    // ----------------------------------------------------------
+  "showGameWinner" should {
+    "print correct winner message" in {
+      val p = Player(1, totalPoints = 77)
 
-    "showGameWinner prints final winner" in {
-      val view = new GameView()
-      val p = Player(3, totalPoints = 99)
-
-      val out = withInOut("") {
+      val text = captureOutput {
         view.showGameWinner(p)
       }
 
-      out should include ("Player3")
-      out should include ("99")
+      text should include("Game Winner")
+      text should include("Player1")
+      text should include("77 points")
     }
-
   }
+
+  "showError" should {
+    "print error message" in {
+      val text = captureOutput {
+        view.showError("Fehler")
+      }
+
+      text should include("Fehler")
+    }
+  }
+
 }

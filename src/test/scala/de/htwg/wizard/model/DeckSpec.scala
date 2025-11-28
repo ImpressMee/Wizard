@@ -5,81 +5,105 @@ import org.scalatest.matchers.should.Matchers
 
 class DeckSpec extends AnyWordSpec with Matchers {
 
-  "A Deck created with Deck()" should {
-    "contain all colors with all values = CardColor.values.size * 3 cards" in {
-      val deck = Deck()
-      val expectedSize = CardColor.values.size * 3
-      deck.cards.size shouldBe expectedSize
-    }
+  "Deck()" should {
+    "create a full Wizard deck (13 values × 4 colors + 4 wizards + 4 jokers = 60 cards)" in {
+      val deck = Deck()  // uses Companion Object
 
-    "contain every combination of (color, value)" in {
-      val deck = Deck()
-      val colors = CardColor.values.toVector
-      val values = 1 to 3
+      deck.cards.size shouldBe 60
 
-      for (c <- colors; v <- values) {
-        deck.cards.contains(Card(c, v)) shouldBe true
-      }
+      val normalCards = deck.cards.collect { case n: NormalCard => n }
+      normalCards.size shouldBe 52  // 13 * 4
+
+      val wizards = deck.cards.collect { case w: WizardCard => w }
+      wizards.size shouldBe 4
+
+      val jokers = deck.cards.collect { case j: JokerCard => j }
+      jokers.size shouldBe 4
     }
   }
 
-  "A Deck created directly with a card list" should {
-    "store the given cards unchanged" in {
-      val cards = List(Card(CardColor.Red, 2), Card(CardColor.Blue, 1))
-      val deck = Deck(cards)
-      deck.cards shouldBe cards
+  "Deck(List)" should {
+    "store cards exactly as provided" in {
+      val list = List(
+        NormalCard(CardColor.Red, 1),
+        WizardCard(CardColor.Green)
+      )
+      val deck = Deck(list)
+
+      deck.cards shouldBe list
     }
   }
 
   "shuffle()" should {
-    "return a new Deck instance" in {
-      val deck = Deck()
+    "return a new deck with the same cards in different order" in {
+      val deck = Deck()        // 60 cards
       val shuffled = deck.shuffle()
-      shuffled should not be theSameInstanceAs(deck)
+
+      shuffled.cards.toSet shouldBe deck.cards.toSet       // same content
+      shuffled.cards should not equal deck.cards           // usually different order
     }
 
-    "not change the number of cards" in {
+    "not mutate the original deck" in {
       val deck = Deck()
-      val shuffled = deck.shuffle()
-      shuffled.cards.size shouldBe deck.cards.size
-    }
-
-    "contain the same cards in a different order (most of the time)" in {
-      val deck = Deck()
-      val shuffled = deck.shuffle()
-
-      shuffled.cards.toSet shouldBe deck.cards.toSet
-      // may rarely fail because random shuffle can accidentally match the original order
-      // but acceptable for normal test usage
+      val original = deck.cards
+      deck.shuffle()
+      deck.cards shouldBe original
     }
   }
 
   "deal()" should {
-    "return a hand of the requested size when enough cards exist" in {
-      val deck = Deck()
-      val (hand, rest) = deck.deal(5)
-      hand.size shouldBe 5
-      rest.cards.size shouldBe (deck.cards.size - 5)
+
+    "return correct number of cards and a reduced deck" in {
+      val cards = List(
+        NormalCard(CardColor.Red, 1),
+        NormalCard(CardColor.Blue, 2),
+        NormalCard(CardColor.Green, 3)
+      )
+      val deck = Deck(cards)
+
+      val (hand, rest) = deck.deal(2)
+
+      hand shouldBe cards.take(2)
+      rest.cards shouldBe cards.drop(2)
     }
 
-    "return all cards if requested handsize equals deck size" in {
-      val deck = Deck()
-      val (hand, rest) = deck.deal(deck.cards.size)
-      hand.size shouldBe deck.cards.size
-      rest.cards.size shouldBe 0
+    "allow dealing 0 cards" in {
+      val cards = List(
+        NormalCard(CardColor.Red, 1),
+        NormalCard(CardColor.Green, 2)
+      )
+      val deck = Deck(cards)
+
+      val (hand, rest) = deck.deal(0)
+
+      hand shouldBe empty
+      rest.cards shouldBe cards
     }
 
-    "return fewer cards if handsize exceeds deck size" in {
-      val deck = Deck()
-      val (hand, rest) = deck.deal(deck.cards.size + 10)
-      hand.size shouldBe deck.cards.size
-      rest.cards.size shouldBe 0
+    "deal all cards successfully" in {
+      val cards = List(
+        WizardCard(CardColor.Blue),
+        JokerCard(CardColor.Yellow)
+      )
+      val deck = Deck(cards)
+
+      val (hand, rest) = deck.deal(2)
+
+      hand shouldBe cards
+      rest.cards shouldBe empty
     }
 
-    "hand and rest should have no shared cards" in {
-      val deck = Deck()
-      val (hand, rest) = deck.deal(5)
-      hand.intersect(rest.cards) shouldBe empty
+    "deal more cards than available (returns what exists)" in {
+      val cards = List(
+        NormalCard(CardColor.Red, 1),
+        NormalCard(CardColor.Blue, 2)
+      )
+      val deck = Deck(cards)
+
+      val (hand, rest) = deck.deal(10)
+
+      hand shouldBe cards
+      rest.cards shouldBe empty
     }
   }
 }
