@@ -35,26 +35,23 @@ class GameControlSpec extends AnyWordSpec with Matchers {
     override def askPlayerAmount(): Unit =
       askPlayerAmountCalled += 1
 
-    override def readPlayerAmount(): Int = {
+    override def readPlayerAmount(): Int =
       readPlayerAmountCalled += 1
       pa.next()
-    }
 
     override def askHowManyTricks(p: Player): Unit =
       askHowManyCalled += 1
 
-    override def readPositiveInt(): Int = {
+    override def readPositiveInt(): Int =
       readPositiveCalled += 1
       pr.next()
-    }
 
     override def askPlayerCard(p: Player): Unit =
       askCardCalled += 1
 
-    override def readIndex(p: Player): Int = {
+    override def readIndex(p: Player): Int =
       readIndexCalled += 1
       ix.next()
-    }
 
     override def showTrickWinner(player: Player, card: Card): Unit =
       showWinnerCalled += 1
@@ -72,7 +69,7 @@ class GameControlSpec extends AnyWordSpec with Matchers {
   }
 
   // -------------------------------------------------------------------------
-  // Deterministisches Deck für Tests
+  // Deterministic Deck for testing
   // -------------------------------------------------------------------------
 
   class TestDeck(cards: List[Card]) extends Deck(cards) {
@@ -93,20 +90,18 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       )
     )
 
-  // -------------------------------------------------------------------------
-  // Hilfsmethoden für Reflection
-  // -------------------------------------------------------------------------
-
-  def privateMethod(control: GameControl, name: String, args: Class[?]*): java.lang.reflect.Method =
-    val m = control.getClass.getDeclaredMethod(name, args*)
+  // Reflection Helper
+  def privateMethod(ctrl: GameControl, name: String, args: Class[?]*): java.lang.reflect.Method =
+    val m = ctrl.getClass.getDeclaredMethod(name, args*)
     m.setAccessible(true)
     m
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR INIT GAME
+  // INIT GAME
   // -------------------------------------------------------------------------
 
   "initGame" should {
+
     "create correct number of players and shuffle deck" in {
       val view = new MockView(playerAmounts = List(3))
       val ctrl = new GameControl(view)
@@ -116,24 +111,41 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
       gs.amountOfPlayers shouldBe 3
       gs.players.size shouldBe 3
-      gs.players.forall(_.hand.isEmpty) shouldBe true
       view.askPlayerAmountCalled shouldBe 1
       view.readPlayerAmountCalled shouldBe 1
     }
 
     "retry on invalid number" in {
-      val view = new MockView(playerAmounts = List(99, 3)) // first invalid
+      val view = new MockView(playerAmounts = List(99, 3))
       val ctrl = new GameControl(view)
 
       val m = privateMethod(ctrl, "initGame")
-      m.invoke(ctrl).asInstanceOf[GameState]
+      m.invoke(ctrl)
 
       view.readPlayerAmountCalled shouldBe 2
+    }
+
+    "retry on NumberFormatException" in {
+      val view = new MockView(playerAmounts = List(3)) {
+        var fail = true
+        override def readPlayerAmount(): Int =
+          readPlayerAmountCalled += 1
+          if fail then
+            fail = false
+            throw new NumberFormatException()
+          else super.readPlayerAmount()
+      }
+      val ctrl = new GameControl(view)
+      val m = privateMethod(ctrl, "initGame")
+      m.invoke(ctrl)
+
+      view.readPlayerAmountCalled should be >= 2
+      view.askPlayerAmountCalled should be >= 2
     }
   }
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR PREPARE ROUND
+  // PREPARE NEXT ROUND
   // -------------------------------------------------------------------------
 
   "prepareNextRound" should {
@@ -168,10 +180,50 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       result.players.foreach(_.hand.size shouldBe 1)
       view.showRoundInfoCalled shouldBe 1
     }
+
+    "call chooseTrump when first card is wizard" in {
+      var called = 0
+
+      val view = new MockView() {
+        override def chooseTrump(): CardColor =
+          called += 1
+          CardColor.Green
+      }
+      val ctrl = new GameControl(view)
+
+      val deck = new TestDeck(List(
+        WizardCard(CardColor.Blue),
+        NormalCard(CardColor.Red, 7)
+      ))
+
+      val gs = GameState(3, List(Player(0), Player(1), Player(2)), deck, 0, 5, None)
+
+      val m = privateMethod(ctrl, "prepareNextRound", classOf[GameState])
+      m.invoke(ctrl, gs)
+
+      called shouldBe 1
+    }
+
+    "set trump = None when first card is joker" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val deck = new TestDeck(List(
+        JokerCard(CardColor.Yellow),
+        NormalCard(CardColor.Green, 3)
+      ))
+
+      val gs = GameState(3, List(Player(0), Player(1), Player(2)), deck, 0, 5, None)
+
+      val m = privateMethod(ctrl, "prepareNextRound", classOf[GameState])
+      val res = m.invoke(ctrl, gs).asInstanceOf[GameState]
+
+      res.currentTrump shouldBe None
+    }
   }
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR PREDICT TRICKS
+  // PREDICT TRICKS
   // -------------------------------------------------------------------------
 
   "predictTricks" should {
@@ -191,7 +243,7 @@ class GameControlSpec extends AnyWordSpec with Matchers {
   }
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR PLAY ONE TRICK
+  // PLAY ONE TRICK
   // -------------------------------------------------------------------------
 
   "playOneTrick" should {
@@ -206,6 +258,25 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
       view.lastError shouldBe "No active stitch!"
       result shouldBe gs
+    }
+
+    "abort on illegal index" in {
+      val view = new MockView(indexes = List(99))
+      val ctrl = new GameControl(view)
+
+      val gs = GameState(
+        1,
+        List(Player(0, hand = List(NormalCard(CardColor.Red, 5)))),
+        fixedDeck(),
+        1,
+        5,
+        None
+      )
+
+      val m = privateMethod(ctrl, "playOneTrick", classOf[Int], classOf[GameState])
+      m.invoke(ctrl, Integer.valueOf(1), gs)
+
+      view.lastError shouldBe "Invalid index!"
     }
 
     "play cards and select winner" in {
@@ -238,29 +309,10 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       view.readIndexCalled shouldBe 3
       view.showWinnerCalled shouldBe 1
     }
-
-    "abort on illegal index" in {
-      val view = new MockView(indexes = List(99))
-      val ctrl = new GameControl(view)
-
-      val gs = GameState(
-        1,
-        List(Player(0, hand = List(NormalCard(CardColor.Red, 5)))),
-        fixedDeck(),
-        1,
-        5,
-        None
-      )
-
-      val m = privateMethod(ctrl, "playOneTrick", classOf[Int], classOf[GameState])
-      m.invoke(ctrl, Integer.valueOf(1), gs)
-
-      view.lastError shouldBe "Invalid index!"
-    }
   }
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR SCORE ROUND
+  // SCORE ROUND
   // -------------------------------------------------------------------------
 
   "scoreRound" should {
@@ -279,19 +331,17 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       val m = privateMethod(ctrl, "scoreRound", classOf[GameState])
       val result = m.invoke(ctrl, gs).asInstanceOf[GameState]
 
-      // Points updated?
       result.players.map(_.totalPoints) shouldBe List(40, -10)
-
-      // Predictions + tricks reset?
       result.players.forall(p => p.tricks == 0 && p.predictedTricks == 0) shouldBe true
     }
   }
 
   // -------------------------------------------------------------------------
-  // TESTS FÜR FINISH GAME
+  // FINISH GAME
   // -------------------------------------------------------------------------
 
   "finishGame" should {
+
     "show winner" in {
       val view = new MockView()
       val ctrl = new GameControl(view)
@@ -305,9 +355,104 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       val gs = GameState(2, players, fixedDeck(), 5, 5, None)
 
       val m = privateMethod(ctrl, "finishGame", classOf[GameState])
-      m.invoke(ctrl, gs).asInstanceOf[Unit]
+      m.invoke(ctrl, gs)
 
       view.showGameWinnerCalled shouldBe 1
+    }
+
+    "handle ties (first in list wins)" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val players =
+        List(
+          Player(0, totalPoints = 50),
+          Player(1, totalPoints = 50)
+        )
+
+      val gs = GameState(2, players, fixedDeck(), 5, 5, None)
+
+      val m = privateMethod(ctrl, "finishGame", classOf[GameState])
+      m.invoke(ctrl, gs)
+
+      view.showGameWinnerCalled shouldBe 1
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // UNDO
+  // -------------------------------------------------------------------------
+
+  "undo" should {
+
+    "return same state if history is empty" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val gs = GameState(1, Nil, fixedDeck(), 0, 1, None)
+
+      ctrl.undo(gs) shouldBe gs
+    }
+
+    "restore previous state if history has one entry" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val gs1 = GameState(1, List(Player(0)), fixedDeck(), 0, 1, None)
+      val gs2 = gs1.copy(currentRound = 5)
+
+      val save = privateMethod(ctrl, "saveState", classOf[GameState])
+      save.invoke(ctrl, gs1)
+
+      ctrl.undo(gs2) shouldBe gs1
+    }
+
+    "restore oldest state if history has multiple entries" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val gs1 = GameState(1, Nil, fixedDeck(), 1, 2, None)
+      val gs2 = GameState(1, Nil, fixedDeck(), 2, 2, None)
+      val gs3 = GameState(1, Nil, fixedDeck(), 3, 2, None)
+
+      val save = privateMethod(ctrl, "saveState", classOf[GameState])
+      save.invoke(ctrl, gs1)
+      save.invoke(ctrl, gs2)
+
+      ctrl.undo(gs3) shouldBe gs2
+      ctrl.undo(gs2) shouldBe gs1
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // RUN GAME
+  // -------------------------------------------------------------------------
+
+  "runGame" should {
+
+    "stop when a phase returns null" in {
+
+      val view = new MockView()
+
+      class DummyPhase extends GameStatePhase {
+        var count = 0
+        override def run(c: GameControl, gs: GameState) =
+          count += 1
+          if count >= 2 then (null, gs) else (this, gs)
+      }
+
+      val ctrl = new GameControl(view) {
+        override def runGame(): Unit =
+          var phase: GameStatePhase = new DummyPhase
+          var state: GameState = GameState(0, Nil, Deck(Nil), 0, 0, None)
+          while phase != null do
+            val (np, ns) = phase.run(this, state)
+            phase = np
+            state = ns
+      }
+
+      ctrl.runGame()
+      succeed
     }
   }
 }

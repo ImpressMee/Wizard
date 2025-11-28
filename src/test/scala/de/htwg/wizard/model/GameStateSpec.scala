@@ -9,14 +9,16 @@ class GameStateSpec extends AnyWordSpec with Matchers {
   // --------------------------------------------------------
   // Helper: MockObserver to test Observable behavior
   // --------------------------------------------------------
+
   class MockObserver extends Observer {
     var updates = 0
     override def update(): Unit = updates += 1
   }
 
-  // Simple sample data
+  // Sample data
   val p0 = Player(0)
   val p1 = Player(1)
+
   val deck = Deck(List(
     NormalCard(CardColor.Red, 1),
     NormalCard(CardColor.Blue, 2)
@@ -25,7 +27,6 @@ class GameStateSpec extends AnyWordSpec with Matchers {
   val trick = Trick(Map(
     0 -> NormalCard(CardColor.Red, 1)
   ))
-
 
   // --------------------------------------------------------
   // TESTS
@@ -53,65 +54,53 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       gs.currentTrick shouldBe Some(trick)
     }
 
-    "have None as default currentTrick when not specified" in {
-      val gs = GameState(
-        amountOfPlayers = 2,
-        players = List(p0, p1),
-        deck = deck,
-        currentRound = 1,
-        totalRounds = 10,
-        currentTrump = None
-      )
-
+    "default currentTrick to None when not specified" in {
+      val gs = GameState(2, List(p0, p1), deck, 1, 10, None)
       gs.currentTrick shouldBe None
     }
 
     "copy itself with modified fields (immutability test)" in {
       val gs1 = GameState(2, List(p0, p1), deck, 1, 10, None)
-
       val gs2 = gs1.copy(currentRound = 2)
 
       gs1.currentRound shouldBe 1
       gs2.currentRound shouldBe 2
     }
 
-    "allow replacing players list using copy" in {
+    "copy the players list immutably" in {
       val gs1 = GameState(2, List(p0), deck, 1, 10, None)
-      val newPlayers = List(p1)
+      val gs2 = gs1.copy(players = List(p1))
 
-      val gs2 = gs1.copy(players = newPlayers)
-
-      gs2.players shouldBe newPlayers
-      gs1.players shouldBe List(p0)   // should stay unchanged
+      gs1.players shouldBe List(p0)
+      gs2.players shouldBe List(p1)
     }
 
-    "allow updating the deck via copy" in {
+    "copy the deck immutably" in {
       val gs1 = GameState(2, List(p0), deck, 1, 10, None)
       val newDeck = Deck(List(NormalCard(CardColor.Green, 7)))
-
       val gs2 = gs1.copy(deck = newDeck)
 
-      gs2.deck shouldBe newDeck
       gs1.deck shouldBe deck
+      gs2.deck shouldBe newDeck
     }
 
-    "allow updating currentTrick using copy" in {
-      val gs1 = GameState(2, List(p0), deck, 1, 10, None)
-      val gs2 = gs1.copy(currentTrick = Some(trick))
-
-      gs2.currentTrick shouldBe Some(trick)
-      gs1.currentTrick shouldBe None
-    }
-
-    "allow updating the trump color using copy" in {
+    "copy the trump immutably" in {
       val gs1 = GameState(2, List(p0), deck, 1, 10, None)
       val gs2 = gs1.copy(currentTrump = Some(CardColor.Yellow))
 
-      gs2.currentTrump shouldBe Some(CardColor.Yellow)
       gs1.currentTrump shouldBe None
+      gs2.currentTrump shouldBe Some(CardColor.Yellow)
     }
 
-    "not modify original GameState when using copy (full immutability test)" in {
+    "copy the trick immutably" in {
+      val gs1 = GameState(2, List(p0), deck, 1, 10, None)
+      val gs2 = gs1.copy(currentTrick = Some(trick))
+
+      gs1.currentTrick shouldBe None
+      gs2.currentTrick shouldBe Some(trick)
+    }
+
+    "not modify the original state when using copy (deep immutability test)" in {
       val original = GameState(2, List(p0), deck, 1, 10, None)
 
       val changed = original.copy(
@@ -136,13 +125,51 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       changed.players shouldBe List(p1)
     }
 
+    // --------------------------------------------------------
+    // MEMENTO TESTS
+    // --------------------------------------------------------
+
+    "create a correct memento" in {
+      val gs = GameState(
+        2, List(p0, p1), deck, 1, 10, Some(CardColor.Blue), Some(trick)
+      )
+
+      val m = gs.createMemento()
+
+      m.amountOfPlayers shouldBe 2
+      m.players shouldBe List(p0, p1)
+      m.deck shouldBe deck
+      m.currentRound shouldBe 1
+      m.totalRounds shouldBe 10
+      m.currentTrump shouldBe Some(CardColor.Blue)
+      m.currentTrick shouldBe Some(trick)
+    }
+
+    "restore correctly from a memento" in {
+      val original = GameState(
+        2, List(p0), deck, 1, 10, None, None
+      )
+      val m = GameStateMemento(
+        3, List(p1), Deck(), 4, 2, Some(CardColor.Green), Some(trick)
+      )
+
+      val restored = original.restore(m)
+
+      restored.amountOfPlayers shouldBe 3
+      restored.players shouldBe List(p1)
+      restored.deck shouldBe Deck()
+      restored.currentRound shouldBe 4
+      restored.totalRounds shouldBe 2
+      restored.currentTrump shouldBe Some(CardColor.Green)
+      restored.currentTrick shouldBe Some(trick)
+    }
 
     // --------------------------------------------------------
-    // Observable tests
+    // OBSERVABLE TESTS
     // --------------------------------------------------------
 
-    "notify observers when update() is triggered" in {
-      val gs = GameState(2, List(p0, p1), deck, 1, 10, None)
+    "notify observers" in {
+      val gs = GameState(2, List(p0), deck, 1, 10, None)
 
       val obs1 = new MockObserver
       val obs2 = new MockObserver
@@ -176,6 +203,7 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       val gs = GameState(2, List(p0), deck, 1, 10, None)
 
       val obs = new MockObserver
+
       gs.add(obs)
 
       gs.notifyObservers()
@@ -185,5 +213,20 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       obs.updates shouldBe 3
     }
 
+    "ignore removing observers not in the list" in {
+      val gs = GameState(2, List(p0), deck, 1, 10, None)
+
+      val obs1 = new MockObserver
+      val obs2 = new MockObserver
+
+      gs.remove(obs1) // should not crash
+      gs.add(obs2)
+      gs.remove(obs1) // again not in list
+
+      gs.notifyObservers()
+
+      obs1.updates shouldBe 0
+      obs2.updates shouldBe 1
+    }
   }
 }

@@ -27,15 +27,15 @@ object Deck:
 
     val normalCards =
       for color <- colors; v <- values
-        yield CardFactory(color, v)
+        yield Card(color, v)
 
     val wizards =
       for color <- colors
-        yield CardFactory(color,"wizard")
+        yield Card(color,"wizard")
 
     val jokers  =
       for color <- colors
-        yield CardFactory(color,"joker")
+        yield Card(color,"joker")
     Deck((normalCards ++ wizards ++ jokers).toList)
 
 // When we call Deck(List[Card]), 

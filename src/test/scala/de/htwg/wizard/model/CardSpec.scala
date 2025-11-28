@@ -116,20 +116,20 @@ class CardSpec extends AnyWordSpec with Matchers {
 
   "CardFactory" should {
     "create NormalCard from (color, value)" in {
-      CardFactory(CardColor.Green, 9) shouldBe NormalCard(CardColor.Green, 9)
+      Card(CardColor.Green, 9) shouldBe NormalCard(CardColor.Green, 9)
     }
 
     "create WizardCard from (color, \"wizard\")" in {
-      CardFactory(CardColor.Red, "wizard") shouldBe WizardCard(CardColor.Red)
+      Card(CardColor.Red, "wizard") shouldBe WizardCard(CardColor.Red)
     }
 
     "create JokerCard from (color, \"joker\")" in {
-      CardFactory(CardColor.Blue, "joker") shouldBe JokerCard(CardColor.Blue)
+      Card(CardColor.Blue, "joker") shouldBe JokerCard(CardColor.Blue)
     }
 
     "throw for unknown type string" in {
       assertThrows[IllegalArgumentException] {
-        CardFactory(CardColor.Yellow, "xyz")
+        Card(CardColor.Yellow, "xyz")
       }
     }
   }

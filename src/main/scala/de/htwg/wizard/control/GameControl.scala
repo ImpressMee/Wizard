@@ -1,8 +1,33 @@
 package de.htwg.wizard.control
+
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.*
 
+import scala.util.boundary
+import scala.util.boundary.break
+
 class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrategy()) {
+
+  // ============================================================
+  // MEMENTO CARETAKER
+  // ============================================================
+
+  private var history: List[GameStateMemento] = Nil
+
+  private def saveState(gs: GameState): Unit =
+    history = gs.createMemento() :: history
+
+  def undo(current: GameState): GameState =
+    history match
+      case m :: rest =>
+        history = rest
+        current.restore(m)
+      case Nil =>
+        current
+
+  // ============================================================
+  // GAME LOOP
+  // ============================================================
 
   def runGame(): Unit =
     var phase: GameStatePhase = InitState
@@ -20,9 +45,10 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
       phase = nextPhase
       state = nextState
 
-  // -------------------------------------------------------------
+  // ============================================================
   // INIT GAME
-  // -------------------------------------------------------------
+  // ============================================================
+
   private[control] def initGame(): GameState =
     view.askPlayerAmount()
     try
@@ -45,6 +71,9 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
         currentTrump = None
       )
 
+      // MEMENTO SAVE
+      saveState(gs)
+
       gs.add(view)
       gs.notifyObservers()
       gs
@@ -54,14 +83,19 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
         view.showError("Invalid entry! Try again.")
         initGame()
 
-  // -------------------------------------------------------------
-  // PREPARE ROUND
-  // -------------------------------------------------------------
+  // ============================================================
+  // PREPARE NEXT ROUND
+  // ============================================================
+
   private[control] def prepareNextRound(gs: GameState): GameState =
     if gs.currentRound >= gs.totalRounds then gs
     else
+      saveState(gs)
+
       val newRound = gs.currentRound + 1
-      var deck = Deck().shuffle()
+
+      // FIXED: use the DECK FROM GAMESTATE, not a new Deck()
+      var deck = gs.deck.shuffle()
 
       val trumpCard = deck.cards.head
       val rest = deck.copy(cards = deck.cards.tail)
@@ -74,6 +108,7 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
       view.showRoundInfo(newRound, trump, gs.amountOfPlayers)
 
       var d = rest
+
       val players = gs.players.map { p =>
         val (hand, newD) = d.deal(newRound)
         d = newD
@@ -87,10 +122,15 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
         currentTrump = trump
       )
 
-  // -------------------------------------------------------------
+
+  // ============================================================
   // PREDICT TRICKS
-  // -------------------------------------------------------------
+  // ============================================================
+
   private[control] def predictTricks(gs: GameState): GameState =
+    // MEMENTO SAVE
+    saveState(gs)
+
     val players = gs.players.map { p =>
       view.askHowManyTricks(p)
       val prediction = view.readPositiveInt()
@@ -101,65 +141,80 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
     newState.notifyObservers()
     newState
 
-  // -------------------------------------------------------------
-  // PLAY ONE TRICK  (FIXED - TESTSAFE)
-  // -------------------------------------------------------------
+  // ============================================================
+  // PLAY ONE TRICK (TESTSAFE)
+  // ============================================================
+
   private[control] def playOneTrick(trickNumber: Int, gs: GameState): GameState =
-    // Test verlangt: SOFORT abbrechen wenn ein Spieler keine Karten hat
-    if gs.players.exists(_.hand.isEmpty) then
-      view.showError("No active stitch!")
-      return gs
+    saveState(gs)
 
-    view.showTrickStart(trickNumber)
+    boundary:
+      if gs.players.exists(_.hand.isEmpty) then
+        view.showError("No active stitch!")
+        break(gs)
 
-    var trickSoFar = Trick(Map())
+      view.showTrickStart(trickNumber)
 
-    val (updatedPlayers, playedPairs) =
-      gs.players.map { p =>
+      // 1) Eingaben sammeln, ohne Hände zu verändern
+      var trickSoFar = Trick(Map())
 
-        view.askPlayerCard(p)
-        val idx = view.readIndex(p)
+      val movesOpt = boundary:
+        val collected = gs.players.map { p =>
+          view.askPlayerCard(p)
+          val idx = view.readIndex(p)
 
-        // Ungültiger Index: sofort abbrechen laut Tests
-        if idx < 0 || idx >= p.hand.size then
-          view.showError("Invalid index!")
-          return gs
+          if idx < 0 || idx >= p.hand.size then
+            view.showError("Invalid index!")
+            break(None)
 
-        val card = p.hand(idx)
+          val card = p.hand(idx)
 
-        // Illegaler Zug: Test verlangt kein Retry → nur Abbruch
-        if !isAllowedMove(card, p, trickSoFar) then
-          view.showError("You must follow start color!")
-          return gs
+          if !isAllowedMove(card, p, trickSoFar) then
+            view.showError("You must follow start color!")
+            break(None)
 
-        // Karte spielen
-        trickSoFar = Trick(trickSoFar.played + (p.id -> card))
-        val newHand = p.hand.patch(idx, Nil, 1)
+          trickSoFar = Trick(trickSoFar.played + (p.id -> card))
+          (p, idx, card)
+        }
+        Some(collected)
 
-        (p.copy(hand = newHand), (p.id, card))
+      // Fehlerfall → originalen GameState zurück
+      if movesOpt.isEmpty then return gs
+      val moves = movesOpt.get
 
-      }.unzip
+      // 2) Jetzt erst Spielzüge anwenden
+      val updatedPlayers =
+        moves.map { (p, idx, _) =>
+          p.copy(hand = p.hand.patch(idx, Nil, 1))
+        }
 
-    val trick = Trick(playedPairs.toMap)
-    val afterTrick = gs.copy(players = updatedPlayers, currentTrick = Some(trick))
-    afterTrick.notifyObservers()
+      // 3) Trick erzeugen
+      val playedPairs = moves.map { (p, _, card) =>
+        (p.id -> card)
+      }.toMap
 
-    val (winnerId, winningCard) =
-      strategy.winner(trick, afterTrick.currentTrump)
+      val trick = Trick(playedPairs)
+      val afterTrick = gs.copy(players = updatedPlayers, currentTrick = Some(trick))
+      afterTrick.notifyObservers()
 
-    val scoredPlayers =
-      afterTrick.players.map { p =>
-        if p.id == winnerId then p.copy(tricks = p.tricks + 1) else p
-      }
+      // 4) Sieger bestimmen
+      val (winnerId, winningCard) = strategy.winner(trick, afterTrick.currentTrump)
 
-    val winner = scoredPlayers.find(_.id == winnerId).get
-    view.showTrickWinner(winner, winningCard)
+      val scoredPlayers =
+        afterTrick.players.map { p =>
+          if p.id == winnerId then p.copy(tricks = p.tricks + 1) else p
+        }
 
-    afterTrick.copy(players = scoredPlayers, currentTrick = None)
+      val winner = scoredPlayers.find(_.id == winnerId).get
+      view.showTrickWinner(winner, winningCard)
 
-  // -------------------------------------------------------------
-  // MOVE CHECK
-  // -------------------------------------------------------------
+      afterTrick.copy(players = scoredPlayers, currentTrick = None)
+
+
+  // ============================================================
+  // ALLOWED MOVE CHECK
+  // ============================================================
+
   private def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean =
     val leadOpt = trick.played.values.collectFirst {
       case c if isNormal(c) => c.color
@@ -173,10 +228,14 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
 
       if mustFollow then isNormal(card) && card.color == lead else true
 
-  // -------------------------------------------------------------
+  // ============================================================
   // SCORE ROUND
-  // -------------------------------------------------------------
+  // ============================================================
+
   private[control] def scoreRound(gs: GameState): GameState =
+    // MEMENTO SAVE
+    saveState(gs)
+
     val scored = gs.players.map { p =>
       p.copy(totalPoints = p.totalPoints + calculateRoundPoints(p))
     }
@@ -192,18 +251,20 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
     s2.notifyObservers()
     s2
 
-  // -------------------------------------------------------------
+  // ============================================================
   // POINT CALCULATION
-  // -------------------------------------------------------------
+  // ============================================================
+
   private[control] def calculateRoundPoints(p: Player): Int =
     if p.predictedTricks == p.tricks then
       20 + p.tricks * 10
     else
       p.tricks * 10 - 10 * (p.tricks - p.predictedTricks).abs
 
-  // -------------------------------------------------------------
+  // ============================================================
   // FINISH
-  // -------------------------------------------------------------
+  // ============================================================
+
   private[control] def finishGame(gs: GameState): Unit =
     val winner = gs.players.maxBy(_.totalPoints)
     view.showGameWinner(winner)

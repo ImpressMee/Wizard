@@ -57,13 +57,13 @@ def trumpColor(): CardColor =
 // ==============================
 // Factory
 // ==============================
-object CardFactory:
+object Card:
   def apply(color: CardColor, kind: String): Card =
     kind.toLowerCase match
       case "wizard" => WizardCard(color)
       case "joker"  => JokerCard(color)
       case other =>
-        throw new IllegalArgumentException(s"Unknown card type: $other")
+        throw new IllegalArgumentException(s"Unknown card type: $other") // zu Try machen
 
   def apply(color: CardColor, value: Int): Card =
     NormalCard(color, value)
