@@ -27,6 +27,10 @@ class GameControl(view: GameView, strategy: TrickStrategy = StandardTrickStrateg
     view.askPlayerAmount()
     try
       val playerCount = view.readPlayerAmount()
+      if playerCount < 3 || playerCount > 6 then
+        view.showError("Wrong amount! Try again.")
+        return initGame()
+
       val deck = new Deck().shuffle()
 
       val players =

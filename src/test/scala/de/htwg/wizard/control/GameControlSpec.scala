@@ -7,18 +7,19 @@ import org.scalatest.matchers.should.Matchers
 
 class GameControlSpec extends AnyWordSpec with Matchers {
 
-  // -------------------------------------------------------
-  // MockView
-  // -------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Mock View
+  // -------------------------------------------------------------------------
+
   class MockView(
                   playerAmounts: List[Int] = List(3),
                   predictions: List[Int] = List.fill(20)(0),
-                  cardIndexes: List[Int] = List.fill(50)(0)
+                  indexes: List[Int] = List.fill(50)(0)
                 ) extends GameView {
 
-    private val paIter = playerAmounts.iterator
-    private val predIter = predictions.iterator
-    private val indexIter = cardIndexes.iterator
+    private val pa = playerAmounts.iterator
+    private val pr = predictions.iterator
+    private val ix = indexes.iterator
 
     var askPlayerAmountCalled = 0
     var readPlayerAmountCalled = 0
@@ -27,7 +28,7 @@ class GameControlSpec extends AnyWordSpec with Matchers {
     var askCardCalled = 0
     var readIndexCalled = 0
     var showWinnerCalled = 0
-    var showRoundEvalCalled = 0
+    var showRoundInfoCalled = 0
     var showGameWinnerCalled = 0
     var lastError: String = ""
 
@@ -36,7 +37,7 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
     override def readPlayerAmount(): Int = {
       readPlayerAmountCalled += 1
-      paIter.next()
+      pa.next()
     }
 
     override def askHowManyTricks(p: Player): Unit =
@@ -44,7 +45,7 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
     override def readPositiveInt(): Int = {
       readPositiveCalled += 1
-      predIter.next()
+      pr.next()
     }
 
     override def askPlayerCard(p: Player): Unit =
@@ -52,27 +53,28 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
     override def readIndex(p: Player): Int = {
       readIndexCalled += 1
-      indexIter.next()
+      ix.next()
     }
 
     override def showTrickWinner(player: Player, card: Card): Unit =
       showWinnerCalled += 1
 
-    override def showRoundEvaluation(round: Int, players: List[Player]): Unit =
-      showRoundEvalCalled += 1
+    override def showRoundInfo(r: Int, trump: Option[CardColor], players: Int): Unit =
+      showRoundInfoCalled += 1
 
     override def showGameWinner(player: Player): Unit =
       showGameWinnerCalled += 1
 
-    override def showError(message: String): Unit =
-      lastError = message
+    override def showError(msg: String): Unit =
+      lastError = msg
 
     override def update(): Unit = ()
   }
 
-  // -------------------------------------------------------
-  // Deterministisches Deck
-  // -------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Deterministisches Deck für Tests
+  // -------------------------------------------------------------------------
+
   class TestDeck(cards: List[Card]) extends Deck(cards) {
     override def shuffle(): Deck = this
     override def deal(n: Int): (List[Card], Deck) =
@@ -82,28 +84,35 @@ class GameControlSpec extends AnyWordSpec with Matchers {
   def fixedDeck(): Deck =
     TestDeck(
       List(
+        NormalCard(CardColor.Red, 5),
         NormalCard(CardColor.Blue, 1),
-        NormalCard(CardColor.Green, 2),
-        NormalCard(CardColor.Yellow, 3),
-        NormalCard(CardColor.Red, 4),
+        NormalCard(CardColor.Yellow, 9),
+        NormalCard(CardColor.Green, 3),
         WizardCard(CardColor.Red),
         JokerCard(CardColor.Blue)
       )
     )
 
-  // -------------------------------------------------------
-  // TESTS
-  // -------------------------------------------------------
-  "GameControl" should {
+  // -------------------------------------------------------------------------
+  // Hilfsmethoden für Reflection
+  // -------------------------------------------------------------------------
 
-    "initGame creates correct number of players" in {
+  def privateMethod(control: GameControl, name: String, args: Class[?]*): java.lang.reflect.Method =
+    val m = control.getClass.getDeclaredMethod(name, args*)
+    m.setAccessible(true)
+    m
+
+  // -------------------------------------------------------------------------
+  // TESTS FÜR INIT GAME
+  // -------------------------------------------------------------------------
+
+  "initGame" should {
+    "create correct number of players and shuffle deck" in {
       val view = new MockView(playerAmounts = List(3))
-      val control = new GameControl(view)
+      val ctrl = new GameControl(view)
 
-      val m = control.getClass.getDeclaredMethod("initGame")
-      m.setAccessible(true)
-
-      val gs = m.invoke(control).asInstanceOf[GameState]
+      val m = privateMethod(ctrl, "initGame")
+      val gs = m.invoke(ctrl).asInstanceOf[GameState]
 
       gs.amountOfPlayers shouldBe 3
       gs.players.size shouldBe 3
@@ -112,93 +121,193 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       view.readPlayerAmountCalled shouldBe 1
     }
 
-    "prepareNextRound increments round and deals correct number of cards" in {
+    "retry on invalid number" in {
+      val view = new MockView(playerAmounts = List(99, 3)) // first invalid
+      val ctrl = new GameControl(view)
+
+      val m = privateMethod(ctrl, "initGame")
+      m.invoke(ctrl).asInstanceOf[GameState]
+
+      view.readPlayerAmountCalled shouldBe 2
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTS FÜR PREPARE ROUND
+  // -------------------------------------------------------------------------
+
+  "prepareNextRound" should {
+
+    "do nothing if currentRound >= totalRounds" in {
       val view = new MockView()
-      val control = new GameControl(view)
+      val ctrl = new GameControl(view)
 
-      val gs0 = GameState(
-        amountOfPlayers = 3,
-        players = List(Player(0), Player(1), Player(2)),
-        deck = fixedDeck(),
-        currentRound = 0,
-        totalRounds = 5,
-        currentTrump = None
-      )
+      val gs = GameState(3, Nil, fixedDeck(), 3, 3, None)
+      val m = privateMethod(ctrl, "prepareNextRound", classOf[GameState])
 
-      val m = control.getClass.getDeclaredMethod("prepareNextRound", classOf[GameState])
-      m.setAccessible(true)
-
-      val gs = m.invoke(control, gs0).asInstanceOf[GameState]
-
-      gs.currentRound shouldBe 1
-      gs.players.foreach(_.hand.size shouldBe 1)
+      m.invoke(ctrl, gs).asInstanceOf[GameState] shouldBe gs
     }
 
-    "calculateRoundPoints works for correct and wrong predictions" in {
-      val control = new GameControl(new MockView())
+    "increment round, deal cards and pick trump" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
 
-      val m = control.getClass.getDeclaredMethod("calculateRoundPoints", classOf[Player])
-      m.setAccessible(true)
+      val gs = GameState(
+        3,
+        List(Player(0), Player(1), Player(2)),
+        fixedDeck(),
+        0,
+        5,
+        None
+      )
 
-      m.invoke(control, Player(0, tricks = 2, predictedTricks = 2))
-        .asInstanceOf[Int] shouldBe 40
+      val m = privateMethod(ctrl, "prepareNextRound", classOf[GameState])
+      val result = m.invoke(ctrl, gs).asInstanceOf[GameState]
 
-      m.invoke(control, Player(1, tricks = 1, predictedTricks = 3))
-        .asInstanceOf[Int] shouldBe (10 - 20)
+      result.currentRound shouldBe 1
+      result.players.foreach(_.hand.size shouldBe 1)
+      view.showRoundInfoCalled shouldBe 1
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTS FÜR PREDICT TRICKS
+  // -------------------------------------------------------------------------
+
+  "predictTricks" should {
+
+    "ask and store predictions" in {
+      val view = new MockView(predictions = List(2, 1, 3))
+      val ctrl = new GameControl(view)
+      val gs = GameState(3, List(Player(0), Player(1), Player(2)), fixedDeck(), 1, 5, None)
+
+      val m = privateMethod(ctrl, "predictTricks", classOf[GameState])
+      val result = m.invoke(ctrl, gs).asInstanceOf[GameState]
+
+      result.players.map(_.predictedTricks) shouldBe List(2, 1, 3)
+      view.askHowManyCalled shouldBe 3
+      view.readPositiveCalled shouldBe 3
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTS FÜR PLAY ONE TRICK
+  // -------------------------------------------------------------------------
+
+  "playOneTrick" should {
+
+    "abort if any player has empty hand" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+      val gs = GameState(1, List(Player(0, hand = Nil)), fixedDeck(), 1, 5, None)
+
+      val m = privateMethod(ctrl, "playOneTrick", classOf[Int], classOf[GameState])
+      val result = m.invoke(ctrl, Integer.valueOf(1), gs).asInstanceOf[GameState]
+
+      view.lastError shouldBe "No active stitch!"
+      result shouldBe gs
     }
 
-    "playOneTrick plays cards and produces a winner" in {
-      val view = new MockView(cardIndexes = List(0, 0, 0))
-      val control = new GameControl(view)
+    "play cards and select winner" in {
+      val view = new MockView(indexes = List(0, 0, 0))
+      val strategy = new TrickStrategy {
+        override def winner(t: Trick, trump: Option[CardColor]): (Int, Card) =
+          (1, NormalCard(CardColor.Blue, 1))
+      }
 
-      val players = List(
-        Player(0, hand = List(NormalCard(CardColor.Red, 5))),
-        Player(1, hand = List(NormalCard(CardColor.Blue, 2))),
-        Player(2, hand = List(NormalCard(CardColor.Green, 3)))
+      val ctrl = new GameControl(view, strategy)
+
+      val gs = GameState(
+        3,
+        List(
+          Player(0, hand = List(NormalCard(CardColor.Red, 5))),
+          Player(1, hand = List(NormalCard(CardColor.Blue, 1))),
+          Player(2, hand = List(NormalCard(CardColor.Green, 4)))
+        ),
+        fixedDeck(),
+        1,
+        5,
+        Some(CardColor.Red)
       )
 
-      val state = GameState(
-        amountOfPlayers = 3,
-        players = players,
-        deck = fixedDeck(),
-        currentRound = 1,
-        totalRounds = 10,
-        currentTrump = Some(CardColor.Red)
-      )
+      val m = privateMethod(ctrl, "playOneTrick", classOf[Int], classOf[GameState])
+      val result = m.invoke(ctrl, Integer.valueOf(1), gs).asInstanceOf[GameState]
 
-      val m = control.getClass.getDeclaredMethod("playOneTrick", classOf[Int], classOf[GameState])
-      m.setAccessible(true)
-
-      val gs = m.invoke(control, Integer.valueOf(1), state).asInstanceOf[GameState]
-
-      gs.currentTrick shouldBe None
-      gs.players.exists(_.tricks == 1) shouldBe true
+      result.players(1).tricks shouldBe 1
       view.askCardCalled shouldBe 3
       view.readIndexCalled shouldBe 3
       view.showWinnerCalled shouldBe 1
     }
 
-    "playOneTrick shows error if any player has no cards" in {
-      val view = new MockView()
-      val control = new GameControl(view)
+    "abort on illegal index" in {
+      val view = new MockView(indexes = List(99))
+      val ctrl = new GameControl(view)
 
-      val state = GameState(
-        amountOfPlayers = 1,
-        players = List(Player(0, hand = List())),
-        deck = fixedDeck(),
-        currentRound = 1,
-        totalRounds = 10,
-        currentTrump = None
+      val gs = GameState(
+        1,
+        List(Player(0, hand = List(NormalCard(CardColor.Red, 5)))),
+        fixedDeck(),
+        1,
+        5,
+        None
       )
 
-      val m = control.getClass.getDeclaredMethod("playOneTrick", classOf[Int], classOf[GameState])
-      m.setAccessible(true)
+      val m = privateMethod(ctrl, "playOneTrick", classOf[Int], classOf[GameState])
+      m.invoke(ctrl, Integer.valueOf(1), gs)
 
-      val result = m.invoke(control, Integer.valueOf(1), state).asInstanceOf[GameState]
-
-      view.lastError shouldBe "No active stitch!"
-      result shouldBe state
+      view.lastError shouldBe "Invalid index!"
     }
+  }
 
+  // -------------------------------------------------------------------------
+  // TESTS FÜR SCORE ROUND
+  // -------------------------------------------------------------------------
+
+  "scoreRound" should {
+    "calculate and reset points" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val players =
+        List(
+          Player(0, tricks = 2, predictedTricks = 2),
+          Player(1, tricks = 1, predictedTricks = 3)
+        )
+
+      val gs = GameState(2, players, fixedDeck(), 1, 5, None)
+
+      val m = privateMethod(ctrl, "scoreRound", classOf[GameState])
+      val result = m.invoke(ctrl, gs).asInstanceOf[GameState]
+
+      // Points updated?
+      result.players.map(_.totalPoints) shouldBe List(40, -10)
+
+      // Predictions + tricks reset?
+      result.players.forall(p => p.tricks == 0 && p.predictedTricks == 0) shouldBe true
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTS FÜR FINISH GAME
+  // -------------------------------------------------------------------------
+
+  "finishGame" should {
+    "show winner" in {
+      val view = new MockView()
+      val ctrl = new GameControl(view)
+
+      val players =
+        List(
+          Player(0, totalPoints = 10),
+          Player(1, totalPoints = 30)
+        )
+
+      val gs = GameState(2, players, fixedDeck(), 5, 5, None)
+
+      val m = privateMethod(ctrl, "finishGame", classOf[GameState])
+      m.invoke(ctrl, gs).asInstanceOf[Unit]
+
+      view.showGameWinnerCalled shouldBe 1
+    }
   }
 }

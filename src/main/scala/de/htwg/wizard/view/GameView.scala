@@ -66,7 +66,7 @@ class GameView extends Observer{
     )
 
 
-  def colorize(card: Card): String = 
+  def colorize(card: Card): String =
     val color = card.color match
       case CardColor.Red => Console.RED
       case CardColor.Blue => Console.BLUE
@@ -74,8 +74,8 @@ class GameView extends Observer{
       case CardColor.Yellow => Console.YELLOW
 
     s"$color${writeOneCard(card)}${Console.RESET}"
-  
-  def showPlayerCards(player :Player): Unit = 
+
+  def showPlayerCards(player :Player): Unit =
     val coloredCards = player.hand.map(colorize).mkString(", ")
       println(
         s"""\n\n-----------------------------------------------
@@ -86,7 +86,7 @@ class GameView extends Observer{
            |-----------------------------------------------
            |""".stripMargin
       )
-  
+
   def askHowManyTricks(player: Player): Unit =
     showPlayerCards(player)
     print(s"\nHow many tricks will you make player${player.id}?\n")
@@ -107,15 +107,15 @@ class GameView extends Observer{
         readPositiveInt()
 
 
-  
-  def showTrickStart(trickNr: Int): Unit = 
+
+  def showTrickStart(trickNr: Int): Unit =
     println(s"${Console.BLUE}//////////////////////////////")
     println(s"\n\n///----Trick ${trickNr} start----///\n${Console.RESET}")
 
-  def askPlayerCard(player: Player): Unit = 
+  def askPlayerCard(player: Player): Unit =
     showPlayerCards(player)
     println(s"Which card do you wanna play Player${player.id}? (Index starts by 1)")
-    
+
   def readIndex(player: Player): Int =
     val input = readLine()
     try
@@ -147,7 +147,7 @@ class GameView extends Observer{
            |////////////////////////////////////////////////////////////${Console.RESET}
            |""".stripMargin
       )
-  
+
   def showGameWinner(player: Player): Unit =
     println(s"${Console.RED}/////////----Game Winner----/////////")
     println(s"\nAnd the winner is Player${player.id} with ${player.totalPoints} points${Console.RESET}")
@@ -157,8 +157,8 @@ class GameView extends Observer{
 
   override def update(): Unit=
     println("update display")   // update display
-  
-  
-  
+
+
+
 }
 
