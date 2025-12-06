@@ -1,6 +1,7 @@
 package de.htwg.wizard
 
 import de.htwg.wizard.control.*
+import de.htwg.wizard.control.strategy.TrickStrategy
 import de.htwg.wizard.view.*
 
 object main:
@@ -9,8 +10,8 @@ object main:
     //val altStrategy = new AlternativeTrickStrategy
     startWizard(new GameView())
 
-  def startWizard(view: GameView): Unit =
+  private def startWizard(view: GameView): Unit =
     new GameControl(view).runGame()
 
-  def startWizard(view: GameView, strategy: TrickStrategy): Unit =
+  private def startWizard(view: GameView, strategy: TrickStrategy): Unit =
     new GameControl(view, strategy).runGame()

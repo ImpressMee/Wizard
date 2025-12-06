@@ -1,5 +1,6 @@
 package de.htwg.wizard.control
 
+import de.htwg.wizard.control.strategy.TrickStrategy
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.*
 import org.scalatest.wordspec.AnyWordSpec

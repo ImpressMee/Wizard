@@ -1,4 +1,4 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.observer
 
 trait Observable {
   private var subscribers: Vector[Observer] = Vector()

@@ -1,4 +1,4 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.strategy
 
 import de.htwg.wizard.model.*
 

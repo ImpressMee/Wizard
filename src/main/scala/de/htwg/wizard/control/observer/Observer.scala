@@ -1,4 +1,4 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.observer
 
 trait Observer {
   def update(): Unit

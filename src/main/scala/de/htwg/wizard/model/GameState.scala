@@ -1,6 +1,6 @@
 package de.htwg.wizard.model
 
-import de.htwg.wizard.control.Observable
+import de.htwg.wizard.control.observer.Observable
 
 /**
  * GameState is a Snapshot of the game

@@ -1,5 +1,6 @@
 package de.htwg.wizard.control
 
+import de.htwg.wizard.control.strategy.{AlternativeTrickStrategy, StandardTrickStrategy}
 import de.htwg.wizard.model.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
