@@ -2,7 +2,7 @@ package de.htwg.wizard.control.command
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-
+import scala.util.{Try, Success}
 import de.htwg.wizard.control.GameControl
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.GameView
@@ -18,10 +18,10 @@ class InitCommandSpec extends AnyWordSpec with Matchers {
 
     override def askPlayerAmount(): Unit = ()
 
-    override def readPlayerAmount(): Int = {
+    override def readPlayerAmount(): Try[Int] = {
       val h = inputs.head
       inputs = inputs.tail
-      h
+      Success(h)
     }
 
     override def showError(msg: String): Unit =

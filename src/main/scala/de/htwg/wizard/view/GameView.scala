@@ -32,22 +32,9 @@ class GameView extends Observer {
       case _ =>
         println("Invalid input, please choose again")
         chooseTrump()
-
-
-  def readPlayerAmount(): Int =
-    val input = readLine()
-
-    Try(input.toInt) match
-      case Success(playerCount) =>
-        if playerCount < 3 || playerCount > 6 then
-          showError("Wrong amount! Try again.")
-          readPlayerAmount()
-        else
-          playerCount
-
-      case Failure(_) =>
-        println("Please enter a valid number!")
-        readPlayerAmount()
+  
+  def readPlayerAmount(): Try[Int] =
+    Try(readLine().toInt)
 
 
   def showRoundInfo(round: Int, trump: Option[CardColor], numberOfPlayers: Int): Unit =

@@ -57,7 +57,7 @@ class GameControl(
   private[control] def doInitGame(): GameState =
     view.askPlayerAmount()
 
-    Try(view.readPlayerAmount()) match
+    view.readPlayerAmount() match
       case Success(playerCount) =>
         if playerCount < 3 || playerCount > 6 then
           view.showError("Wrong amount! Try again.")
@@ -65,7 +65,7 @@ class GameControl(
         else
           val deck = new Deck().shuffle()
           val players = (0 until playerCount).map(id => Player(id)).toList
-
+  
           val gs = GameState(
             amountOfPlayers = playerCount,
             players = players,
@@ -74,14 +74,15 @@ class GameControl(
             totalRounds = Array(4, 3, 2, 2)(playerCount - 3),
             currentTrump = None
           )
-
+  
           gs.add(view)
           gs.notifyObservers()
           gs
-
+  
       case Failure(_) =>
         view.showError("Invalid entry! Try again.")
         doInitGame()
+
 
   // ============================================================
   // PREPARE NEXT ROUND

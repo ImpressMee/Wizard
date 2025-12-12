@@ -5,6 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.control.GameControl
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.GameView
+import scala.util.{Try, Success}
 
 class ScoreRoundCommandSpec extends AnyWordSpec with Matchers {
 
@@ -15,7 +16,7 @@ class ScoreRoundCommandSpec extends AnyWordSpec with Matchers {
     override def update(): Unit = ()
 
     // nicht relevant, aber notwendig
-    override def readPlayerAmount(): Int = 3
+    override def readPlayerAmount(): Try[Int] = Success(3)
     override def chooseTrump(): CardColor = CardColor.Red
     override def askPlayerAmount(): Unit = ()
     override def askHowManyTricks(p: Player): Unit = ()

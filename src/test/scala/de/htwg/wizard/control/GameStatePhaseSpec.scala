@@ -1,5 +1,5 @@
 package de.htwg.wizard.control
-
+import scala.util.{Try, Success}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
@@ -11,7 +11,7 @@ class GameStatePhaseSpec extends AnyWordSpec with Matchers {
   // MockView – minimal & deterministisch
   // ============================================================
   class MockView extends GameView {
-    override def readPlayerAmount(): Int = 3
+    override def readPlayerAmount(): Try[Int] = Success(3)
     override def chooseTrump(): CardColor = CardColor.Red
     override def readPositiveInt(): Int = 1
     override def readIndex(p: Player): Int = 0

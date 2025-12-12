@@ -3,6 +3,7 @@ package de.htwg.wizard.control.command
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.util.{Try, Success}
 import de.htwg.wizard.control.GameControl
 import de.htwg.wizard.control.strategy.TrickStrategy
 import de.htwg.wizard.model.*
@@ -15,7 +16,7 @@ class PlayTrickCommandSpec extends AnyWordSpec with Matchers {
   // ------------------------------------------------------------
   class MockView extends GameView {
     override def askPlayerAmount(): Unit = ()
-    override def readPlayerAmount(): Int = 0
+    override def readPlayerAmount(): Try[Int] = Success(3)
     override def showError(msg: String): Unit = ()
     override def chooseTrump(): CardColor =
       throw new UnsupportedOperationException("not used in this test")

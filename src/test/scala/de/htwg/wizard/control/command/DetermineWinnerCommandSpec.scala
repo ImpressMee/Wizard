@@ -6,6 +6,7 @@ import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.control.GameControl
 import de.htwg.wizard.model.*
 import de.htwg.wizard.view.GameView
+import scala.util.{Try, Success}
 
 class DetermineWinnerCommandSpec extends AnyWordSpec with Matchers {
 
@@ -19,7 +20,7 @@ class DetermineWinnerCommandSpec extends AnyWordSpec with Matchers {
       winnerShown = true
 
     override def askPlayerAmount(): Unit = ()
-    override def readPlayerAmount(): Int = 0
+    override def readPlayerAmount(): Try[Int]= Success(3)
     override def showError(msg: String): Unit = ()
 
     override def chooseTrump(): CardColor =

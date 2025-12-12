@@ -1,5 +1,6 @@
 package de.htwg.wizard.control.command
 
+import scala.util.{Try, Success}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.control.GameControl
@@ -16,7 +17,7 @@ class PrepareRoundCommandSpec extends AnyWordSpec with Matchers {
     override def update(): Unit = ()
 
     // nicht relevant für diesen Command
-    override def readPlayerAmount(): Int = 3
+    override def readPlayerAmount(): Try[Int] = Success(3)
     override def readPositiveInt(): Int = 1
     override def askPlayerAmount(): Unit = ()
     override def askHowManyTricks(p: Player): Unit = ()

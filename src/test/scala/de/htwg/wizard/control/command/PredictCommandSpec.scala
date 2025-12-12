@@ -1,5 +1,6 @@
 package de.htwg.wizard.control.command
 
+import scala.util.{Try, Success}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.control.GameControl
@@ -18,7 +19,7 @@ class PredictCommandSpec extends AnyWordSpec with Matchers {
     override def update(): Unit = ()
 
     // unused methods
-    override def readPlayerAmount(): Int = 3
+    override def readPlayerAmount(): Try[Int] = Success(3)
     override def chooseTrump(): CardColor = CardColor.Red
     override def askPlayerAmount(): Unit = ()
     override def askPlayerCard(p: Player): Unit = ()
