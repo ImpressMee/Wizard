@@ -31,10 +31,11 @@ case object PrepareRoundState extends GameStatePhase:
     val cmd = PrepareRoundCommand(control, state)
     val s2  = cmd.execute()
 
-    if s2.currentRound > s2.totalRounds then
+    if s2.currentRound >= s2.totalRounds then
       (Some(FinishState), s2)
     else
       (Some(PredictState), s2)
+
 
 
 // ============================================================
@@ -53,13 +54,22 @@ case object PredictState extends GameStatePhase:
 // ============================================================
 
 case class TrickState(n: Int) extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    if n > state.players.head.hand.size then
-      (Some(ScoreState), state)
+  override def run(control: GameControl, state: GameState) =
+    val beforeHandSize = state.players.head.hand.size
+
+    val cmd       = PlayTrickCommand(control, n, state)
+    val nextState = cmd.execute()
+
+    val afterHandSize = nextState.players.head.hand.size
+
+    // if no card was removed, the trick was invalid → repeat same trick number
+    if afterHandSize == beforeHandSize then
+      (Some(TrickState(n)), state)
+    else if afterHandSize == 0 then
+      (Some(ScoreState), nextState)
     else
-      val cmd = PlayTrickCommand(control, n, state)
-      val s2  = cmd.execute()
-      (Some(TrickState(n + 1)), s2)
+      (Some(TrickState(n + 1)), nextState)
+
 
 
 // ============================================================

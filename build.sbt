@@ -1,17 +1,39 @@
+// ------------------------------------------------------------
+// Global Settings
+// ------------------------------------------------------------
 ThisBuild / version := "0.1.0-SNAPSHOT"
-
 ThisBuild / scalaVersion := "3.3.7"
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
 
+// ------------------------------------------------------------
+// Test JVM Settings (WICHTIG für Coverage & GC)
+// ------------------------------------------------------------
+Test / fork := true
+
+Test / javaOptions ++= Seq(
+  "-Xms512M",
+  "-Xmx2G",
+  "-XX:+UseG1GC"
+)
+
+// ------------------------------------------------------------
+// Coverage
+// ------------------------------------------------------------
+coverageEnabled := true
+
+// ------------------------------------------------------------
+// Dependencies
+// ------------------------------------------------------------
+libraryDependencies ++= Seq(
+  "org.scalactic" %% "scalactic" % "3.2.14",
+  "org.scalatest" %% "scalatest" % "3.2.18" % Test,
+  "org.apache.commons" % "commons-lang3" % "3.4",
+  "org.apache.commons" % "commons-io" % "1.3.2"
+)
+
+// ------------------------------------------------------------
+// Project
+// ------------------------------------------------------------
 lazy val root = (project in file("."))
   .settings(
-    name := "Wizard",
-    libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.2.18" % Test,
-      "org.apache.commons" % "commons-lang3" % "3.4",
-      "org.apache.commons" % "commons-io" % "1.3.2"
-
-    )
+    name := "Wizard"
   )
-coverageEnabled := true

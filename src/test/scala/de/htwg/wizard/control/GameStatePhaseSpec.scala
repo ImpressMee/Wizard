@@ -1,209 +1,232 @@
 package de.htwg.wizard.control
 
-import de.htwg.wizard.model.*
-import de.htwg.wizard.view.GameView
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import de.htwg.wizard.model.*
+import de.htwg.wizard.view.GameView
 
 class GameStatePhaseSpec extends AnyWordSpec with Matchers {
 
-  // -------------------------------------------------------------------------
-  // DummyView – MUSS GameView erweitern
-  // -------------------------------------------------------------------------
-
-  class DummyView extends GameView {
-    override def askPlayerAmount(): Unit = ()
+  // ============================================================
+  // MockView – minimal & deterministisch
+  // ============================================================
+  class MockView extends GameView {
     override def readPlayerAmount(): Int = 3
-
-    override def askHowManyTricks(p: Player): Unit = ()
-    override def readPositiveInt(): Int = 0
-
-    override def askPlayerCard(p: Player): Unit = ()
+    override def chooseTrump(): CardColor = CardColor.Red
+    override def readPositiveInt(): Int = 1
     override def readIndex(p: Player): Int = 0
 
-    override def showTrickWinner(player: Player, card: Card): Unit = ()
-    override def showRoundEvaluation(round: Int, players: List[Player]): Unit = ()
-    override def showGameWinner(player: Player): Unit = ()
-
+    override def askPlayerAmount(): Unit = ()
+    override def askHowManyTricks(p: Player): Unit = ()
+    override def askPlayerCard(p: Player): Unit = ()
     override def showError(msg: String): Unit = ()
-
-    override def chooseTrump(): CardColor = CardColor.Red
-    override def showRoundInfo(r: Int, trump: Option[CardColor], p: Int): Unit = ()
-
+    override def showTrickStart(n: Int): Unit = ()
+    override def showTrickWinner(p: Player, c: Card): Unit = ()
+    override def showRoundInfo(r: Int, t: Option[CardColor], n: Int): Unit = ()
+    override def showRoundEvaluation(r: Int, p: List[Player]): Unit = ()
+    override def showGameWinner(p: Player): Unit = ()
     override def update(): Unit = ()
   }
 
-  // -------------------------------------------------------------------------
-  // MockControl – track all calls
-  // -------------------------------------------------------------------------
-
-  class MockControl(
-                     initState: GameState,
-                     playersAfterInit: List[Player] = List(Player(0), Player(1), Player(2))
-                   ) extends GameControl(new DummyView()) {
-
-    var initCalled = false
-    var prepareCalled = false
-    var predictCalled = false
-    var trickCalled = List.empty[Int]
-    var scoreCalled = false
-    var finishCalled = false
-
-    private var current = initState
-
-    override private[control] def initGame(): GameState =
-      initCalled = true
-      current = current.copy(players = playersAfterInit)
-      current
-
-    override private[control] def prepareNextRound(gs: GameState): GameState =
-      prepareCalled = true
-      val g2 = gs.copy(currentRound = gs.currentRound + 1)
-      current = g2
-      g2
-
-    override private[control] def predictTricks(gs: GameState): GameState =
-      predictCalled = true
-      current = gs
-      gs
-
-    override private[control] def playOneTrick(n: Int, gs: GameState): GameState =
-      trickCalled = trickCalled :+ n
-      current = gs
-      gs
-
-    override private[control] def scoreRound(gs: GameState): GameState =
-      scoreCalled = true
-      current = gs
-      gs
-
-    override private[control] def finishGame(gs: GameState): Unit =
-      finishCalled = true
-  }
-
-  // -------------------------------------------------------------------------
-  // Test-Zustand
-  // -------------------------------------------------------------------------
-
-  val baseState =
-    GameState(
-      amountOfPlayers = 3,
-      players = List(Player(0), Player(1), Player(2)),
-      deck = new Deck(),
-      currentRound = 0,
-      totalRounds = 5,
-      currentTrump = None
-    )
-
-  // -------------------------------------------------------------------------
-  // TESTS
-  // -------------------------------------------------------------------------
-
+  // ============================================================
+  // INIT STATE
+  // ============================================================
   "InitState" should {
-    "call initGame and prepareNextRound and move to PredictState" in {
-      val ctrl = new MockControl(baseState)
-      val (next, s2) = InitState.run(ctrl, baseState)
 
-      ctrl.initCalled shouldBe true
-      ctrl.prepareCalled shouldBe true
-      next shouldBe PredictState
-      s2.currentRound shouldBe 1
+    "initialize game and move to PredictState" in {
+      val control = new GameControl(new MockView)
+
+      val start = GameState(
+        0, Nil, Deck(), 0, 0, None
+      )
+
+      val (next, state) = InitState.run(control, start)
+
+      next shouldBe Some(PredictState)
+      state.amountOfPlayers shouldBe 3
+      state.players.size shouldBe 3
+      state.currentRound shouldBe 1
     }
   }
 
+  // ============================================================
+  // PREPARE ROUND STATE
+  // ============================================================
   "PrepareRoundState" should {
 
-    "call prepareNextRound exactly once" in {
-      val ctrl = new MockControl(baseState)
-      PrepareRoundState.run(ctrl, baseState)
-      ctrl.prepareCalled shouldBe true
+    "move to PredictState if rounds remain" in {
+      val control = new GameControl(new MockView)
+
+      val state = GameState(
+        3,
+        List(Player(0), Player(1), Player(2)),
+        Deck(),
+        currentRound = 0,
+        totalRounds = 2,
+        currentTrump = None
+      )
+
+      val (next, s2) = PrepareRoundState.run(control, state)
+
+      next shouldBe Some(PredictState)
+      s2.currentRound shouldBe 1
     }
 
-    "return PredictState when currentRound < totalRounds" in {
-      val s = baseState.copy(currentRound = 1)
-      val ctrl = new MockControl(s)
-      val (next, _) = PrepareRoundState.run(ctrl, s)
-      next shouldBe PredictState
-    }
+    "move to FinishState if last round reached" in {
+      val control = new GameControl(new MockView)
 
-    "return PredictState when currentRound == totalRounds" in {
-      val s = baseState.copy(currentRound = 5)
-      val ctrl = new MockControl(s)
-      val (next, _) = PrepareRoundState.run(ctrl, s)
-      next shouldBe FinishState
-    }
+      val state = GameState(
+        3,
+        List(Player(0), Player(1), Player(2)),
+        Deck(),
+        currentRound = 0,
+        totalRounds = 1,
+        currentTrump = None
+      )
 
-    "return FinishState when currentRound > totalRounds" in {
-      val s = baseState.copy(currentRound = 6)
-      val ctrl = new MockControl(s)
-      val (next, _) = PrepareRoundState.run(ctrl, s)
-      next shouldBe FinishState
+      val (next, _) = PrepareRoundState.run(control, state)
+
+      next shouldBe Some(FinishState)
     }
   }
 
+  // ============================================================
+  // PREDICT STATE
+  // ============================================================
   "PredictState" should {
-    "call predictTricks and go to TrickState(1)" in {
-      val ctrl = new MockControl(baseState)
-      val (next, s2) = PredictState.run(ctrl, baseState)
 
-      ctrl.predictCalled shouldBe true
-      next shouldBe TrickState(1)
-      s2 shouldBe baseState
+    "set predictions and move to TrickState(1)" in {
+      val control = new GameControl(new MockView)
+
+      val state = GameState(
+        3,
+        List(Player(0), Player(1), Player(2)),
+        Deck(),
+        currentRound = 1,
+        totalRounds = 1,
+        currentTrump = None
+      )
+
+      val (next, s2) = PredictState.run(control, state)
+
+      next shouldBe Some(TrickState(1))
+      s2.players.forall(_.predictedTricks == 1) shouldBe true
     }
   }
 
+  // ============================================================
+  // TRICK STATE
+  // ============================================================
   "TrickState" should {
 
-    "go to ScoreState when n > hand size" in {
-      val gs = baseState.copy(players = List(Player(0, hand = List())))
-      val ctrl = new MockControl(gs)
+    "repeat same trick number on illegal move" in {
+      val view = new MockView {
+        override def readIndex(p: Player): Int =
+          if p.id == 1 then 1 else 0 // illegal follow suit
+      }
+      val control = new GameControl(view)
 
-      val (next, s2) = TrickState(1).run(ctrl, gs)
+      val players = List(
+        Player(0, List(NormalCard(CardColor.Red, 5))),
+        Player(1, List(
+          NormalCard(CardColor.Red, 3),
+          NormalCard(CardColor.Blue, 7)
+        )),
+        Player(2, List(NormalCard(CardColor.Red, 9)))
+      )
 
-      next shouldBe ScoreState
-      ctrl.trickCalled shouldBe empty
-      s2 shouldBe gs
+      val state = GameState(
+        3, players, Deck(), 1, 1, None
+      )
+
+      val (next, _) = TrickState(1).run(control, state)
+
+      next shouldBe Some(TrickState(1))
     }
 
-    "call playOneTrick when n <= hand size" in {
-      val gs = baseState.copy(players = List(Player(0, hand = List(NormalCard(CardColor.Red, 5)))))
-      val ctrl = new MockControl(gs)
+    "move to next TrickState if cards remain" in {
+      val control = new GameControl(new MockView)
 
-      val (next, s2) = TrickState(1).run(ctrl, gs)
+      val players = List(
+        Player(0, List(NormalCard(CardColor.Red, 5), NormalCard(CardColor.Red, 6))),
+        Player(1, List(NormalCard(CardColor.Red, 7), NormalCard(CardColor.Red, 8))),
+        Player(2, List(NormalCard(CardColor.Red, 9), NormalCard(CardColor.Red, 10)))
+      )
 
-      ctrl.trickCalled shouldBe List(1)
-      next shouldBe TrickState(2)
-      s2 shouldBe gs
+      val state = GameState(
+        3, players, Deck(), 1, 1, None
+      )
+
+      val (next, _) = TrickState(1).run(control, state)
+
+      next shouldBe Some(TrickState(2))
     }
 
-    "correctly increment trick number" in {
-      val gs = baseState.copy(players = List(Player(0, hand = List.fill(2)(NormalCard(CardColor.Red, 5)))))
-      val ctrl = new MockControl(gs)
+    "move to ScoreState when hands are empty" in {
+      val control = new GameControl(new MockView)
 
-      val (next, _) = TrickState(2).run(ctrl, gs)
-      next shouldBe TrickState(3)
+      val players = List(
+        Player(0, List(NormalCard(CardColor.Red, 5))),
+        Player(1, List(NormalCard(CardColor.Red, 7))),
+        Player(2, List(NormalCard(CardColor.Red, 9)))
+      )
+
+      val state = GameState(
+        3, players, Deck(), 1, 1, None
+      )
+
+      val (next, _) = TrickState(1).run(control, state)
+
+      next shouldBe Some(ScoreState)
     }
   }
 
+  // ============================================================
+  // SCORE STATE
+  // ============================================================
   "ScoreState" should {
-    "call scoreRound and return PrepareRoundState" in {
-      val ctrl = new MockControl(baseState)
-      val (next, s2) = ScoreState.run(ctrl, baseState)
 
-      ctrl.scoreCalled shouldBe true
-      next shouldBe PrepareRoundState
-      s2 shouldBe baseState
+    "score round and move to PrepareRoundState" in {
+      val control = new GameControl(new MockView)
+
+      val players = List(
+        Player(0, Nil, tricks = 1, predictedTricks = 1),
+        Player(1, Nil),
+        Player(2, Nil)
+      )
+
+      val state = GameState(
+        3, players, Deck(), 1, 1, None
+      )
+
+      val (next, s2) = ScoreState.run(control, state)
+
+      next shouldBe Some(PrepareRoundState)
+      s2.players.head.totalPoints shouldBe 30
     }
   }
 
+  // ============================================================
+  // FINISH STATE
+  // ============================================================
   "FinishState" should {
-    "call finishGame and return null as next state" in {
-      val ctrl = new MockControl(baseState)
-      val (next, s2) = FinishState.run(ctrl, baseState)
 
-      ctrl.finishCalled shouldBe true
-      next shouldBe null
-      s2 shouldBe baseState
+    "determine winner and end game" in {
+      val control = new GameControl(new MockView)
+
+      val state = GameState(
+        3,
+        List(
+          Player(0, Nil, totalPoints = 10),
+          Player(1, Nil, totalPoints = 50),
+          Player(2, Nil, totalPoints = 20)
+        ),
+        Deck(), 1, 1, None
+      )
+
+      val (next, _) = FinishState.run(control, state)
+
+      next shouldBe None
     }
   }
 }

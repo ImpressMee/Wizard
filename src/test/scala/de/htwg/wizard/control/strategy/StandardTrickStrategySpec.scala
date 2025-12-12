@@ -1,9 +1,9 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.strategy
 
 import de.htwg.wizard.control.strategy.StandardTrickStrategy
 import de.htwg.wizard.model.*
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class StandardTrickStrategySpec extends AnyWordSpec with Matchers {
 
