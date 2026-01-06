@@ -3,13 +3,17 @@ package de.htwg.wizard.control.command
 import de.htwg.wizard.control.GameControl
 import de.htwg.wizard.model.GameState
 
-case class PredictCommand(control: GameControl, gs: GameState) extends Command:
+case class PredictCommand(
+                           control: GameControl,
+                           gs: GameState,
+                           predictions: Map[Int, Int]   // playerId -> predictedTricks
+                         ) extends Command:
+
   private var last: GameState = gs
 
   override def execute(): GameState =
     control.saveState(gs)
-    val s2 = control.doPredictTricks(gs)
-    s2.notifyObservers()
+    val s2 = control.doPredictTricks(gs, predictions)
     last = s2
     s2
 

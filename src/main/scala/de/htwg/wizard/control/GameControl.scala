@@ -4,12 +4,13 @@ import de.htwg.wizard.model.*
 import de.htwg.wizard.view.*
 import de.htwg.wizard.control.strategy.{StandardTrickStrategy, TrickStrategy}
 
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 import scala.util.boundary
 import scala.util.boundary.break
+import de.htwg.wizard.control.event.*
+import de.htwg.wizard.control.observer.Observer
 
 class GameControl(
-                   val view: GameView,
                    val strategy: TrickStrategy = StandardTrickStrategy()
                  ) {
 
@@ -31,12 +32,61 @@ class GameControl(
         current
 
   // ============================================================
+  // GUI / TUI ENTRY POINTS
+  // ============================================================
+
+  var currentState: GameState = _
+  private var currentPhase: Option[GameStatePhase] = _
+  
+  def submitPlayerAmount(n: Int): Unit =
+    saveState(currentState)
+    currentState = doInitGame(n)
+    currentPhase = Some(PrepareRoundState)
+    step()
+
+
+  def prepareNextRound(trump: Option[CardColor]): Unit =
+    saveState(currentState)
+    currentState = doPrepareNextRound(currentState, trump)
+
+    if currentState.currentRound >= currentState.totalRounds then
+      currentPhase = Some(FinishState)
+    else
+      currentPhase = Some(PredictState)
+
+    step()
+
+  def submitPredictions(predictions: Map[Int, Int]): Unit =
+    saveState(currentState)
+    currentState = doPredictTricks(currentState, predictions)
+    currentPhase = Some(TrickState(1))
+    step()
+
+  def playTrick(trickNr: Int, moves: Map[Int, Int]): Unit =
+    saveState(currentState)
+
+    val before = currentState.players.head.hand.size
+    val next = doPlayOneTrick(trickNr, currentState, moves)
+    val after = next.players.head.hand.size
+
+    currentState = next
+
+    if after == before then
+      currentPhase = Some(TrickState(trickNr)) // ungültiger Stich
+    else if after == 0 then
+      currentPhase = Some(ScoreState) // Runde fertig
+    else
+      currentPhase = Some(TrickState(trickNr + 1)) // nächster Stich
+
+    step()
+
+
+  // ============================================================
   // GAME LOOP
   // ============================================================
 
-  def runGame(): Unit =
-    var phase: Option[GameStatePhase] = Some(InitState)
-    var state: GameState = GameState(
+  def runGame(view: Observer): Unit =
+    currentState = GameState(
       amountOfPlayers = 0,
       players = Nil,
       deck = new Deck(),
@@ -45,218 +95,205 @@ class GameControl(
       currentTrump = None
     )
 
-    while phase.isDefined do
-      val (nextPhase, nextState) = phase.get.run(this, state)
-      phase = nextPhase
-      state = nextState
+    currentPhase = Some(InitState)
+
+    // Observer anmelden
+    currentState.add(view)
+
+    // erste Phase auslösen
+    step()
+
+  private def step(): Unit =
+    currentPhase match
+      case Some(phase) =>
+        val (nextPhase, nextState) = phase.run(this, currentState)
+        currentState = nextState
+        currentPhase = nextPhase
+      case None =>
+
 
   // ============================================================
   // INITIALIZATION
   // ============================================================
 
-  private[control] def doInitGame(): GameState =
-    view.askPlayerAmount()
+  private[control] def doInitGame(playerCount: Int): GameState =
 
-    view.readPlayerAmount() match
-      case Success(playerCount) =>
-        if playerCount < 3 || playerCount > 6 then
-          view.showError("Wrong amount! Try again.")
-          doInitGame()
-        else
-          val deck = new Deck().shuffle()
-          val players = (0 until playerCount).map(id => Player(id)).toList
-  
-          val gs = GameState(
-            amountOfPlayers = playerCount,
-            players = players,
-            deck = deck,
-            currentRound = 0,
-            totalRounds = Array(4, 3, 2, 2)(playerCount - 3),
-            currentTrump = None
-          )
-  
-          gs.add(view)
-          gs.notifyObservers()
-          gs
-  
-      case Failure(_) =>
-        view.showError("Invalid entry! Try again.")
-        doInitGame()
+      val deck = new Deck().shuffle()
+      val players = (0 until playerCount).map(id => Player(id)).toList
 
+      val gs = GameState(
+        amountOfPlayers = playerCount,
+        players = players,
+        deck = deck,
+        currentRound = 0,
+        totalRounds = Array(4, 3, 2, 2)(playerCount - 3),
+        currentTrump = None
+      )
+
+      gs.notifyObservers(StateChanged(gs))
+      gs
 
   // ============================================================
   // PREPARE NEXT ROUND
   // ============================================================
 
-  private[control] def doPrepareNextRound(gs: GameState): GameState = {
+  private[control] def doPrepareNextRound(gs: GameState, trump: Option[CardColor]): GameState = {
       saveState(gs)
-      if gs.currentRound >= gs.totalRounds then
-        gs
-      else
-        val newRound = gs.currentRound + 1
+      val newRound = gs.currentRound + 1
 
-        // IMPORTANT: create a fresh full deck every round
-        val fullDeck = Deck().shuffle()
+      // create a fresh full deck every round
+      val fullDeck = Deck().shuffle()
+      val deckAfterTrump = fullDeck.copy(cards = fullDeck.cards.tail)
 
-        val trumpCard = fullDeck.cards.head
-        val deckAfterTrump = fullDeck.copy(cards = fullDeck.cards.tail)
+      val playersWithHands =
+        gs.players.foldLeft((List.empty[Player], deckAfterTrump)) {
+          case ((acc, deck), p) =>
+            val (hand, nextDeck) = deck.deal(newRound)
+            (acc :+ p.copy(hand = hand), nextDeck)
+        } match
+          case (players, deck) => (players, deck)
 
-        val trump =
-          if isWizard(trumpCard) then
-            Some(view.chooseTrump())
-          else if isJoker(trumpCard) then
-            None
-          else
-            Some(trumpCard.color)
 
-        view.showRoundInfo(newRound, trump, gs.amountOfPlayers)
-
-        var remainingDeck = deckAfterTrump
-        val playersWithHands =
-          gs.players.map { player =>
-            val (hand, newDeck) = remainingDeck.deal(newRound)
-            remainingDeck = newDeck
-            player.copy(hand = hand)
-          }
-
-        gs.copy(
+      val newState = gs.copy(
           currentRound = newRound,
-          players = playersWithHands,
-          deck = remainingDeck,
+          players = playersWithHands._1,
+          deck = playersWithHands._2,
           currentTrump = trump
         )
-  }
+        newState.notifyObservers(RoundStarted(newRound, newState))
+        newState
+    }
 
 
   // ============================================================
   // PREDICT TRICKS
   // ============================================================
 
-  private[control] def doPredictTricks(gs: GameState): GameState =
-    val players = gs.players.map { p =>
-      view.askHowManyTricks(p)
-      val prediction = view.readPositiveInt()
-      p.copy(predictedTricks = prediction)
-    }
-    gs.copy(players = players)
+  private[control] def doPredictTricks(
+                                        gs: GameState,
+                                        predictions: Map[Int, Int]
+                                      ): GameState =
+
+    // ------------------------------------------------------------
+    // Validate input
+    // ------------------------------------------------------------
+    val updatedPlayersOpt =
+      gs.players.foldLeft(Option(List.empty[Player])) {
+        case (None, _) => None
+
+        case (Some(acc), player) =>
+          predictions.get(player.id) match
+            case None => None
+            case Some(pred) if pred < 0 => None
+            case Some(pred) =>
+              Some(acc :+ player.copy(predictedTricks = pred))
+      }
+
+    // invalid retry
+    if updatedPlayersOpt.isEmpty then
+      gs.notifyObservers(StateChanged(gs))
+      return gs
+
+    val newState =
+      gs.copy(players = updatedPlayersOpt.get)
+
+    newState.notifyObservers(StateChanged(newState))
+    newState
 
   // ============================================================
   // PLAY ONE TRICK
   // ============================================================
 
-  private[control] def doPlayOneTrick(n: Int, gs: GameState): GameState =
-    internalPlayOneTrick(n, gs)
+  private[control] def doPlayOneTrick(
+                                       trickNumber: Int,
+                                       gs: GameState,
+                                       moves: Map[Int, Int]
+                                     ): GameState =
 
-  private def internalPlayOneTrick(trickNumber: Int, gameState: GameState): GameState =
-    boundary:
+    // ------------------------------------------------------------
+    // Guard: no cards left
+    // ------------------------------------------------------------
+    if gs.players.exists(_.hand.isEmpty) then
+      gs.notifyObservers(StateChanged(gs))
+      return gs
 
-      // Abort if at least one player has no cards left
-      // In that case, no valid trick can be played
-      if gameState.players.exists(_.hand.isEmpty) then
-        view.showError("No active stitch!")
-        break(gameState)
+    // Trick started
+    gs.notifyObservers(TrickStarted(trickNumber, gs))
 
-      // Inform the view that a new trick starts
-      view.showTrickStart(trickNumber)
+    // ------------------------------------------------------------
+    // Phase 1: Validate & collect cards (no mutation)
+    // ------------------------------------------------------------
+    val collectedOpt =
+      gs.players.foldLeft(Option(Trick(Map.empty[PlayerID, Card]))) {
+        case (None, _) => None
 
-      // Collects the cards played so far (playerId -> card)
-      // Used to enforce rules like "follow suit"
-      var partialTrick = Trick(Map.empty)
+        case (Some(trick), player) =>
+          moves.get(player.id) match
+            case None => None
 
-      // ------------------------------------------------------------
-      // Phase 1: Collect all intended moves WITHOUT modifying hands
-      // ------------------------------------------------------------
-      val collectedMovesOpt = boundary: //boundary creates a controlled early-exit context.
-        val collectedMoves = gameState.players.map { player =>
-          // Ask the player to choose a card
-          view.askPlayerCard(player)
-          val cardIndex = view.readIndex(player)
+            case Some(cardIndex) =>
+              if cardIndex < 0 || cardIndex >= player.hand.size then
+                None
+              else
+                val card = player.hand(cardIndex)
+                if !isAllowedMove(card, player, trick) then
+                  None
+                else
+                  Some(
+                    Trick(trick.played + (player.id -> card))
+                  )
+      }
 
-          // Validate index
-          if cardIndex < 0 || cardIndex >= player.hand.size then
-            view.showError("Invalid index!")
-            break(None) // can use break(value) to exit immediately
-                        // and return a value from the boundary expression.
+    // invalid trick → repeat
+    if collectedOpt.isEmpty then
+      gs.notifyObservers(StateChanged(gs))
+      return gs
 
-          val chosenCard = player.hand(cardIndex)
+    val completedTrick = collectedOpt.get
 
-          // Validate game rules (e.g. follow suit)
-          if !isAllowedMove(chosenCard, player, partialTrick) then
-            view.showError("You must follow the start color!")
-            break(None)
+    // ------------------------------------------------------------
+    // Phase 2: Remove cards from hands
+    // ------------------------------------------------------------
+    val playersAfterRemoval =
+      gs.players.map { p =>
+        moves.get(p.id) match
+          case Some(idx) =>
+            p.copy(hand = p.hand.patch(idx, Nil, 1))
+          case None =>
+            p
+      }
 
-          // Temporarily record the card as played
-          partialTrick =
-            Trick(partialTrick.played + (player.id -> chosenCard))
+    val afterTrickState =
+      gs.copy(
+        players = playersAfterRemoval,
+        currentTrick = Some(completedTrick)
+      )
 
-          // Store move information:
-          // (playerId, index in hand, chosen card)
-          (player.id, cardIndex, chosenCard)
-        }
+    afterTrickState.notifyObservers(StateChanged(afterTrickState))
 
-        Some(collectedMoves)
+    // ------------------------------------------------------------
+    // Phase 3: Determine winner
+    // ------------------------------------------------------------
+    val (winnerId, _) =
+      strategy.winner(completedTrick, afterTrickState.currentTrump)
 
-      // ------------------------------------------------------------
-      // If any move was invalid, abort the trick completely
-      // IMPORTANT: No card has been removed so far
-      // ------------------------------------------------------------
-      if collectedMovesOpt.isEmpty then
-        return gameState
+    val playersAfterScoring =
+      afterTrickState.players.map { p =>
+        if p.id == winnerId then
+          p.copy(tricks = p.tricks + 1)
+        else
+          p
+      }
 
-      val collectedMoves = collectedMovesOpt.get
-
-      // ------------------------------------------------------------
-      // Phase 2: Apply moves – now cards are actually removed
-      // ------------------------------------------------------------
-      val playersAfterCardRemoval =
-        gameState.players.map { player =>
-          collectedMoves.find(_._1 == player.id) match
-            case Some((_, cardIndex, _)) =>
-              player.copy(hand = player.hand.patch(cardIndex, Nil, 1))
-            case None =>
-              player
-        }
-
-      // Build the final Trick object from the collected moves
-      val completedTrick =
-        Trick(collectedMoves.map { (id, _, card) => id -> card }.toMap)
-
-      // Update game state with played trick
-      val stateAfterTrick =
-        gameState.copy(
-          players = playersAfterCardRemoval,
-          currentTrick = Some(completedTrick)
-        )
-
-      // Notify observers (GUI/TUI)
-      stateAfterTrick.notifyObservers()
-
-      // ------------------------------------------------------------
-      // Determine trick winner using the configured strategy
-      // ------------------------------------------------------------
-      val (winningPlayerId, winningCard) =
-        strategy.winner(completedTrick, stateAfterTrick.currentTrump)
-
-      // Increment trick count for the winner
-      val playersAfterScoring =
-        stateAfterTrick.players.map { player =>
-          if player.id == winningPlayerId then
-            player.copy(tricks = player.tricks + 1)
-          else
-            player
-        }
-
-      val winningPlayer =
-        playersAfterScoring.find(_.id == winningPlayerId).get
-
-      // Show winner in the view
-      view.showTrickWinner(winningPlayer, winningCard)
-
-      // Return updated state, trick is finished
-      stateAfterTrick.copy(
+    val finalState =
+      afterTrickState.copy(
         players = playersAfterScoring,
         currentTrick = None
       )
+
+    finalState.notifyObservers(TrickFinished(winnerId, finalState))
+    finalState
+
 
 
   // ============================================================
@@ -282,18 +319,37 @@ class GameControl(
   // ============================================================
 
   private[control] def doScoreRound(gs: GameState): GameState =
-    val scored = gs.players.map { p =>
-      p.copy(totalPoints = p.totalPoints + calculateRoundPoints(p))
-    }
 
-    val s1 = gs.copy(players = scored)
-    s1.notifyObservers()
-    view.showRoundEvaluation(s1.currentRound, scored)
+    // ------------------------------------------------------------
+    // Phase 1: calculate points
+    // ------------------------------------------------------------
+    val scoredPlayers =
+      gs.players.map { p =>
+        p.copy(
+          totalPoints = p.totalPoints + calculateRoundPoints(p)
+        )
+      }
 
-    val reset = scored.map(p => p.copy(tricks = 0, predictedTricks = 0))
-    val s2 = s1.copy(players = reset)
-    s2.notifyObservers()
-    s2
+    val scoredState =
+      gs.copy(players = scoredPlayers)
+
+    // Event: round scored (before reset)
+    scoredState.notifyObservers(RoundFinished(scoredState))
+
+    // ------------------------------------------------------------
+    // Phase 2: reset round-specific values
+    // ------------------------------------------------------------
+    val resetPlayers =
+      scoredPlayers.map { p =>
+        p.copy(tricks = 0, predictedTricks = 0)
+      }
+
+    val finalState =
+      scoredState.copy(players = resetPlayers)
+
+    finalState.notifyObservers(StateChanged(finalState))
+    finalState
+
 
   private def calculateRoundPoints(p: Player): Int =
     if p.predictedTricks == p.tricks then
@@ -305,7 +361,10 @@ class GameControl(
   // DETERMINE WINNER
   // ============================================================
 
-  private[control] def doDetermineWinner(gs: GameState): Unit =
+  private[control] def doDetermineWinner(gs: GameState): GameState =
     val winner = gs.players.maxBy(_.totalPoints)
-    view.showGameWinner(winner)
+
+    gs.notifyObservers(GameFinished(winner, gs))
+    gs
+
 }

@@ -1,9 +1,11 @@
 package de.htwg.wizard.view
 
+import de.htwg.wizard.control.event.GameEvent
 import de.htwg.wizard.control.observer.Observer
 import de.htwg.wizard.model.*
+
 import scala.io.StdIn.readLine
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 class GameView extends Observer {
 
@@ -151,9 +153,6 @@ class GameView extends Observer {
 
   def showError(message: String): Unit =
     println(Console.RED + message + Console.RESET)
-
-
-  override def update(): Unit =
-    println("update display")
-
+  
+  override def update(event: GameEvent): Unit = ???
 }

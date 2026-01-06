@@ -2,6 +2,7 @@ package de.htwg.wizard.control
 
 import de.htwg.wizard.model.*
 import de.htwg.wizard.control.command.*
+import de.htwg.wizard.control.event.*
 
 trait GameStatePhase:
   def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState)
@@ -12,14 +13,10 @@ trait GameStatePhase:
 // ============================================================
 
 case object InitState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    val initCmd   = InitCommand(control)
-    val afterInit = initCmd.execute()
+  override def run(control: GameControl, state: GameState) =
+    state.notifyObservers(PlayerAmountRequested(state))
+    (Some(InitState), state)
 
-    val prepCmd   = PrepareRoundCommand(control, afterInit)
-    val afterPrep = prepCmd.execute()
-
-    (Some(PredictState), afterPrep)
 
 
 // ============================================================
@@ -27,15 +24,9 @@ case object InitState extends GameStatePhase:
 // ============================================================
 
 case object PrepareRoundState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    val cmd = PrepareRoundCommand(control, state)
-    val s2  = cmd.execute()
-
-    if s2.currentRound >= s2.totalRounds then
-      (Some(FinishState), s2)
-    else
-      (Some(PredictState), s2)
-
+  override def run(control: GameControl, state: GameState) =
+    state.notifyObservers(TrumpSelectionRequested(state))
+    (Some(PrepareRoundState), state)
 
 
 // ============================================================
@@ -43,10 +34,9 @@ case object PrepareRoundState extends GameStatePhase:
 // ============================================================
 
 case object PredictState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    val cmd = PredictCommand(control, state)
-    val s2  = cmd.execute()
-    (Some(TrickState(1)), s2)
+  override def run(control: GameControl, state: GameState) =
+    state.notifyObservers(PredictionsRequested(state))
+    (Some(PredictState), state)
 
 
 // ============================================================
@@ -55,40 +45,23 @@ case object PredictState extends GameStatePhase:
 
 case class TrickState(n: Int) extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
-    val beforeHandSize = state.players.head.hand.size
-
-    val cmd       = PlayTrickCommand(control, n, state)
-    val nextState = cmd.execute()
-
-    val afterHandSize = nextState.players.head.hand.size
-
-    // if no card was removed, the trick was invalid → repeat same trick number
-    if afterHandSize == beforeHandSize then
-      (Some(TrickState(n)), state)
-    else if afterHandSize == 0 then
-      (Some(ScoreState), nextState)
-    else
-      (Some(TrickState(n + 1)), nextState)
-
-
+    state.notifyObservers(TrickMoveRequested(n, state))
+    (Some(TrickState(n)), state)
 
 // ============================================================
 // SCORE ROUND
 // ============================================================
 
 case object ScoreState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    val cmd = ScoreRoundCommand(control, state)
-    val s2  = cmd.execute()
-    (Some(PrepareRoundState), s2)
-
+  override def run(control: GameControl, state: GameState) =
+    val next = control.doScoreRound(state)
+    (Some(PrepareRoundState), next)
 
 // ============================================================
 // FINISH
 // ============================================================
 
 case object FinishState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState) =
-    val cmd = DetermineWinnerCommand(control, state)
-    cmd.execute()
+  override def run(control: GameControl, state: GameState) =
+    control.doDetermineWinner(state)
     (None, state)
