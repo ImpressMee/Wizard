@@ -6,76 +6,135 @@ import de.htwg.wizard.model.*
 
 class TuiView extends Observer {
 
-  private def colorCard(c: Card): String =
-    c.cardType match
-      case CardType.Wizard => s"${Console.RED}${c}${Console.RESET}"
-      case CardType.Joker  => s"${Console.YELLOW}${c}${Console.RESET}"
-      case CardType.Normal(_) =>
-        val col = c.color match
-          case CardColor.Red    => Console.RED
-          case CardColor.Blue   => Console.BLUE
-          case CardColor.Green  => Console.GREEN
-          case CardColor.Yellow => Console.YELLOW
-        s"$col$c${Console.RESET}"
+  // =========================================================
+  // Coloring (only via card.color)
+  // =========================================================
+
+  private def colorCard(card: Card): String = {
+    val color = card.color match
+      case CardColor.Red    => Console.RED
+      case CardColor.Blue   => Console.BLUE
+      case CardColor.Green  => Console.GREEN
+      case CardColor.Yellow => Console.YELLOW
+
+    s"$color${card.toString}${Console.RESET}"
+  }
+
+  private def showPlayerCards(player: Player): Unit = {
+    val cards = player.hand.map(colorCard).mkString(", ")
+    println(
+      s"""
+         |-----------------------------------------------
+         |${Console.CYAN}| Player ${player.id} |${Console.RESET}
+         |Cards: $cards
+         |-----------------------------------------------
+         |""".stripMargin
+    )
+  }
+
+  // =========================================================
+  // Observer
+  // =========================================================
 
   override def update(event: GameEvent): Unit =
     event match
 
       // ===============================
-      // Spielstart
+      // Game start
       // ===============================
       case PlayerAmountRequested(_) =>
-        println(s"${Console.MAGENTA}[TUI] Waiting for player count from GUI...${Console.RESET}")
-
-      // ===============================
-      // Runde gestartet
-      // ===============================
-      case RoundStarted(round, state) =>
-        println(s"\n${Console.BLUE}========== ROUND $round ==========${Console.RESET}")
-        println(s"Trumpf: ${state.currentTrump.getOrElse("None")}")
-
-      // ===============================
-      // Vorhersagen
-      // ===============================
-      case PredictionsRequested(state) =>
-        println(s"\n${Console.MAGENTA}[TUI] Prediction phase${Console.RESET}")
-        state.players.foreach { p =>
-          val cards = p.hand.map(colorCard).mkString(", ")
-          println(s"${Console.CYAN}Player ${p.id}${Console.RESET}: $cards")
-        }
-
-      // ===============================
-      // Stichstart
-      // ===============================
-      case TrickMoveRequested(trickNr, _) =>
-        println(s"\n${Console.BLUE}[TUI] Trick $trickNr started${Console.RESET}")
-
-      // ===============================
-      // Stich beendet
-      // ===============================
-      case TrickFinished(winnerId, _) =>
         println(
-          s"${Console.GREEN}[TUI] Trick won by Player $winnerId${Console.RESET}"
+          s"""
+             |${Console.RED}/////////----Game Start----/////////${Console.RESET}
+             |How many players are playing? (3–6)
+             |""".stripMargin
         )
 
       // ===============================
-      // Runde beendet
+      // Round started
       // ===============================
-      case RoundFinished(state) =>
-        println(s"\n${Console.MAGENTA}========== ROUND FINISHED ==========${Console.RESET}")
+      case RoundStarted(round, state) =>
+        val trumpText = state.currentTrump match
+          case Some(c) => s"Trump color is: $c"
+          case None    => "There is no trump"
+
+        println(
+          s"""
+             |${Console.MAGENTA}////////////////////////////////////////////////////////////
+             |/////----Round $round start----//////
+             |----Round info----------------------
+             |There are ${state.players.size} players.
+             |Round: $round
+             |$trumpText
+             |------------------------------------${Console.RESET}
+             |""".stripMargin
+        )
+
+      // ===============================
+      // Prediction phase
+      // ===============================
+      case PredictionsRequested(state) =>
+        println(s"\n${Console.MAGENTA}//// Prediction Phase ////${Console.RESET}")
         state.players.foreach { p =>
-          println(
-            s"${Console.CYAN}Player ${p.id}${Console.RESET}: " +
-              s"predicted=${p.predictedTricks}, tricks=${p.tricks}, points=${p.totalPoints}"
-          )
+          showPlayerCards(p)
+          println(s"How many tricks will you make Player ${p.id}?")
         }
 
       // ===============================
-      // Spiel beendet
+      // Trick started
+      // ===============================
+      case TrickMoveRequested(trickNr, state) =>
+        println(
+          s"""
+             |${Console.BLUE}//////////////////////////////
+             |///----Trick $trickNr start----///
+             |//////////////////////////////${Console.RESET}
+             |""".stripMargin
+        )
+        state.players.foreach { p =>
+          showPlayerCards(p)
+          println(s"Which card do you want to play Player ${p.id}? (index)")
+        }
+
+      // ===============================
+      // Trick finished
+      // ===============================
+      case TrickFinished(winnerId, _) =>
+        println(
+          s"${Console.GREEN}///----Trick won by Player $winnerId----///${Console.RESET}"
+        )
+
+      // ===============================
+      // Round finished
+      // ===============================
+      case RoundFinished(state) =>
+        println(
+          s"\n${Console.MAGENTA}//////--Round Evaluation--//////${Console.RESET}"
+        )
+        state.players.foreach { p =>
+          println(
+            s"""
+               |${Console.CYAN}------ Player ${p.id} -------
+               |tricks predicted: ${p.predictedTricks}
+               |actual tricks:    ${p.tricks}
+               |=> total points:  ${p.totalPoints}
+               |------------------------------------${Console.RESET}
+               |""".stripMargin
+          )
+        }
+        println("Press ENTER / click 'Weiter' in GUI to continue...")
+
+      // ===============================
+      // Game finished
       // ===============================
       case GameFinished(winner, _) =>
         println(
-          s"\n${Console.RED}GAME FINISHED — Winner: Player ${winner.id} (${winner.totalPoints} points)${Console.RESET}"
+          s"""
+             |${Console.RED}/////////----Game Winner----/////////
+             |Winner: Player ${winner.id}
+             |Total points: ${winner.totalPoints}
+             |////////////////////////////////////${Console.RESET}
+             |""".stripMargin
         )
 
       case _ => ()

@@ -1,6 +1,5 @@
 package de.htwg.wizard.model
 
-import de.htwg.wizard.control.observer.Observable
 
 /**
  * GameState is a Snapshot of the game
@@ -13,7 +12,7 @@ case class GameState(
                       totalRounds: Int,
                       currentTrump: Option[CardColor] = None,
                       currentTrick: Option[Trick] = None
-                    ) extends Observable:
+                    ):
 
   def createMemento(): GameStateMemento =
     GameStateMemento(

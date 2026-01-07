@@ -15,14 +15,19 @@ import de.htwg.wizard.model.*
 class GuiView(control: GameControl) extends Observer {
 
   // =========================================================
+  // GUI-Konstanten
+  // =========================================================
+
+  private val Width  = 1200
+  private val Height = 800
+
+  // =========================================================
   // GUI-interner Zustand
   // =========================================================
 
   private var stage: Stage = _
-
   private var predictionIndex = 0
   private var predictions: Map[Int, Int] = Map.empty
-
   private var trickMoves: Map[Int, Int] = Map.empty
 
   // =========================================================
@@ -40,7 +45,6 @@ class GuiView(control: GameControl) extends Observer {
   override def update(event: GameEvent): Unit =
     Platform.runLater {
       event match
-
         case PlayerAmountRequested(_) =>
           stage.scene = playerCountScene()
 
@@ -66,10 +70,8 @@ class GuiView(control: GameControl) extends Observer {
   // Scenes
   // =========================================================
 
-  // ---------------- Start ----------------
-
   private def startScene(): Scene =
-    new Scene(800, 600) {
+    new Scene(Width, Height) {
       root = new VBox {
         alignment = Pos.Center
         spacing = 30
@@ -82,10 +84,8 @@ class GuiView(control: GameControl) extends Observer {
       }
     }
 
-  // ---------------- Player count ----------------
-
   private def playerCountScene(): Scene =
-    new Scene(800, 600) {
+    new Scene(Width, Height) {
       root = new VBox {
         alignment = Pos.Center
         spacing = 15
@@ -95,41 +95,30 @@ class GuiView(control: GameControl) extends Observer {
               new Button(s"$n Spieler") {
                 onAction = _ => control.submitPlayerAmount(n)
               }
-            } ++
-            Seq(
-              new Button("Back") {
-                onAction = _ => showStart(stage)
-              }
-            )
+            }
       }
     }
-
-  // ---------------- Prediction (spielweise) ----------------
 
   private def predictionScene(state: GameState): Scene = {
     val player = state.players(predictionIndex)
 
-    new Scene(900, 600) {
+    new Scene(Width, Height) {
       root = new VBox {
         alignment = Pos.Center
         spacing = 20
         children = Seq(
-
           new Label(s"Player ${player.id}: How many tricks will you make?"),
 
-          // Karten anzeigen
           new HBox {
             spacing = 12
             alignment = Pos.Center
-            children =
-              player.hand.map { card =>
-                new Label(card.toString) {
-                  style = s"-fx-font-weight: bold; -fx-text-fill: ${colorOf(card)};"
-                }
+            children = player.hand.map { card =>
+              new Label(card.toString) {
+                style = s"-fx-font-weight: bold; -fx-text-fill: ${colorOf(card)};"
               }
+            }
           },
 
-          // Auswahl 0..handSize
           new HBox {
             spacing = 10
             alignment = Pos.Center
@@ -139,7 +128,6 @@ class GuiView(control: GameControl) extends Observer {
                   onAction = _ =>
                     predictions += player.id -> n
                     predictionIndex += 1
-
                     if predictionIndex < state.players.size then
                       stage.scene = predictionScene(state)
                     else
@@ -152,50 +140,45 @@ class GuiView(control: GameControl) extends Observer {
     }
   }
 
-  // ---------------- Game board ----------------
-
   private def gameBoardScene(state: GameState): Scene = {
 
     val activePlayer =
       state.players.find(p => !trickMoves.contains(p.id)).get
 
-    new Scene(1200, 800) {
+    val currentTrick =
+      Trick(trickMoves.map { case (pid, idx) =>
+        pid -> state.players.find(_.id == pid).get.hand(idx)
+      })
+
+    new Scene(Width, Height) {
       root = new BorderPane {
 
-        // ---------- TOP ----------
         top = new VBox {
           spacing = 5
           padding = Insets(10)
           children = Seq(
             new Label(s"Runde: ${state.currentRound}"),
-            new Label(s"Trumpf: ${state.currentTrump.getOrElse("Kein")}"),
-            new Label(s"Stich: ${state.currentTrick.map(_.played.size + 1).getOrElse(1)}"),
+            trumpLabel(state.currentTrump),
             new Label(s"Aktiver Spieler: Player ${activePlayer.id}")
           )
         }
 
-        // ---------- CENTER (gelegte Karten) ----------
         center = new HBox {
           spacing = 20
           alignment = Pos.Center
           children =
-            trickMoves.toSeq
-              .sortBy(_._1)
-              .map { (pid, idx) =>
-                val card =
-                  state.players.find(_.id == pid).get.hand(idx)
-                new Label(card.toString) {
-                  style = s"-fx-font-size: 16; -fx-text-fill: ${colorOf(card)};"
-                }
+            trickMoves.toSeq.sortBy(_._1).map { (pid, idx) =>
+              val card = state.players.find(_.id == pid).get.hand(idx)
+              new Label(card.toString) {
+                style = s"-fx-font-size: 16; -fx-text-fill: ${colorOf(card)};"
               }
+            }
         }
 
-        // ---------- BOTTOM (Karten höher + Buttons) ----------
         bottom = new VBox {
           alignment = Pos.Center
           spacing = 10
-          padding = Insets(0, 0, 60, 0) // ca. 2 cm nach oben
-
+          padding = Insets(0, 0, 60, 0)
           children = Seq(
             new Label(s"Player ${activePlayer.id}, wähle eine Karte:"),
 
@@ -207,21 +190,15 @@ class GuiView(control: GameControl) extends Observer {
                   new Button(card.toString) {
 
                     disable =
-                      !isAllowedGuiMove(card, activePlayer, trickMoves, state)
+                      !control.isAllowedMove(card, activePlayer, currentTrick)
 
                     style =
-                      s"""
-                         |-fx-font-weight: bold;
-                         |-fx-text-fill: ${colorOf(card)};
-                         |""".stripMargin
+                      s"-fx-font-weight: bold; -fx-text-fill: ${colorOf(card)};"
 
                     onAction = _ =>
                       trickMoves += activePlayer.id -> idx
-
                       if trickMoves.size == state.players.size then
-                        val trickNr =
-                          state.currentTrick.map(_.played.size + 1).getOrElse(1)
-                        control.playTrick(trickNr, trickMoves)
+                        control.playTrick(1, trickMoves)
                       else
                         stage.scene = gameBoardScene(state)
                   }
@@ -233,10 +210,8 @@ class GuiView(control: GameControl) extends Observer {
     }
   }
 
-  // ---------------- Round summary ----------------
-
   private def roundSummaryScene(state: GameState): Scene =
-    new Scene(800, 600) {
+    new Scene(Width, Height) {
       root = new VBox {
         alignment = Pos.Center
         spacing = 20
@@ -248,16 +223,14 @@ class GuiView(control: GameControl) extends Observer {
             )
           },
           new Button("Weiter") {
-            onAction = _ => control.prepareNextRound(state.currentTrump)
+            onAction = _ => control.continueAfterRound()
           }
         )
       }
     }
 
-  // ---------------- End ----------------
-
   private def endScene(winner: Player): Scene =
-    new Scene(800, 600) {
+    new Scene(Width, Height) {
       root = new VBox {
         alignment = Pos.Center
         spacing = 20
@@ -282,25 +255,19 @@ class GuiView(control: GameControl) extends Observer {
       case CardColor.Green  => "green"
       case CardColor.Yellow => "goldenrod"
 
-  private def isAllowedGuiMove(
-                                card: Card,
-                                player: Player,
-                                trickMoves: Map[Int, Int],
-                                state: GameState
-                              ): Boolean = {
+  private def colorOfColor(color: CardColor): String =
+    color match
+      case CardColor.Red    => "red"
+      case CardColor.Blue   => "blue"
+      case CardColor.Green  => "green"
+      case CardColor.Yellow => "goldenrod"
 
-    if trickMoves.isEmpty then return true
-
-    val leadColorOpt =
-      trickMoves.headOption.flatMap { (pid, idx) =>
-        state.players.find(_.id == pid).map(_.hand(idx)).collect {
-          case c if isNormal(c) => c.color
+  private def trumpLabel(trump: Option[CardColor]): Label =
+    trump match
+      case Some(color) =>
+        new Label(s"Trumpf: $color") {
+          style = s"-fx-font-weight: bold; -fx-text-fill: ${colorOfColor(color)};"
         }
-      }
-
-    leadColorOpt.forall { lead =>
-      !player.hand.exists(c => isNormal(c) && c.color == lead) ||
-        (isNormal(card) && card.color == lead)
-    }
-  }
+      case None =>
+        new Label("Trumpf: Kein")
 }

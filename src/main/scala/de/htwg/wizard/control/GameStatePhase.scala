@@ -1,10 +1,22 @@
 package de.htwg.wizard.control
 
-import de.htwg.wizard.model.*
-import de.htwg.wizard.control.event.*
+import de.htwg.wizard.model.GameState
 
+/**
+ * State-Pattern:
+ * Entscheidet ausschließlich den SPIELABLAUF.
+ *
+ * - KEINE Events
+ * - KEINE Observer
+ * - KEINE Logik
+ * - KEINE Side-Effects
+ */
 trait GameStatePhase:
-  def run(control: GameControl, state: GameState): (Option[GameStatePhase], GameState)
+
+  /**
+   * Liefert die nächste Phase basierend auf dem aktuellen GameState.
+   */
+  def next(state: GameState): GameStatePhase
 
 
 // ============================================================
@@ -12,10 +24,10 @@ trait GameStatePhase:
 // ============================================================
 
 case object InitState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println("[STATE] InitState")
-    state.notifyObservers(PlayerAmountRequested(state))
-    (None, state)
+
+  override def next(state: GameState): GameStatePhase =
+    // wartet auf Spieleranzahl → danach Prediction
+    PredictState
 
 
 // ============================================================
@@ -23,29 +35,35 @@ case object InitState extends GameStatePhase:
 // ============================================================
 
 case object PrepareRoundState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println("[STATE] PrepareRoundState")
-    (None, state)
+
+  override def next(state: GameState): GameStatePhase =
+    // nach Vorbereitung wird vorhergesagt
+    PredictState
+
 
 // ============================================================
 // PREDICT TRICKS
 // ============================================================
 
 case object PredictState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println("[STATE] PredictState")
-    state.notifyObservers(PredictionsRequested(state))
-    (None, state)
+
+  override def next(state: GameState): GameStatePhase =
+    TrickState(1)
+
 
 // ============================================================
 // TRICK STATE (STATEFUL)
 // ============================================================
 
-case class TrickState(n: Int) extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println(s"[STATE] TrickState($n)")
-    state.notifyObservers(TrickMoveRequested(n, state))
-    (None, state)
+case class TrickState(trickNr: Int) extends GameStatePhase:
+
+  override def next(state: GameState): GameStatePhase =
+    // solange noch Karten auf der Hand sind → nächster Stich
+    if state.players.headOption.exists(_.hand.nonEmpty) then
+      TrickState(trickNr + 1)
+    else
+      // keine Karten mehr → Runde werten
+      ScoreState
 
 
 // ============================================================
@@ -53,18 +71,21 @@ case class TrickState(n: Int) extends GameStatePhase:
 // ============================================================
 
 case object ScoreState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println("[STATE] ScoreState")
-    val next = control.doScoreRound(state)
-    (Some(PrepareRoundState), next)
+
+  override def next(state: GameState): GameStatePhase =
+    // letzte Runde erreicht?
+    if state.currentRound >= state.totalRounds then
+      FinishState
+    else
+      PrepareRoundState
 
 
 // ============================================================
-// FINISH
+// FINISH GAME
 // ============================================================
 
 case object FinishState extends GameStatePhase:
-  override def run(control: GameControl, state: GameState) =
-    println("[STATE] FinishState")
-    control.doDetermineWinner(state)
-    (None, state)
+
+  override def next(state: GameState): GameStatePhase =
+    // Endzustand, bleibt hier
+    this

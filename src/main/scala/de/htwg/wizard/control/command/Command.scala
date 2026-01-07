@@ -4,4 +4,3 @@ import de.htwg.wizard.model.GameState
 
 trait Command:
   def execute(): GameState
-  def undo(): GameState
