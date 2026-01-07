@@ -8,13 +8,16 @@ case class InitCommand(
                         playerCount: Int
                       ) extends Command:
 
-  private var last: GameState = _
+  private var before: Option[GameState] = None
 
   override def execute(): GameState =
-    control.saveState(control.currentState)
-    val s = control.doInitGame(playerCount)
-    last = s
-    s
+    before = control.currentState
+    control.currentState.foreach(control.saveState)
+
+    val newState = control.doInitGame(playerCount)
+    newState
 
   override def undo(): GameState =
-    control.undo(last)
+    before match
+      case Some(state) => state
+      case None        => throw new IllegalStateException("Nothing to undo")

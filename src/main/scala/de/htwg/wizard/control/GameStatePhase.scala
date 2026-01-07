@@ -1,7 +1,6 @@
 package de.htwg.wizard.control
 
 import de.htwg.wizard.model.*
-import de.htwg.wizard.control.command.*
 import de.htwg.wizard.control.event.*
 
 trait GameStatePhase:
@@ -14,9 +13,9 @@ trait GameStatePhase:
 
 case object InitState extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
+    println("[STATE] InitState")
     state.notifyObservers(PlayerAmountRequested(state))
-    (Some(InitState), state)
-
+    (None, state)
 
 
 // ============================================================
@@ -25,9 +24,8 @@ case object InitState extends GameStatePhase:
 
 case object PrepareRoundState extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
-    state.notifyObservers(TrumpSelectionRequested(state))
-    (Some(PrepareRoundState), state)
-
+    println("[STATE] PrepareRoundState")
+    (None, state)
 
 // ============================================================
 // PREDICT TRICKS
@@ -35,9 +33,9 @@ case object PrepareRoundState extends GameStatePhase:
 
 case object PredictState extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
+    println("[STATE] PredictState")
     state.notifyObservers(PredictionsRequested(state))
-    (Some(PredictState), state)
-
+    (None, state)
 
 // ============================================================
 // TRICK STATE (STATEFUL)
@@ -45,8 +43,10 @@ case object PredictState extends GameStatePhase:
 
 case class TrickState(n: Int) extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
+    println(s"[STATE] TrickState($n)")
     state.notifyObservers(TrickMoveRequested(n, state))
-    (Some(TrickState(n)), state)
+    (None, state)
+
 
 // ============================================================
 // SCORE ROUND
@@ -54,8 +54,10 @@ case class TrickState(n: Int) extends GameStatePhase:
 
 case object ScoreState extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
+    println("[STATE] ScoreState")
     val next = control.doScoreRound(state)
     (Some(PrepareRoundState), next)
+
 
 // ============================================================
 // FINISH
@@ -63,5 +65,6 @@ case object ScoreState extends GameStatePhase:
 
 case object FinishState extends GameStatePhase:
   override def run(control: GameControl, state: GameState) =
+    println("[STATE] FinishState")
     control.doDetermineWinner(state)
     (None, state)

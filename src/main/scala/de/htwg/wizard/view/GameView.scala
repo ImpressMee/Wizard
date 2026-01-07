@@ -7,7 +7,7 @@ import de.htwg.wizard.model.*
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
-class GameView extends Observer {
+class GameView {
 
   def writeOneCard(card: Card): String =
     card.cardType match
@@ -153,6 +153,5 @@ class GameView extends Observer {
 
   def showError(message: String): Unit =
     println(Console.RED + message + Console.RESET)
-  
-  override def update(event: GameEvent): Unit = ???
+
 }

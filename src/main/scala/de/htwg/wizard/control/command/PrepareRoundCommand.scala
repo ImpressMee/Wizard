@@ -6,11 +6,10 @@ import de.htwg.wizard.model.{CardColor, GameState}
 case class PrepareRoundCommand(
                                 control: GameControl,
                                 state: GameState,
-                                trump: Option[CardColor]
                               ) extends Command:
 
   override def execute(): GameState =
-    control.doPrepareNextRound(state, trump)
+    control.doPrepareNextRound(state)
 
 
   override def undo(): GameState =
