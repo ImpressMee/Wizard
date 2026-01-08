@@ -11,7 +11,8 @@ case class GameState(
                       currentRound: Int,
                       totalRounds: Int,
                       currentTrump: Option[CardColor] = None,
-                      currentTrick: Option[Trick] = None
+                      currentTrick: Option[Trick] = None,
+                      completedTricks: Int = 0
                     ):
 
   def createMemento(): GameStateMemento =

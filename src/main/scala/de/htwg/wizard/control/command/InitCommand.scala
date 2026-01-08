@@ -1,12 +1,13 @@
 package de.htwg.wizard.control.command
 
-import de.htwg.wizard.control.GameControl
-import de.htwg.wizard.model.GameState
+import de.htwg.wizard.model.*
 
-class InitCommand(
-                   control: GameControl,
-                   playerCount: Int
-                 ) extends Command:
-
-  override def execute(): GameState =
-    control.initGame(playerCount)
+case class InitCommand(playerCount: Int) extends Command:
+  def execute(state: GameState): GameState =
+    GameState(
+      amountOfPlayers = playerCount,
+      players = (0 until playerCount).map(Player(_)).toList,
+      deck = Deck().shuffle(),
+      currentRound = 0,
+      totalRounds = Array(4,3,2,2)(playerCount - 3)
+    )

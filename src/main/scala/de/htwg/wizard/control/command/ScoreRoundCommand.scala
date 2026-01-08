@@ -1,12 +1,23 @@
 package de.htwg.wizard.control.command
 
-import de.htwg.wizard.control.GameControl
-import de.htwg.wizard.model.GameState
+import de.htwg.wizard.model.*
 
-class ScoreRoundCommand(
-                         control: GameControl,
-                         state: GameState
-                       ) extends Command:
+object ScoreRoundCommand extends Command:
 
-  override def execute(): GameState =
-    control.scoreRound(state)
+  override def execute(state: GameState): GameState =
+    val scored =
+      state.players.map { p =>
+        val delta =
+          if p.predictedTricks == p.tricks then
+            20 + p.tricks * 10
+          else
+            -10 * (p.tricks - p.predictedTricks).abs
+
+        p.copy(
+          totalPoints = p.totalPoints + delta,
+          tricks = 0,
+          predictedTricks = 0
+        )
+      }
+
+    state.copy(players = scored)

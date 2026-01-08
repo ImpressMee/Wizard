@@ -1,14 +1,38 @@
 package de.htwg.wizard.control.command
 
-import de.htwg.wizard.control.GameControl
-import de.htwg.wizard.model.GameState
+import de.htwg.wizard.model.*
+import de.htwg.wizard.control.strategy.TrickStrategy
 
-class PlayTrickCommand(
-                        control: GameControl,
-                        trickNr: Int,
-                        state: GameState,
-                        moves: Map[Int, Int]
-                      ) extends Command:
+case class PlayTrickCommand(
+                             moves: Map[Int, Int],
+                             strategy: TrickStrategy
+                           ) extends Command:
 
-  override def execute(): GameState =
-    control.playOneTrick(trickNr, state, moves)
+  override def execute(state: GameState): GameState =
+    val trick = Trick(
+      state.players.map { p =>
+        p.id -> p.hand(moves(p.id))
+      }.toMap
+    )
+
+    val (winnerId, _) =
+      strategy.winner(trick, state.currentTrump)
+
+    val updatedPlayers =
+      state.players.map { p =>
+        val newHand =
+          moves.get(p.id)
+            .map(idx => p.hand.patch(idx, Nil, 1))
+            .getOrElse(p.hand)
+
+        val tricks =
+          if p.id == winnerId then p.tricks + 1 else p.tricks
+
+        p.copy(hand = newHand, tricks = tricks)
+      }
+
+    state.copy(
+      players = updatedPlayers,
+      currentTrick = None
+    )
+
