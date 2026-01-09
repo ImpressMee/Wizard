@@ -135,4 +135,37 @@ class GameControl(
 
   def redo(): Unit =
     notify(StateChanged(currentState))
+
+  // =========================================================
+  // Move validation (used by Component-GUI)
+  // =========================================================
+
+  def isAllowedMove(
+                     playerId: Int,
+                     cardIndex: Int,
+                     state: GameState
+                   ): Boolean = {
+
+    val player =
+      state.players.find(_.id == playerId)
+        .getOrElse(return false)
+
+    if cardIndex < 0 || cardIndex >= player.hand.size then
+      return false
+
+    val card = player.hand(cardIndex)
+
+    state.currentTrick match
+      case None =>
+        true // erste Karte im Stich immer erlaubt
+
+      case Some(trick) =>
+        strategy.isAllowedMove(
+          card = card,
+          player = player,
+          trick = trick
+        )
+  }
+
+
 }

@@ -2,6 +2,7 @@ package de.htwg.wizard.component.game
 
 import de.htwg.wizard.control.input.GameInput
 import de.htwg.wizard.control.observer.Observer
+import de.htwg.wizard.model.GameState
 
 /**
  * GamePort is the stable interface (port) of the GameComponent.
@@ -23,4 +24,10 @@ trait GamePort {
    * This decouples input handling from concrete UI implementations.
    */
   def handleInput(input: GameInput): Unit
+
+  def isAllowedMove(playerId: Int,
+                     cardIndex: Int,
+                     state: GameState
+                   ): Boolean
+
 }

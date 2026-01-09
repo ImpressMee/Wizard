@@ -81,4 +81,12 @@ class GameComponent(
 
       case _ =>
         ()
+
+  override def isAllowedMove(
+                              playerId: PlayerID,
+                              cardIndex: Int,
+                              state: GameState
+                            ): Boolean =
+    control.isAllowedMove(playerId, cardIndex, state)
+
 }

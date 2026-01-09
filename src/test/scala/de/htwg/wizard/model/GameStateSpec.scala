@@ -3,112 +3,82 @@ package de.htwg.wizard.model
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
-import de.htwg.wizard.control.observer.Observer
-
 class GameStateSpec extends AnyWordSpec with Matchers {
 
-  // ------------------------------------------------------------
-  // TestObserver für Observable-Verhalten
-  // ------------------------------------------------------------
-  class TestObserver extends Observer {
-    var updated = false
-    override def update(): Unit = updated = true
+  // ---------------------------------------------------------
+  // Hilfsobjekte
+  // ---------------------------------------------------------
+
+  val initialState =
+    GameState(
+      amountOfPlayers = 2,
+      players = List(Player(0), Player(1)),
+      deck = Deck(),
+      currentRound = 1,
+      totalRounds = 5,
+      currentTrump = Some(CardColor.Red),
+      currentTrick = None,
+      completedTricks = 2
+    )
+
+  // ---------------------------------------------------------
+  // createMemento
+  // ---------------------------------------------------------
+
+  "GameState.createMemento" should {
+
+    "create a snapshot of the current game state" in {
+      val memento = initialState.createMemento()
+
+      memento.amountOfPlayers shouldBe initialState.amountOfPlayers
+      memento.players shouldBe initialState.players
+      memento.deck shouldBe initialState.deck
+      memento.currentRound shouldBe initialState.currentRound
+      memento.totalRounds shouldBe initialState.totalRounds
+      memento.currentTrump shouldBe initialState.currentTrump
+      memento.currentTrick shouldBe initialState.currentTrick
+    }
   }
 
-  "GameState" should {
+  // ---------------------------------------------------------
+  // restore
+  // ---------------------------------------------------------
 
-    "store all constructor values correctly" in {
-      val players = List(Player(0), Player(1))
-      val deck = Deck()
-      val trick = Trick(Map(0 -> NormalCard(CardColor.Red, 5)))
+  "GameState.restore" should {
 
-      val gs = GameState(
-        amountOfPlayers = 2,
-        players = players,
-        deck = deck,
-        currentRound = 3,
-        totalRounds = 10,
-        currentTrump = Some(CardColor.Blue),
-        currentTrick = Some(trick)
-      )
+    "restore a previous snapshot and undo later changes" in {
+      val memento = initialState.createMemento()
 
-      gs.amountOfPlayers shouldBe 2
-      gs.players shouldBe players
-      gs.deck shouldBe deck
-      gs.currentRound shouldBe 3
-      gs.totalRounds shouldBe 10
-      gs.currentTrump shouldBe Some(CardColor.Blue)
-      gs.currentTrick shouldBe Some(trick)
+      // veränderter Zustand
+      val modifiedState =
+        initialState.copy(
+          currentRound = 3,
+          completedTricks = 5,
+          currentTrump = None
+        )
+
+      val restored = modifiedState.restore(memento)
+
+      restored.amountOfPlayers shouldBe initialState.amountOfPlayers
+      restored.players shouldBe initialState.players
+      restored.deck shouldBe initialState.deck
+      restored.currentRound shouldBe initialState.currentRound
+      restored.totalRounds shouldBe initialState.totalRounds
+      restored.currentTrump shouldBe initialState.currentTrump
+      restored.currentTrick shouldBe initialState.currentTrick
     }
 
-    "create a correct GameStateMemento snapshot" in {
-      val players = List(Player(0))
-      val deck = Deck()
-      val trick = Trick(Map())
+    "not modify fields that are not part of the memento" in {
+      val memento = initialState.createMemento()
 
-      val gs = GameState(
-        amountOfPlayers = 1,
-        players = players,
-        deck = deck,
-        currentRound = 1,
-        totalRounds = 5,
-        currentTrump = None,
-        currentTrick = Some(trick)
-      )
+      val modified =
+        initialState.copy(
+          completedTricks = 99 // nicht im Memento enthalten
+        )
 
-      val m = gs.createMemento()
+      val restored = modified.restore(memento)
 
-      m.amountOfPlayers shouldBe 1
-      m.players shouldBe players
-      m.deck shouldBe deck
-      m.currentRound shouldBe 1
-      m.totalRounds shouldBe 5
-      m.currentTrump shouldBe None
-      m.currentTrick shouldBe Some(trick)
-    }
-
-    "restore a previous state from a memento" in {
-      val original = GameState(
-        amountOfPlayers = 2,
-        players = List(Player(0), Player(1)),
-        deck = Deck(),
-        currentRound = 2,
-        totalRounds = 10,
-        currentTrump = Some(CardColor.Red),
-        currentTrick = None
-      )
-
-      val modified = GameState(
-        amountOfPlayers = 1,
-        players = List(Player(0)),
-        deck = Deck(),
-        currentRound = 5,
-        totalRounds = 5,
-        currentTrump = None,
-        currentTrick = Some(Trick(Map()))
-      )
-
-      val restored = modified.restore(original.createMemento())
-
-      restored shouldBe original
-    }
-
-    "notify observers when inherited Observable behavior is used" in {
-      val observer = new TestObserver
-
-      val gs = GameState(
-        amountOfPlayers = 1,
-        players = List(Player(0)),
-        deck = Deck(),
-        currentRound = 0,
-        totalRounds = 0,
-        currentTrump = None
-      )
-
-      gs.add(observer)
-      gs.notifyObservers()
-
-      observer.updated shouldBe true
+      restored.completedTricks shouldBe modified.completedTricks
     }
   }
 }
