@@ -51,8 +51,10 @@ class GameControl(
       currentRound = 0,
       totalRounds = 0,
       currentTrump = None,
-      currentTrick = None
+      currentTrick = None,
+      completedTricks = 0
     )
+
 
     currentState = Some(gs)
     currentPhase = InitState
@@ -120,16 +122,20 @@ class GameControl(
     currentState.foreach { gs =>
       saveState(gs)
 
-      val next = PlayTrickCommand(this, trickNr, gs, moves).execute()
-      currentState = Some(next)
-      currentPhase = currentPhase.next(next)
+      val afterTrick =
+        PlayTrickCommand(this, trickNr, gs, moves).execute()
 
-      notifyObservers(StateChanged(next))
+      currentState = Some(afterTrick)
 
-      currentPhase match
-        case ScoreState => finishRound()
-        case _          => firePhaseEvent()
+      notifyObservers(StateChanged(afterTrick))
+
+      if afterTrick.players.head.hand.isEmpty then
+        finishRound()
+      else
+        currentPhase = TrickState(afterTrick.completedTricks + 1)
+        firePhaseEvent()
     }
+
 
   // =========================================================
   // INTERNAL FLOW
@@ -203,7 +209,12 @@ class GameControl(
       gs.players.foldLeft((List.empty[Player], deck)) {
         case ((acc, d), p) =>
           val (hand, nd) = d.deal(newRound)
-          (acc :+ p.copy(hand = hand), nd)
+          (acc :+ p.copy(
+            hand = hand,
+            tricks = 0,
+            predictedTricks = 0
+          ), nd)
+
       }
 
     gs.copy(
@@ -211,7 +222,8 @@ class GameControl(
       players = players,
       deck = restDeck,
       currentTrump = trump,
-      currentTrick = None
+      currentTrick = None,
+      completedTricks = 0
     )
 
   private[control] def doPredictTricks(
@@ -260,13 +272,12 @@ class GameControl(
           else p.tricks * 10 - 10 * (p.tricks - p.predictedTricks).abs
 
         p.copy(
-          totalPoints = p.totalPoints + points,
-          tricks = 0,
-          predictedTricks = 0
+          totalPoints = p.totalPoints + points
         )
       },
       currentTrick = None
     )
+
 
   private[control] def doDetermineWinner(gs: GameState): GameState = gs
 

@@ -1,0 +1,128 @@
+/* ---------- GLOBAL ---------- */
+
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* ---------- TITLES ---------- */
+
+.title {
+    -fx-font-size: 64px;
+    -fx-font-family: "Jokerman";
+}
+
+.winner-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.round-summary-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.pre-game-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+/* ---------- BUTTONS ---------- */
+
+.button {
+    -fx-font-size: 15px;
+}
+.button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.card-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.card-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+
+    /* Holographic Gradient */
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        #00ffff26,
+        #ff00ff26,
+        #00ffff26
+    );
+
+    /* Holographic Glow */
+    -fx-effect: dropshadow(
+        gaussian,
+        #00ffff99,
+        20,
+        0.6,
+        0,
+        0
+    );
+
+}
+
+/* ---------- LABELS ---------- */
+
+
+.text-label {
+    -fx-font-size: 15px;
+}
+.trump-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.card-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0,0,0,0.6);
+    -fx-padding: 2 4 2 4;
+    -fx-background-radius: 4;
+}
+
+/* ---------- LAYOUT HELPERS ---------- */
+
+.game-background {
+     -fx-background-color: #d5e4f9;
+}
+
+.playingfield {
+    -fx-padding: 20;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+    -fx-background-color: #dfd6ef;
+}
+
+.center-row {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.player-info {
+    -fx-spacing: 5;
+    -fx-font-size: 18px;
+}
+
+.summary-box {
+    -fx-spacing: 2;
+}
+
+/* ---------- BACKGROUNDS ---------- */
+
+.stats-background {
+    -fx-background-image: url("/cards/auswertung.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.start-background {
+    -fx-background-image: url("/cards/background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}

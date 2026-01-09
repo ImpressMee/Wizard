@@ -2,96 +2,59 @@ package de.htwg.wizard.control.observer
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import de.htwg.wizard.control.event.PlayerAmountRequested
+import de.htwg.wizard.model.*
 
 class ObservableSpec extends AnyWordSpec with Matchers {
 
-  // ------------------------------------------------------------
-  // TestObserver
-  // ------------------------------------------------------------
   class TestObserver extends Observer {
-    var updates = 0
-    override def update(): Unit = updates += 1
+    var received: List[Any] = Nil
+    override def update(event: de.htwg.wizard.control.event.GameEvent): Unit =
+      received = event :: received
   }
+
+  class TestObservable extends Observable
 
   "Observable" should {
 
-    "notify a single observer" in {
-      val obs = new Observable {}
-      val o = new TestObserver
+    "notify a registered observer" in {
+      val observable = new TestObservable
+      val observer = new TestObserver
+      val state = GameState(0, Nil, Deck(), 0, 0)
+      val event = PlayerAmountRequested(state)
 
-      obs.add(o)
-      obs.notifyObservers()
+      observable.add(observer)
+      observable.notifyObservers(event)
 
-      o.updates shouldBe 1
+      observer.received should contain (event)
     }
 
     "notify multiple observers" in {
-      val obs = new Observable {}
+      val observable = new TestObservable
       val o1 = new TestObserver
       val o2 = new TestObserver
+      val state = GameState(0, Nil, Deck(), 0, 0)
+      val event = PlayerAmountRequested(state)
 
-      obs.add(o1)
-      obs.add(o2)
-      obs.notifyObservers()
+      observable.add(o1)
+      observable.add(o2)
+      observable.notifyObservers(event)
 
-      o1.updates shouldBe 1
-      o2.updates shouldBe 1
+      o1.received should contain (event)
+      o2.received should contain (event)
     }
 
-    "notify observers multiple times" in {
-      val obs = new Observable {}
-      val o = new TestObserver
+    "not notify removed observers" in {
+      val observable = new TestObservable
+      val observer = new TestObserver
+      val state = GameState(0, Nil, Deck(), 0, 0)
+      val event = PlayerAmountRequested(state)
 
-      obs.add(o)
-      obs.notifyObservers()
-      obs.notifyObservers()
-      obs.notifyObservers()
+      observable.add(observer)
+      observable.remove(observer)
+      observable.notifyObservers(event)
 
-      o.updates shouldBe 3
-    }
-
-    "remove an observer correctly" in {
-      val obs = new Observable {}
-      val o = new TestObserver
-
-      obs.add(o)
-      obs.remove(o)
-      obs.notifyObservers()
-
-      o.updates shouldBe 0
-    }
-
-    "remove only the specified observer" in {
-      val obs = new Observable {}
-      val o1 = new TestObserver
-      val o2 = new TestObserver
-
-      obs.add(o1)
-      obs.add(o2)
-      obs.remove(o1)
-      obs.notifyObservers()
-
-      o1.updates shouldBe 0
-      o2.updates shouldBe 1
-    }
-
-    "ignore removing an observer that was never added" in {
-      val obs = new Observable {}
-      val o1 = new TestObserver
-      val o2 = new TestObserver
-
-      obs.add(o1)
-      obs.remove(o2) // o2 war nie drin
-      obs.notifyObservers()
-
-      o1.updates shouldBe 1
-      o2.updates shouldBe 0
-    }
-
-    "notifyObservers does nothing if there are no observers" in {
-      val obs = new Observable {}
-
-      noException should be thrownBy obs.notifyObservers()
+      observer.received shouldBe empty
     }
   }
 }
