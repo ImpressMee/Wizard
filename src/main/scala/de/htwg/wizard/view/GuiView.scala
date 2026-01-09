@@ -33,6 +33,7 @@ class GuiView(game: GamePort) extends Observer {
   private var predictionIndex = 0
   private var predictions: Map[Int, Int] = Map.empty
   private var trickMoves: Map[Int, Int] = Map.empty
+
   // =========================================================
   // Entry
   // =========================================================
@@ -75,6 +76,7 @@ class GuiView(game: GamePort) extends Observer {
     val scene = new Scene(root, Width, Height)
     scene.stylesheets += getClass.getResource("/style/gui.css").toExternalForm
     scene
+
   // =========================================================
   // Start
   // =========================================================
@@ -90,7 +92,7 @@ class GuiView(game: GamePort) extends Observer {
             children = Seq(
               new Label("WIZARD") { styleClass += "title" },
               new Button("Start") {
-                styleClass += "sbutton"
+                styleClass += "button"
                 onAction = _ => game.startGame()
               }
             )
@@ -171,7 +173,10 @@ class GuiView(game: GamePort) extends Observer {
 
   private def gameBoardScene(state: GameState): Scene =
     val activePlayer =
-      state.players.find(p => !trickMoves.contains(p.id)).get
+      state.players.find(p => !trickMoves.contains(p.id))
+        .getOrElse(state.players.head)
+
+
     styledScene(
       new BorderPane {
         styleClass += "game-background"

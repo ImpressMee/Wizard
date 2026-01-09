@@ -49,42 +49,47 @@ class GameControl(
   // =========================================================
 
   private def firePhase(): Unit =
-    phase match
+    val s = currentState
 
+    phase match
       case InitState =>
-        notify(PlayerAmountRequested(currentState))
+        notify(PlayerAmountRequested(s))
 
       case PredictState =>
-        notify(PredictionsRequested(currentState))
+        notify(PredictionsRequested(s))
 
       case TrickState(n) =>
-        notify(TrickStarted(n, currentState))
-        notify(TrickMoveRequested(n, currentState))
+        notify(TrickStarted(n, s))
+        println(currentState.completedTricks)
+        notify(TrickMoveRequested(n, s))
 
       case ScoreState =>
-        state = Some(ScoreRoundCommand.execute(currentState))
+        state = Some(ScoreRoundCommand.execute(s))
         notify(RoundFinished(currentState))
 
       case FinishState =>
-        val winner = currentState.players.maxBy(_.totalPoints)
-        notify(GameFinished(winner, currentState))
+        val winner = s.players.maxBy(_.totalPoints)
+        notify(GameFinished(winner, s))
+
 
   // =========================================================
   // Input handling
   // =========================================================
 
-  def submitPlayerAmount(amount: Int): Unit =
-    // initialize players and deck
-    state = Some(InitCommand(amount).execute(currentState))
+  def submitPlayerAmount(amount: Int): Unit = {
+    val initialized =
+      InitCommand(amount).execute(currentState)
 
-    // prepare first round (deal cards, set trump, reset trick counter)
-    state = Some(
-      PrepareRoundCommand.execute(currentState)
+    val prepared =
+      PrepareRoundCommand.execute(initialized)
         .copy(completedTricks = 0)
-    )
+
+    state = Some(prepared)
 
     phase = PredictState
     firePhase()
+  }
+
 
   def submitPredictions(predictions: Map[Int, Int]): Unit =
     state = Some(PredictCommand(predictions).execute(currentState))
@@ -95,22 +100,15 @@ class GameControl(
     val afterTrick =
       PlayTrickCommand(moves, strategy).execute(currentState)
 
-    // increase completed trick counter
-    val updated =
-      afterTrick.copy(
-        completedTricks = currentState.completedTricks + 1,
-        currentTrick = None
-      )
+    state = Some(afterTrick)
 
-    state = Some(updated)
-
-    // decide next phase
-    if updated.players.head.hand.isEmpty then
+    if afterTrick.players.head.hand.isEmpty then
       phase = ScoreState
     else
-      phase = TrickState(updated.completedTricks + 1)
+      phase = TrickState(afterTrick.completedTricks + 1)
 
     firePhase()
+
 
   def prepareNextRound(): Unit =
     val next =

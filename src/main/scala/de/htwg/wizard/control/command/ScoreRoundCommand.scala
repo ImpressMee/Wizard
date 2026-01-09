@@ -14,9 +14,7 @@ object ScoreRoundCommand extends Command:
             -10 * (p.tricks - p.predictedTricks).abs
 
         p.copy(
-          totalPoints = p.totalPoints + delta,
-          tricks = 0,
-          predictedTricks = 0
+          totalPoints = p.totalPoints + delta
         )
       }
 
