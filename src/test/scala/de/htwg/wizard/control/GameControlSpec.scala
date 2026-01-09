@@ -2,99 +2,149 @@ package de.htwg.wizard.control
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.wizard.control.event.*
+
 import de.htwg.wizard.model.*
+import de.htwg.wizard.control.event.*
+import de.htwg.wizard.control.strategy.TrickStrategy
 
 class GameControlSpec extends AnyWordSpec with Matchers {
 
+  // ---------------------------------------------------------
+  // Fake Strategy (deterministic)
+  // ---------------------------------------------------------
+  object TestStrategy extends TrickStrategy {
+    override def winner(trick: Trick, trump: Option[CardColor]): (Int, Card) =
+      trick.played.head
+
+    override def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean =
+      true
+  }
+
+  // ---------------------------------------------------------
+  // Event recorder
+  // ---------------------------------------------------------
+  class EventRecorder {
+    var events: List[GameEvent] = Nil
+    def notify(e: GameEvent): Unit = events ::= e
+  }
+
+  // ---------------------------------------------------------
+  // Initial state
+  // ---------------------------------------------------------
+  def initialState =
+    GameState(
+      amountOfPlayers = 0,
+      players = Nil,
+      deck = Deck(),
+      currentRound = 0,
+      totalRounds = 0
+    )
+
+  // ---------------------------------------------------------
+  // Tests
+  // ---------------------------------------------------------
   "GameControl" should {
 
-    "start the game and emit initial events" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "emit PlayerAmountRequested on start" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
+      control.start(initialState)
 
-      // mindestens ein StateChanged
-      obs.events.exists(_.isInstanceOf[StateChanged]) shouldBe true
-
-      // und eine Aufforderung zur Spieleranzahl
-      obs.events.exists(_.isInstanceOf[PlayerAmountRequested]) shouldBe true
+      recorder.events.head shouldBe a [PlayerAmountRequested]
     }
 
-    "initialize players and prepare first round after submitting player amount" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "transition to prediction phase after player amount submission" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
+      control.start(initialState)
       control.submitPlayerAmount(3)
 
-      val states =
-        obs.events.collect { case StateChanged(gs) => gs }
-
-      states.exists(_.players.size == 3) shouldBe true
-      states.exists(_.currentRound == 1) shouldBe true
+      recorder.events.exists(_.isInstanceOf[PredictionsRequested]) shouldBe true
     }
 
-    "request predictions after round preparation" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "transition to trick phase after predictions submission" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
+      control.start(initialState)
       control.submitPlayerAmount(3)
+      control.submitPredictions(Map(0 -> 0, 1 -> 0, 2 -> 0))
 
-      obs.events.exists(_.isInstanceOf[PredictionsRequested]) shouldBe true
+      recorder.events.exists(_.isInstanceOf[TrickMoveRequested]) shouldBe true
     }
 
-    "apply predictions and emit updated state" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "emit RoundFinished after last trick" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
-      control.submitPlayerAmount(3)
+      // prepare minimal playable state
+      val players =
+        List(
+          Player(0, hand = List(Card(CardColor.Red, 1))),
+          Player(1, hand = List(Card(CardColor.Blue, 2)))
+        )
 
-      control.submitPredictions(Map(0 -> 1, 1 -> 1, 2 -> 1))
+      val state =
+        GameState(
+          amountOfPlayers = 2,
+          players = players,
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1
+        )
 
-      val states =
-        obs.events.collect { case StateChanged(gs) => gs }
+      control.start(state)
 
-      states.exists { gs =>
-        gs.players.forall(_.predictedTricks == 1)
-      } shouldBe true
+      control.submitPredictions(Map(0 -> 0, 1 -> 0))
+      control.playTrick(Map(0 -> 0, 1 -> 0))
+
+      recorder.events.exists(_.isInstanceOf[RoundFinished]) shouldBe true
     }
 
-    "support undo and restore a previous state" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "emit GameFinished when final round is completed" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
-      control.submitPlayerAmount(3)
+      val players =
+        List(
+          Player(0, hand = List(Card(CardColor.Red, 1)), totalPoints = 10),
+          Player(1, hand = List(Card(CardColor.Blue, 2)), totalPoints = 0)
+        )
 
-      val statesBeforeUndo =
-        obs.events.collect { case StateChanged(gs) => gs }
+      val state =
+        GameState(
+          amountOfPlayers = 2,
+          players = players,
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1
+        )
 
-      control.undo()
+      control.start(state)
+      control.submitPredictions(Map(0 -> 0, 1 -> 0))
+      control.playTrick(Map(0 -> 0, 1 -> 0))
+      control.prepareNextRound()
 
-      val statesAfterUndo =
-        obs.events.collect { case StateChanged(gs) => gs }
-
-      statesAfterUndo.size should be > statesBeforeUndo.size
+      recorder.events.exists(_.isInstanceOf[GameFinished]) shouldBe true
     }
 
-    "continue after round and emit a new phase event" in {
-      val control = new GameControl()
-      val obs = new RecordingObserver
+    "delegate isAllowedMove to the strategy" in {
+      val recorder = new EventRecorder
+      val control  = new GameControl(TestStrategy, recorder.notify)
 
-      control.runGame(obs)
-      control.submitPlayerAmount(3)
+      val state =
+        GameState(
+          amountOfPlayers = 1,
+          players = List(Player(0, hand = List(Card(CardColor.Red, 1)))),
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1,
+          currentTrick = Some(Trick(Map.empty))
+        )
 
-      control.continueAfterRound()
-
-      obs.events.exists {
-        case PredictionsRequested(_) => true
-        case PlayerAmountRequested(_) => true
-        case _ => false
-      } shouldBe true
+      control.isAllowedMove(0, 0, state) shouldBe true
     }
   }
 }

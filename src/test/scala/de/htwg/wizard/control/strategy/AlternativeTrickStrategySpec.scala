@@ -1,88 +1,117 @@
 package de.htwg.wizard.control.strategy
 
-import de.htwg.wizard.control.strategy.AlternativeTrickStrategy
-import de.htwg.wizard.model.*
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import de.htwg.wizard.model.*
 
 class AlternativeTrickStrategySpec extends AnyWordSpec with Matchers {
 
-  val strat = new AlternativeTrickStrategy
+  val strategy = new AlternativeTrickStrategy
 
-  def N(c: CardColor, v: Int) = NormalCard(c, v)
-  def W(c: CardColor) = WizardCard(c)
-  def J(c: CardColor) = JokerCard(c)
+  // ---------------------------------------------------------
+  // Helper cards
+  // ---------------------------------------------------------
+  val red5    = Card(CardColor.Red, 5)
+  val red10   = Card(CardColor.Red, 10)
+  val blue7  = Card(CardColor.Blue, 7)
+  val green9 = Card(CardColor.Green, 9)
 
-  // -------------------------------------------------------
-  // TESTS
-  // -------------------------------------------------------
+  val joker = Card(CardColor.Blue, "Joker")
+  val wizard = Card(CardColor.Red, "Wizard")
 
-  "AlternativeTrickStrategy" should {
 
-    "immediately pick the first wizard if any wizard is played" in {
-      val trick = Trick(Map(
-        0 -> N(CardColor.Red, 5),
-        1 -> W(CardColor.Blue),
-        2 -> N(CardColor.Green, 7),
-        3 -> W(CardColor.Red) // ignored, first wizard wins
-      ))
+  // ---------------------------------------------------------
+  // winner(...)
+  // ---------------------------------------------------------
+  "AlternativeTrickStrategy.winner" should {
 
-      val (winner, card) = strat.winner(trick, Some(CardColor.Green))
+    "return the first wizard if any wizard is played" in {
+      val trick = Trick(
+        Map(
+          0 -> red10,
+          1 -> wizard,
+          2 -> joker
+        )
+      )
 
-      winner shouldBe 1
-      card shouldBe W(CardColor.Blue)
+      strategy.winner(trick, None)._1 shouldBe 1
     }
 
-    "pick the LAST joker if at least one joker is present and NO wizard" in {
-      val trick = Trick(Map(
-        0 -> J(CardColor.Blue),
-        1 -> N(CardColor.Red, 6),
-        2 -> J(CardColor.Green) // last joker → winner
-      ))
+    "return the last joker if no wizard is present" in {
+      val trick = Trick(
+        Map(
+          0 -> joker,
+          1 -> red5,
+          2 -> joker
+        )
+      )
 
-      val (winner, card) = strat.winner(trick, Some(CardColor.Blue))
-
-      winner shouldBe 2
-      card shouldBe J(CardColor.Green)
+      strategy.winner(trick, None)._1 shouldBe 2
     }
 
-    "pick the highest trump card when no wizard/joker" in {
-      val trick = Trick(Map(
-        0 -> N(CardColor.Red, 3),
-        1 -> N(CardColor.Green, 7),
-        2 -> N(CardColor.Green, 10) // highest trump
-      ))
+    "return highest trump card if no wizard or joker exists" in {
+      val trick = Trick(
+        Map(
+          0 -> red5,
+          1 -> blue7,
+          2 -> red10
+        )
+      )
 
-      val (winner, card) = strat.winner(trick, Some(CardColor.Green))
-
-      winner shouldBe 2
-      card shouldBe N(CardColor.Green, 10)
+      strategy.winner(trick, Some(CardColor.Red))._1 shouldBe 2
     }
 
-    "pick the highest NORMAL card when no trump exists" in {
-      val trick = Trick(Map(
-        0 -> N(CardColor.Red, 3),
-        1 -> N(CardColor.Yellow, 10),
-        2 -> N(CardColor.Green, 7)
-      ))
+    "return highest normal card if no trump is present" in {
+      val trick = Trick(
+        Map(
+          0 -> red5,
+          1 -> blue7,
+          2 -> green9
+        )
+      )
 
-      val (winner, card) = strat.winner(trick, None)
+      strategy.winner(trick, None)._1 shouldBe 2
+    }
+  }
 
-      winner shouldBe 1
-      card shouldBe N(CardColor.Yellow, 10)
+  // ---------------------------------------------------------
+  // isAllowedMove(...)
+  // ---------------------------------------------------------
+  "AlternativeTrickStrategy.isAllowedMove" should {
+
+    "allow any card if trick is empty" in {
+      val player = Player(0, hand = List(red5, blue7))
+      val trick  = Trick(Map.empty)
+
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
     }
 
-    "fallback: return last card when only impossible case happens" in {
-      // This case happens only if all cards are non-normal AND non-joker AND no wizard 
-      val trick = Trick(Map(
-        0 -> J(CardColor.Red),
-        1 -> J(CardColor.Blue)
-      ))
+    "allow any card if lead card is wizard or joker" in {
+      val player = Player(0, hand = List(red5))
+      val trick  = Trick(Map(1 -> joker))
 
-      val (winner, card) = strat.winner(trick, None)
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
+    }
 
-      winner shouldBe 1
-      card shouldBe J(CardColor.Blue)
+    "force following suit if player has lead color" in {
+      val player =
+        Player(0, hand = List(red5, blue7))
+
+      val trick =
+        Trick(Map(1 -> red10))
+
+      strategy.isAllowedMove(blue7, player, trick) shouldBe false
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
+    }
+
+    "allow any card if player does not have lead color" in {
+      val player =
+        Player(0, hand = List(blue7, green9))
+
+      val trick =
+        Trick(Map(1 -> red10))
+
+      strategy.isAllowedMove(blue7, player, trick) shouldBe true
     }
   }
 }

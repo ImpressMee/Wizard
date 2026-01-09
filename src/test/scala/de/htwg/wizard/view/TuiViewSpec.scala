@@ -2,94 +2,151 @@ package de.htwg.wizard.view
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+
 import de.htwg.wizard.control.event.*
 import de.htwg.wizard.model.*
 
+import java.io.{ByteArrayOutputStream, PrintStream}
+
 class TuiViewSpec extends AnyWordSpec with Matchers {
 
-  private def captureStdOut(block: => Unit): String = {
-    val out = new java.io.ByteArrayOutputStream()
-    Console.withOut(out) {
+  // ---------------------------------------------------------
+  // Helper: capture console output
+  // ---------------------------------------------------------
+  def captureOut(block: => Unit): String = {
+    val baos = new ByteArrayOutputStream()
+    Console.withOut(new PrintStream(baos)) {
       block
     }
-    out.toString
+    baos.toString
   }
 
+  val baseState =
+    GameState(
+      amountOfPlayers = 2,
+      players = List(Player(0), Player(1)),
+      deck = Deck(),
+      currentRound = 1,
+      totalRounds = 5
+    )
+
+  // ---------------------------------------------------------
+  // Tests
+  // ---------------------------------------------------------
   "TuiView" should {
 
-    "print a game start message on PlayerAmountRequested" in {
+    "print game start message on PlayerAmountRequested" in {
       val tui = new TuiView
-      val state = GameState(0, Nil, Deck(), 0, 0)
 
-      val output = captureStdOut {
-        tui.update(PlayerAmountRequested(state))
+      val out = captureOut {
+        tui.update(PlayerAmountRequested(baseState))
       }
 
-      output should include ("Game Start")
-      output should include ("How many players")
+      out should include ("Game Start")
+      out should include ("How many players")
     }
 
-    "print prediction phase information on PredictionsRequested" in {
+    "print round start information on RoundStarted" in {
       val tui = new TuiView
-      val players = List(Player(0), Player(1))
-      val state = GameState(2, players, Deck(), 1, 5)
 
-      val output = captureStdOut {
+      val out = captureOut {
+        tui.update(RoundStarted(1, baseState))
+      }
+
+      out should include ("Round 1 start")
+      out should include ("There are 2 players")
+    }
+
+    "print prediction phase output on PredictionsRequested" in {
+      val tui = new TuiView
+
+      val state =
+        baseState.copy(
+          players = List(
+            Player(0, hand = List(Card(CardColor.Red, 1))),
+            Player(1, hand = List(Card(CardColor.Blue, 2)))
+          )
+        )
+
+      val out = captureOut {
         tui.update(PredictionsRequested(state))
       }
 
-      output should include ("Prediction Phase")
-      output should include ("Player 0")
-      output should include ("Player 1")
+      out should include ("Prediction Phase")
+      out should include ("Player 0")
+      out should include ("Player 1")
+      out should include ("How many tricks will you make")
     }
 
-    "print trick start information on TrickMoveRequested" in {
+    "print trick start output on TrickMoveRequested" in {
       val tui = new TuiView
-      val players =
-        List(
-          Player(0, hand = List(NormalCard(CardColor.Red, 5))),
-          Player(1, hand = List(NormalCard(CardColor.Blue, 7)))
-        )
-      val state = GameState(2, players, Deck(), 1, 5)
 
-      val output = captureStdOut {
+      val state =
+        baseState.copy(
+          players = List(
+            Player(0, hand = List(Card(CardColor.Red, 1))),
+            Player(1, hand = List(Card(CardColor.Blue, 2)))
+          )
+        )
+
+      val out = captureOut {
         tui.update(TrickMoveRequested(1, state))
       }
 
-      output should include ("Trick 1")
-      output should include ("Which card do you want to play")
+      out should include ("Trick 1 start")
+      out should include ("Which card do you want to play")
+    }
+
+    "print trick winner on TrickFinished" in {
+      val tui = new TuiView
+
+      val out = captureOut {
+        tui.update(TrickFinished(0, baseState))
+      }
+
+      out should include ("Trick won by Player 0")
     }
 
     "print round evaluation on RoundFinished" in {
       val tui = new TuiView
-      val players =
-        List(
-          Player(0, tricks = 1, predictedTricks = 1, totalPoints = 30),
-          Player(1, tricks = 0, predictedTricks = 1, totalPoints = -10)
-        )
-      val state = GameState(2, players, Deck(), 1, 5)
 
-      val output = captureStdOut {
+      val state =
+        baseState.copy(
+          players = List(
+            Player(0, tricks = 1, predictedTricks = 1, totalPoints = 20),
+            Player(1, tricks = 0, predictedTricks = 1, totalPoints = -10)
+          )
+        )
+
+      val out = captureOut {
         tui.update(RoundFinished(state))
       }
 
-      output should include ("Round Evaluation")
-      output should include ("Player 0")
-      output should include ("total points")
+      out should include ("Round Evaluation")
+      out should include ("Player 0")
+      out should include ("total points")
     }
 
     "print winner information on GameFinished" in {
       val tui = new TuiView
-      val winner = Player(1, totalPoints = 50)
-      val state = GameState(2, List(winner), Deck(), 5, 5)
 
-      val output = captureStdOut {
-        tui.update(GameFinished(winner, state))
+      val winner = Player(0, totalPoints = 42)
+
+      val out = captureOut {
+        tui.update(GameFinished(winner, baseState))
       }
 
-      output should include ("Game Winner")
-      output should include ("Player 1")
-      output should include ("50")
+      out should include ("Game Winner")
+      out should include ("Player 0")
+      out should include ("42")
+    }
+
+    "ignore unrelated events safely" in {
+      val tui = new TuiView
+
+      noException shouldBe thrownBy {
+        tui.update(StateChanged(baseState))
+      }
     }
   }
 }

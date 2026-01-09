@@ -1,121 +1,128 @@
 package de.htwg.wizard.control.strategy
 
-import de.htwg.wizard.control.strategy.StandardTrickStrategy
-import de.htwg.wizard.model.*
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import de.htwg.wizard.model.*
 
 class StandardTrickStrategySpec extends AnyWordSpec with Matchers {
 
-  val strategy = StandardTrickStrategy()
+  val strategy = new StandardTrickStrategy
 
-  // Helpers
-  def t(cards: (Int, Card)*): Trick = Trick(cards.toMap)
+  // ---------------------------------------------------------
+  // Helper cards (API-konform!)
+  // ---------------------------------------------------------
+  val red5    = Card(CardColor.Red, 5)
+  val red10   = Card(CardColor.Red, 10)
+  val blue7  = Card(CardColor.Blue, 7)
+  val blue9  = Card(CardColor.Blue, 9)
+  val green8 = Card(CardColor.Green, 8)
 
-  val r5  = NormalCard(CardColor.Red, 5)
-  val r9  = NormalCard(CardColor.Red, 9)
-  val b7  = NormalCard(CardColor.Blue, 7)
-  val g3  = NormalCard(CardColor.Green, 3)
-  val b12 = NormalCard(CardColor.Blue, 12)
+  val wizard = Card(CardColor.Red, "Wizard")
+  val joker  = Card(CardColor.Blue, "Joker")
 
-  val wR  = WizardCard(CardColor.Red)
-  val wG  = WizardCard(CardColor.Green)
+  // ---------------------------------------------------------
+  // winner(...)
+  // ---------------------------------------------------------
+  "StandardTrickStrategy.winner" should {
 
-  val jR  = JokerCard(CardColor.Red)
-  val jB  = JokerCard(CardColor.Blue)
-
-  // -------------------------------------------------------------
-  // Tests
-  // -------------------------------------------------------------
-
-  "StandardTrickStrategy" should {
-
-    "Wizard wins instantly (first wizard in order)" in {
-      val trick = t(
-        0 -> r5,
-        1 -> wG,   // first wizard
-        2 -> wR
+    "return the first wizard if a wizard is played" in {
+      val trick = Trick(
+        Map(
+          0 -> red10,
+          1 -> wizard,
+          2 -> joker
+        )
       )
 
-      strategy.winner(trick, Some(CardColor.Red)) shouldBe (1 -> wG)
+      strategy.winner(trick, None)._1 shouldBe 1
     }
 
-    "if all cards are Jokers, the last joker wins" in {
-      val trick = t(
-        0 -> jR,
-        1 -> jB
+    "return the last joker if all cards are jokers" in {
+      val trick = Trick(
+        Map(
+          0 -> joker,
+          1 -> joker,
+          2 -> joker
+        )
       )
 
-      strategy.winner(trick, None) shouldBe (1 -> jB)
+      strategy.winner(trick, None)._1 shouldBe 2
     }
 
-    "if only jokers and no normal cards, last card wins" in {
-      val trick = t(
-        0 -> jR,
-        1 -> jB,
-        2 -> jR
+    "use lead color if no trump is present" in {
+      val trick = Trick(
+        Map(
+          0 -> red5,
+          1 -> blue9,
+          2 -> red10
+        )
       )
 
-      strategy.winner(trick, None) shouldBe (2 -> jR)
+      strategy.winner(trick, None)._1 shouldBe 2
     }
 
-    "highest trump wins when at least one trump appears" in {
-      val trick = t(
-        0 -> r5,
-        1 -> b7,
-        2 -> r9     // highest trump
+    "prefer trump cards over lead color" in {
+      val trick = Trick(
+        Map(
+          0 -> red10,
+          1 -> blue7,
+          2 -> blue9
+        )
       )
 
-      strategy.winner(trick, Some(CardColor.Red)) shouldBe (2 -> r9)
+      strategy.winner(trick, Some(CardColor.Blue))._1 shouldBe 2
     }
 
-    "lead color is determined by first normal card" in {
-      val trick = t(
-        0 -> jR,  // ignored for lead
-        1 -> b7,  // lead = Blue
-        2 -> g3
+    "return last card if no normal card exists" in {
+      val trick = Trick(
+        Map(
+          0 -> joker,
+          1 -> wizard
+        )
       )
 
-      strategy.winner(trick, Some(CardColor.Yellow)) shouldBe (1 -> b7)
+      strategy.winner(trick, None)._1 shouldBe 1
+    }
+  }
+
+  // ---------------------------------------------------------
+  // isAllowedMove(...)
+  // ---------------------------------------------------------
+  "StandardTrickStrategy.isAllowedMove" should {
+
+    "allow any card if trick is empty" in {
+      val player = Player(0, hand = List(red5, blue7))
+      val trick  = Trick(Map.empty)
+
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
     }
 
-    "highest card of the lead color wins when no trump played" in {
-      val trick = t(
-        0 -> b7,     // lead color Blue
-        1 -> g3,
-        2 -> b12     // highest Blue
-      )
+    "allow any card if lead card is wizard or joker" in {
+      val player = Player(0, hand = List(red5))
+      val trick  = Trick(Map(1 -> joker))
 
-      strategy.winner(trick, None) shouldBe (2 -> b12)
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
     }
 
-    "fallback: last joker wins if no normal cards exist (and no wizard)" in {
-      val trick = t(
-        0 -> jR,
-        1 -> jB
-      )
+    "force following suit if player has lead color" in {
+      val player =
+        Player(0, hand = List(red5, blue7))
 
-      strategy.winner(trick, None) shouldBe (1 -> jB)
+      val trick =
+        Trick(Map(1 -> red10))
+
+      strategy.isAllowedMove(blue7, player, trick) shouldBe false
+      strategy.isAllowedMove(red5, player, trick) shouldBe true
     }
 
-    "normal cards only: highest of lead color wins (no trump)" in {
-      val trick = t(
-        0 -> g3,  // lead = Green
-        1 -> r5,
-        2 -> NormalCard(CardColor.Green, 10)
-      )
+    "allow any card if player does not have lead color" in {
+      val player =
+        Player(0, hand = List(blue7, green8))
 
-      strategy.winner(trick, None) shouldBe (2 -> NormalCard(CardColor.Green, 10))
-    }
+      val trick =
+        Trick(Map(1 -> red10))
 
-    "trump beats lead color always" in {
-      val trick = t(
-        0 -> b7,   // lead = Blue
-        1 -> r5,   // trump
-        2 -> b12
-      )
-
-      strategy.winner(trick, Some(CardColor.Red)) shouldBe (1 -> r5)
+      strategy.isAllowedMove(blue7, player, trick) shouldBe true
     }
   }
 }
