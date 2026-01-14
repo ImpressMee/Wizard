@@ -4,11 +4,10 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
 import de.htwg.wizard.control.*
+import de.htwg.wizard.control.controlComponent.GameControl
 import de.htwg.wizard.control.controlComponent.strategy.TrickStrategy
+import de.htwg.wizard.model.*
 import de.htwg.wizard.model.modelComponent.*
-import de.htwg.wizard.model.modelComponent.ModelComponent
-import de.htwg.wizard.model.ModelInterface
-
 
 class GameComponentSpec extends AnyWordSpec with Matchers {
 
@@ -32,10 +31,16 @@ class GameComponentSpec extends AnyWordSpec with Matchers {
       true
   }
 
+  // ---------------------------------------------------------
+  // Helper
+  // ---------------------------------------------------------
   private def createGame(): (GameComponent, TestObserver) = {
     val model: ModelInterface = new ModelComponent()
-    val game = new GameComponent(model, TestStrategy)
+    val control = new GameControl(model, TestStrategy)
+
+    val game = new GameComponent(control)
     val obs  = new TestObserver
+
     game.registerObserver(obs)
     (game, obs)
   }

@@ -1,5 +1,6 @@
 package de.htwg.wizard.control.controlComponent
 
+import com.google.inject.Inject
 import de.htwg.wizard.control.controlComponent.*
 import de.htwg.wizard.control.controlComponent.command.*
 import de.htwg.wizard.control.*
@@ -20,12 +21,18 @@ import de.htwg.wizard.model.modelComponent.GameState
  * - No duplicated game state
  * - All persistent state lives in GameState
  */
-class GameControl(
-                   model: ModelInterface,
-                   strategy: TrickStrategy,
-                   notify: GameEvent => Unit
-                 ){
+class GameControl @Inject() (
+                              model: ModelInterface,
+                              strategy: TrickStrategy
+                            ) {
 
+  private var observers: List[Observer] = Nil
+
+  def registerObserver(o: Observer): Unit =
+    observers ::= o
+
+  private def notify(event: GameEvent): Unit =
+    observers.foreach(_.update(event))
   // =========================================================
   // Internal state
   // =========================================================

@@ -21,11 +21,12 @@ class GameControlSpec extends AnyWordSpec with Matchers {
   }
 
   // ---------------------------------------------------------
-  // Event recorder
+  // Event recorder (Observer)
   // ---------------------------------------------------------
-  class EventRecorder {
+  class EventRecorder extends Observer {
     var events: List[GameEvent] = Nil
-    def notify(e: GameEvent): Unit = events ::= e
+    override def update(e: GameEvent): Unit =
+      events ::= e
   }
 
   // ---------------------------------------------------------
@@ -33,7 +34,9 @@ class GameControlSpec extends AnyWordSpec with Matchers {
   // ---------------------------------------------------------
   private def newControl(recorder: EventRecorder): GameControl = {
     val model: ModelInterface = new ModelComponent()
-    new GameControl(model, TestStrategy, recorder.notify)
+    val control = new GameControl(model, TestStrategy)
+    control.registerObserver(recorder)
+    control
   }
 
   // ---------------------------------------------------------
@@ -83,8 +86,6 @@ class GameControlSpec extends AnyWordSpec with Matchers {
 
       recorder.events.exists(_.isInstanceOf[RoundFinished]) shouldBe true
     }
-
-
 
     "delegate isAllowedMove to the strategy" in {
       val recorder = new EventRecorder

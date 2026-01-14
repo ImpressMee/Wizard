@@ -1,7 +1,5 @@
 package de.htwg.wizard.model.modelComponent
 
-import de.htwg.wizard.model.modelComponent.{Card, CardColor}
-
 import scala.util.Random
 
 case class Deck(cards: List[Card]=List()):

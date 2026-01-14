@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "20.0.0-R31",
   "org.openjfx" % "javafx-base" % "20" classifier "win",
   "org.openjfx" % "javafx-controls" % "20" classifier "win",
-  "org.openjfx" % "javafx-graphics" % "20" classifier "win"
+  "org.openjfx" % "javafx-graphics" % "20" classifier "win",
+  "net.codingwell" %% "scala-guice" % "7.0.0"
 )
 Compile / mainClass := Some("de.htwg.wizard.Main")
 

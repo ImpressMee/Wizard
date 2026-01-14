@@ -3,48 +3,28 @@ package de.htwg.wizard.control.controlComponent.component
 
 import de.htwg.wizard.control.*
 import de.htwg.wizard.control.controlComponent.GameControl
-import de.htwg.wizard.control.controlComponent.strategy.{StandardTrickStrategy, TrickStrategy}
-import de.htwg.wizard.model.*
-import de.htwg.wizard.model.modelComponent.{Deck, GameState, ModelComponent, PlayerID}
+import de.htwg.wizard.model.modelComponent.{GameState, PlayerID}
+import jakarta.inject.Inject
 
-
-class GameComponent(
-                     model: ModelInterface,
-                     strategy: TrickStrategy = StandardTrickStrategy()
-                   ) extends GamePort {
-
-  private var observers: List[Observer] = Nil
-
-  private def notifyObservers(event: GameEvent): Unit =
-    observers.foreach(_.update(event))
+class GameComponent @Inject() (
+                                control: GameControl
+                              ) extends GamePort {
 
   override def registerObserver(observer: Observer): Unit =
-    observers ::= observer
-
-  private val control = new GameControl(model, strategy, notifyObservers)
+    control.registerObserver(observer)
 
   override def startGame(): Unit =
-    control.start(
-      GameState(
-        amountOfPlayers = 0,
-        players = Nil,
-        deck = Deck(),
-        currentRound = 0,
-        totalRounds = 0,
-        currentTrick = None,
-        currentTrump = None
-      )
-    )
+    control.start(GameState.empty)
 
   override def handleInput(input: GameInput): Unit =
     input match
-      case PlayerAmountSelected(n)        => control.submitPlayerAmount(n)
-      case PredictionsSubmitted(p)        => control.submitPredictions(p)
-      case TrickMovesSubmitted(m)         => control.playTrick(m)
-      case ContinueAfterRound             => control.prepareNextRound()
-      case Undo                           => control.undo()
-      case Redo                           => control.redo()
-      case _                              => ()
+      case PlayerAmountSelected(n) => control.submitPlayerAmount(n)
+      case PredictionsSubmitted(p) => control.submitPredictions(p)
+      case TrickMovesSubmitted(m)  => control.playTrick(m)
+      case ContinueAfterRound      => control.prepareNextRound()
+      case Undo                   => control.undo()
+      case Redo                   => control.redo()
+      case _                      => ()
 
   override def isAllowedMove(
                               playerId: PlayerID,
@@ -53,3 +33,4 @@ class GameComponent(
                             ): Boolean =
     control.isAllowedMove(playerId, cardIndex, state)
 }
+
