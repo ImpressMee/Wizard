@@ -2,7 +2,7 @@ package de.htwg.wizard
 
 import scalafx.application.JFXApp3
 import de.htwg.wizard.control.GamePort
-import de.htwg.wizard.control.controlComponents.component.GameComponent
+import de.htwg.wizard.control.controlComponent.component.GameComponent
 import de.htwg.wizard.model.ModelInterface
 import de.htwg.wizard.model.modelComponent.ModelComponent
 import de.htwg.wizard.view.{GuiView, TuiView}

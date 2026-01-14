@@ -38,3 +38,16 @@ case class GameState(
       currentTrump = m.currentTrump,
       currentTrick = m.currentTrick
     )
+object GameState {
+  def empty: GameState =
+    GameState(
+      amountOfPlayers = 0,
+      players = Nil,
+      deck = Deck(),
+      currentRound = 0,
+      totalRounds = 0,
+      currentTrick = None,
+      currentTrump = None
+    )
+}
+  

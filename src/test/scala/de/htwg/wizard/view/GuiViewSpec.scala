@@ -5,8 +5,6 @@ import org.scalatest.matchers.should.Matchers
 import scalafx.application.Platform
 import scalafx.stage.Stage
 import de.htwg.wizard.control.{GameFinished, GameInput, GamePort, Observer, PlayerAmountRequested, PredictionsRequested, RoundFinished, TrickMoveRequested}
-import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.input.*
 import de.htwg.wizard.model.*
 import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player}
 

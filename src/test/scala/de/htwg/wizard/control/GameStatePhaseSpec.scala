@@ -1,6 +1,6 @@
 package de.htwg.wizard.control
 
-import de.htwg.wizard.control.controlComponents.{FinishState, InitState, PredictState, ScoreState, TrickState}
+import de.htwg.wizard.control.controlComponent.{FinishState, InitState, PredictState, ScoreState, TrickState}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
