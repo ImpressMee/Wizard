@@ -1,8 +1,10 @@
 package de.htwg.wizard.control.event
 
+import de.htwg.wizard.control.{GameFinished, PlayerAmountRequested, PredictionsRequested, RoundFinished, RoundStarted, StateChanged, TrickFinished, TrickMoveRequested, TrickStarted}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Deck, GameState, Player}
 
 class GameEventSpec extends AnyWordSpec with Matchers {
 

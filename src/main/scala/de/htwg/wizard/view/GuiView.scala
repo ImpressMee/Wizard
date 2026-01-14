@@ -7,11 +7,9 @@ import scalafx.scene.layout.*
 import scalafx.stage.Stage
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
-import de.htwg.wizard.component.game.GamePort
-import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.input.*
-import de.htwg.wizard.control.observer.Observer
+import de.htwg.wizard.control.{ContinueAfterRound, GameEvent, GameFinished, GamePort, Observer, PlayerAmountRequested, PlayerAmountSelected, PredictionsRequested, PredictionsSubmitted, RoundFinished, TrickMoveRequested, TrickMovesSubmitted}
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardType, GameState, Player}
 import scalafx.Includes.observableList2ObservableBuffer
 
 class GuiView(game: GamePort) extends Observer {

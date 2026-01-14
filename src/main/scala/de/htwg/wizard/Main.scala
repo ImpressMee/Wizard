@@ -1,7 +1,10 @@
 package de.htwg.wizard
 
 import scalafx.application.JFXApp3
-import de.htwg.wizard.component.game.{GameComponent, GamePort}
+import de.htwg.wizard.control.GamePort
+import de.htwg.wizard.control.controlComponents.component.GameComponent
+import de.htwg.wizard.model.ModelInterface
+import de.htwg.wizard.model.modelComponent.ModelComponent
 import de.htwg.wizard.view.{GuiView, TuiView}
 
 /**
@@ -21,8 +24,8 @@ object Main extends JFXApp3 {
 
   override def start(): Unit =
 
-    val game: GamePort =
-      new GameComponent()
+    val model: ModelInterface = new ModelComponent()
+    val game: GamePort = new GameComponent(model)
 
     val gui = new GuiView(game)
     val tui = new TuiView()

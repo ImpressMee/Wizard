@@ -1,8 +1,10 @@
 package de.htwg.wizard.control.command
 
+import de.htwg.wizard.control.controlComponents.command.InitCommand
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Deck, GameState}
 
 class InitCommandSpec extends AnyWordSpec with Matchers {
 

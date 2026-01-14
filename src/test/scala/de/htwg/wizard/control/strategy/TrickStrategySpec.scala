@@ -1,7 +1,8 @@
 package de.htwg.wizard.control.strategy
 
-import de.htwg.wizard.control.strategy.{AlternativeTrickStrategy, StandardTrickStrategy}
+import de.htwg.wizard.control.controlComponents.strategy.{AlternativeTrickStrategy, StandardTrickStrategy}
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, JokerCard, NormalCard, Trick, WizardCard}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

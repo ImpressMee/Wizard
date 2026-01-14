@@ -1,9 +1,11 @@
 package de.htwg.wizard.control.command
 
+import de.htwg.wizard.control.controlComponents.command.PlayTrickCommand
+import de.htwg.wizard.control.controlComponents.strategy.TrickStrategy
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
-import de.htwg.wizard.control.strategy.TrickStrategy
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player, Trick}
 
 class PlayTrickCommandSpec extends AnyWordSpec with Matchers {
 

@@ -1,8 +1,10 @@
 package de.htwg.wizard.control.command
 
+import de.htwg.wizard.control.controlComponents.command.ScoreRoundCommand
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Deck, GameState, Player}
 
 class ScoreRoundCommandSpec extends AnyWordSpec with Matchers {
 

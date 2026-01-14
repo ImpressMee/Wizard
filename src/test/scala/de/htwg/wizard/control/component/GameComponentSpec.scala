@@ -1,13 +1,16 @@
 package de.htwg.wizard.control.component
 
 import de.htwg.wizard.component.game.GameComponent
+import de.htwg.wizard.control.{GameEvent, Observer, PlayerAmountRequested, PlayerAmountSelected, PredictionsRequested, PredictionsSubmitted, Redo, StateChanged, TrickMoveRequested, Undo}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.control.input.*
 import de.htwg.wizard.control.strategy.*
 import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.observer.Observer
+import de.htwg.wizard.control.controlComponents.component.GameComponent
+import de.htwg.wizard.control.controlComponents.strategy.TrickStrategy
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player, Trick}
 
 class GameComponentSpec extends AnyWordSpec with Matchers {
 

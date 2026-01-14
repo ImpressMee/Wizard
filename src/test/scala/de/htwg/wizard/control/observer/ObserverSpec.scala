@@ -1,9 +1,10 @@
 package de.htwg.wizard.control.observer
 
+import de.htwg.wizard.control.{GameEvent, Observer, StateChanged}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.wizard.control.event.StateChanged
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Deck, GameState}
 
 class ObserverSpec extends AnyWordSpec with Matchers {
 
@@ -13,7 +14,7 @@ class ObserverSpec extends AnyWordSpec with Matchers {
       var called = false
 
       val observer: Observer = new Observer {
-        override def update(event: de.htwg.wizard.control.event.GameEvent): Unit =
+        override def update(event: GameEvent): Unit =
           called = true
       }
 

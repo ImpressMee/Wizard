@@ -1,7 +1,8 @@
-package de.htwg.wizard.control.command
+package de.htwg.wizard.control.controlComponents.command
 
+import de.htwg.wizard.control.controlComponents.strategy.TrickStrategy
 import de.htwg.wizard.model.*
-import de.htwg.wizard.control.strategy.TrickStrategy
+import de.htwg.wizard.model.modelComponent.{GameState, Trick}
 
 case class PlayTrickCommand(
                              moves: Map[Int, Int],

@@ -1,10 +1,11 @@
 package de.htwg.wizard.view
 
+import de.htwg.wizard.control.{GameFinished, PlayerAmountRequested, PredictionsRequested, RoundFinished, RoundStarted, StateChanged, TrickFinished, TrickMoveRequested}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-
 import de.htwg.wizard.control.event.*
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player}
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 

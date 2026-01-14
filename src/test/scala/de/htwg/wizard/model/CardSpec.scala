@@ -1,5 +1,6 @@
 package de.htwg.wizard.model
 
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, CardType, JokerCard, NormalCard, WizardCard, determinesColor, isJoker, isNormal, isWizard, trumpColor, value}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -48,7 +49,7 @@ class CardSpec extends AnyWordSpec with Matchers {
 
       c.color shouldBe CardColor.Blue
       c.cardType shouldBe CardType.Wizard
-      de.htwg.wizard.model.value(c) shouldBe 0
+      modelComponent.value(c) shouldBe 0
       isWizard(c) shouldBe true
       isNormal(c) shouldBe false
       isJoker(c) shouldBe false
@@ -63,7 +64,7 @@ class CardSpec extends AnyWordSpec with Matchers {
 
       c.color shouldBe CardColor.Green
       c.cardType shouldBe CardType.Joker
-      de.htwg.wizard.model.value(c) shouldBe 0
+      modelComponent.value(c) shouldBe 0
       isJoker(c) shouldBe true
       isNormal(c) shouldBe false
       isWizard(c) shouldBe false

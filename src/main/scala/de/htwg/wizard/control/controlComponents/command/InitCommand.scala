@@ -1,6 +1,7 @@
-package de.htwg.wizard.control.command
+package de.htwg.wizard.control.controlComponents.command
 
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Deck, GameState, Player}
 
 case class InitCommand(playerCount: Int) extends Command:
   def execute(state: GameState): GameState =

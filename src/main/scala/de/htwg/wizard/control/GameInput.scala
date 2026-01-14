@@ -1,11 +1,12 @@
-package de.htwg.wizard.control.input
+package de.htwg.wizard.control
+import de.htwg.wizard.control.GameInput
 
 /**
  * All user inputs that can be sent from a view (GUI / TUI)
  * to the game component.
  *
- * The set is intentionally minimal and matches exactly
- * the inputs handled by GameComponent.
+ * This ADT represents the complete input protocol
+ * of the GameComponent.
  */
 sealed trait GameInput
 
@@ -13,19 +14,23 @@ sealed trait GameInput
 // Game setup
 // =========================================================
 
-case class PlayerAmountSelected(amount: Int) extends GameInput
+final case class PlayerAmountSelected(amount: Int) extends GameInput
 
 // =========================================================
 // Prediction phase
 // =========================================================
 
-case class PredictionsSubmitted(predictions: Map[Int, Int]) extends GameInput
+final case class PredictionsSubmitted(
+                                       predictions: Map[Int, Int]
+                                     ) extends GameInput
 
 // =========================================================
 // Trick phase
 // =========================================================
 
-case class TrickMovesSubmitted(moves: Map[Int, Int]) extends GameInput
+final case class TrickMovesSubmitted(
+                                      moves: Map[Int, Int]
+                                    ) extends GameInput
 
 // =========================================================
 // Round / game flow
@@ -34,7 +39,7 @@ case class TrickMovesSubmitted(moves: Map[Int, Int]) extends GameInput
 case object ContinueAfterRound extends GameInput
 
 // =========================================================
-// Optional controls (hooks, currently no logic behind them)
+// Optional controls
 // =========================================================
 
 case object Undo extends GameInput

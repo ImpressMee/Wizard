@@ -1,8 +1,10 @@
 package de.htwg.wizard.control.command
 
+import de.htwg.wizard.control.controlComponents.command.PrepareRoundCommand
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{CardColor, Deck, GameState, Player}
 
 class PrepareRoundCommandSpec extends AnyWordSpec with Matchers {
 

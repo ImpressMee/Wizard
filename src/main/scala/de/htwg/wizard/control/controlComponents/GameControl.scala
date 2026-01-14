@@ -1,9 +1,11 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.controlComponents
 
+import de.htwg.wizard.control.controlComponents.*
+import de.htwg.wizard.control.controlComponents.command.*
+import de.htwg.wizard.control.*
+import de.htwg.wizard.control.controlComponents.strategy.TrickStrategy
 import de.htwg.wizard.model.*
-import de.htwg.wizard.control.command.*
-import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.strategy.TrickStrategy
+import de.htwg.wizard.model.modelComponent.GameState
 
 /**
  * Internal orchestration of the game.
@@ -19,9 +21,10 @@ import de.htwg.wizard.control.strategy.TrickStrategy
  * - All persistent state lives in GameState
  */
 class GameControl(
+                   model: ModelInterface,
                    strategy: TrickStrategy,
                    notify: GameEvent => Unit
-                 ) {
+                 ){
 
   // =========================================================
   // Internal state
@@ -48,7 +51,7 @@ class GameControl(
   // Phase handling
   // =========================================================
 
-  private def firePhase(): Unit =
+  private def firePhase(): Unit = {
     val s = currentState
 
     phase match
@@ -70,7 +73,7 @@ class GameControl(
       case FinishState =>
         val winner = s.players.maxBy(_.totalPoints)
         notify(GameFinished(winner, s))
-
+  }
 
   // =========================================================
   // Input handling
@@ -85,32 +88,30 @@ class GameControl(
         .copy(completedTricks = 0)
 
     state = Some(prepared)
-
     phase = PredictState
     firePhase()
   }
-
 
   def submitPredictions(predictions: Map[Int, Int]): Unit =
     state = Some(PredictCommand(predictions).execute(currentState))
     phase = TrickState(1)
     firePhase()
 
-  def playTrick(moves: Map[Int, Int]): Unit =
+  def playTrick(moves: Map[Int, Int]): Unit = {
     val afterTrick =
       PlayTrickCommand(moves, strategy).execute(currentState)
 
     state = Some(afterTrick)
 
-    if afterTrick.players.head.hand.isEmpty then
-      phase = ScoreState
-    else
-      phase = TrickState(afterTrick.completedTricks + 1)
+    phase =
+      if afterTrick.players.head.hand.isEmpty
+      then ScoreState
+      else TrickState(afterTrick.completedTricks + 1)
 
     firePhase()
+  }
 
-
-  def prepareNextRound(): Unit =
+  def prepareNextRound(): Unit = {
     val next =
       PrepareRoundCommand.execute(currentState)
         .copy(completedTricks = 0)
@@ -123,6 +124,7 @@ class GameControl(
       else PredictState
 
     firePhase()
+  }
 
   // =========================================================
   // Undo / Redo hooks (optional, UI compatibility)
@@ -164,6 +166,4 @@ class GameControl(
           trick = trick
         )
   }
-
-
 }

@@ -1,8 +1,10 @@
 package de.htwg.wizard.control.strategy
 
+import de.htwg.wizard.control.controlComponents.strategy.AlternativeTrickStrategy
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Player, Trick}
 
 class AlternativeTrickStrategySpec extends AnyWordSpec with Matchers {
 

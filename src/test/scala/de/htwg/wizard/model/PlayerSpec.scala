@@ -1,5 +1,6 @@
 package de.htwg.wizard.model
 
+import de.htwg.wizard.model.modelComponent.{CardColor, NormalCard, Player, WizardCard}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 

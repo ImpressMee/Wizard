@@ -1,6 +1,7 @@
-package de.htwg.wizard.control.strategy
+package de.htwg.wizard.control.controlComponents.strategy
 
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Player, Trick, isJoker, isNormal, isWizard, value}
 
 class AlternativeTrickStrategy extends TrickStrategy:
 

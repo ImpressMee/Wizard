@@ -1,8 +1,8 @@
 package de.htwg.wizard.view
 
-import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.observer.Observer
+import de.htwg.wizard.control.{GameEvent, GameFinished, Observer, PlayerAmountRequested, PredictionsRequested, RoundFinished, RoundStarted, TrickFinished, TrickMoveRequested}
 import de.htwg.wizard.model.*
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Player}
 
 class TuiView extends Observer {
 

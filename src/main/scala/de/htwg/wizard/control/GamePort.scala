@@ -1,8 +1,6 @@
-package de.htwg.wizard.component.game
+package de.htwg.wizard.control
 
-import de.htwg.wizard.control.input.GameInput
-import de.htwg.wizard.control.observer.Observer
-import de.htwg.wizard.model.GameState
+import de.htwg.wizard.model.modelComponent.GameState
 
 /**
  * GamePort is the stable interface (port) of the GameComponent.

@@ -1,4 +1,6 @@
-package de.htwg.wizard.model
+package de.htwg.wizard.model.modelComponent
+
+import de.htwg.wizard.model.modelComponent.CardColor
 
 case class GameStateMemento(
                              amountOfPlayers: Int,

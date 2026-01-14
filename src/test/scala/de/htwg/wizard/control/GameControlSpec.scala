@@ -1,11 +1,12 @@
 package de.htwg.wizard.control
 
+import de.htwg.wizard.control.controlComponents.GameControl
+import de.htwg.wizard.control.controlComponents.strategy.TrickStrategy
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-
 import de.htwg.wizard.model.*
 import de.htwg.wizard.control.event.*
-import de.htwg.wizard.control.strategy.TrickStrategy
+import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player, Trick}
 
 class GameControlSpec extends AnyWordSpec with Matchers {
 

@@ -1,6 +1,6 @@
-package de.htwg.wizard.control.event
-
-import de.htwg.wizard.model.{Card, GameState, Player}
+package de.htwg.wizard.control
+import de.htwg.wizard.control.GameEvent
+import de.htwg.wizard.model.modelComponent.{Card, GameState, Player}
 
 sealed trait GameEvent {
   def state: GameState
