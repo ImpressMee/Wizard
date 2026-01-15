@@ -1,12 +1,12 @@
-package de.htwg.wizard.control.observer
+package de.htwg.wizard.control
 
 import de.htwg.wizard.control.{GameEvent, Observer, StateChanged}
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
 import de.htwg.wizard.model.modelComponent.{Deck, GameState}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class ObserverSpec extends AnyWordSpec with Matchers {
+class bserverSpec extends AnyWordSpec with Matchers {
 
   "Observer trait" should {
 

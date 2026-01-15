@@ -25,13 +25,18 @@ class GuiViewSpec extends AnyWordSpec with Matchers {
   // Fake GamePort
   class FakeGamePort extends GamePort {
     var started = false
-    var lastInput: Option[GameInput] = None
+    var inputs: List[GameInput] = Nil
 
     override def registerObserver(observer: Observer): Unit = ()
     override def startGame(): Unit = started = true
-    override def handleInput(input: GameInput): Unit = lastInput = Some(input)
-    override def isAllowedMove(pid: Int, idx: Int, state: GameState): Boolean = true
+    override def init(): Unit = ()
+    override def handleInput(input: GameInput): Unit =
+      inputs ::= input
+
+    override def isAllowedMove(p: Int, c: Int, s: GameState): Boolean = true
+    override def canSafelyExit: Boolean = true
   }
+
 
   val baseState =
     GameState(

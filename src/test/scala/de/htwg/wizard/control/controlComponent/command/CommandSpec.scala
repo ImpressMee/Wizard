@@ -1,17 +1,15 @@
 package de.htwg.wizard.control.controlComponent.command
 
-import de.htwg.wizard.control.controlComponent.command.Command
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.wizard.model.*
-import de.htwg.wizard.model.modelComponent.{Deck, GameState, Player}
+import de.htwg.wizard.model.modelComponent.GameState
 
 class CommandSpec extends AnyWordSpec with Matchers {
 
   // ---------------------------------------------------------
-  // Dummy Command for testing the Command contract
+  // Dummy Command for contract testing
   // ---------------------------------------------------------
-  case object DummyCommand extends Command {
+  object DummyCommand extends Command {
     override def execute(state: GameState): GameState =
       state.copy(currentRound = state.currentRound + 1)
   }
@@ -20,24 +18,18 @@ class CommandSpec extends AnyWordSpec with Matchers {
   // Test data
   // ---------------------------------------------------------
   val initialState: GameState =
-    GameState(
-      amountOfPlayers = 3,
-      players = List(Player(0), Player(1), Player(2)),
-      deck = Deck(),
-      currentRound = 1,
-      totalRounds = 5
-    )
+    GameState.empty.copy(currentRound = 1)
 
   // ---------------------------------------------------------
   // Tests
   // ---------------------------------------------------------
   "A Command" should {
 
-    "return a new GameState when executed" in {
-      val newState = DummyCommand.execute(initialState)
+    "transform a GameState into a new GameState" in {
+      val result = DummyCommand.execute(initialState)
 
-      newState shouldBe a [GameState]
-      newState.currentRound shouldBe 2
+      result shouldBe a[GameState]
+      result.currentRound shouldBe 2
     }
 
     "not mutate the original GameState" in {
@@ -46,7 +38,7 @@ class CommandSpec extends AnyWordSpec with Matchers {
       initialState.currentRound shouldBe 1
     }
 
-    "follow the Command contract (GameState => GameState)" in {
+    "return a different instance than the input state" in {
       val result = DummyCommand.execute(initialState)
 
       result should not be theSameInstanceAs(initialState)

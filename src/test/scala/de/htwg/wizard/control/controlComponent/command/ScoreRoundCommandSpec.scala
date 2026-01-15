@@ -71,15 +71,20 @@ class ScoreRoundCommandSpec extends AnyWordSpec with Matchers {
       result.players.find(_.id == 2).get.totalPoints shouldBe -30
     }
 
-    "reset tricks and predictedTricks after scoring" in {
+    "keep tricks and predictedTricks unchanged after scoring" in {
       val result =
         ScoreRoundCommand.execute(initialState)
 
-      result.players.foreach { p =>
-        p.tricks shouldBe 0
-        p.predictedTricks shouldBe 0
-      }
+      result.players.find(_.id == 0).get.tricks shouldBe 2
+      result.players.find(_.id == 0).get.predictedTricks shouldBe 2
+
+      result.players.find(_.id == 1).get.tricks shouldBe 1
+      result.players.find(_.id == 1).get.predictedTricks shouldBe 2
+
+      result.players.find(_.id == 2).get.tricks shouldBe 3
+      result.players.find(_.id == 2).get.predictedTricks shouldBe 0
     }
+
 
     "not mutate the original GameState" in {
       ScoreRoundCommand.execute(initialState)

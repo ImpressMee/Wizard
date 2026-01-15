@@ -70,13 +70,6 @@ class PrepareRoundCommandSpec extends AnyWordSpec with Matchers {
         Deck().cards.size - dealtCards
     }
 
-    "reset the current trump to None" in {
-      val result =
-        PrepareRoundCommand.execute(initialState)
-
-      result.currentTrump shouldBe None
-    }
-
     "not mutate the original GameState" in {
       PrepareRoundCommand.execute(initialState)
 

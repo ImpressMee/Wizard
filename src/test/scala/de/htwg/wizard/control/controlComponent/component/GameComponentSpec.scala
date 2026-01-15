@@ -5,110 +5,157 @@ import org.scalatest.matchers.should.Matchers
 
 import de.htwg.wizard.control.*
 import de.htwg.wizard.control.controlComponent.GameControl
-import de.htwg.wizard.control.controlComponent.strategy.TrickStrategy
-import de.htwg.wizard.model.*
-import de.htwg.wizard.model.modelComponent.*
+import de.htwg.wizard.model.modelComponent.{GameState, PlayerID}
+
+// ---------------------------------------------------------
+// Fake GameControl for delegation testing
+// ---------------------------------------------------------
+class FakeGameControl extends GameControl(null, null) {
+
+  var initCalled = false
+  var startCalledWith: Option[GameState] = None
+  var submittedPlayerAmount: Option[Int] = None
+  var predictionsSubmitted = false
+  var trickPlayed = false
+  var undoCalled = false
+  var redoCalled = false
+  var loadCalled = false
+  var nextRoundCalled = false
+  var isAllowedMoveCalled = false
+
+  override def init(): Unit =
+    initCalled = true
+
+  override def start(state: GameState): Unit =
+    startCalledWith = Some(state)
+
+  override def submitPlayerAmount(n: Int): Unit =
+    submittedPlayerAmount = Some(n)
+
+  override def submitPredictions(p: Map[Int, Int]): Unit =
+    predictionsSubmitted = true
+
+  override def playTrick(m: Map[Int, Int]): Unit =
+    trickPlayed = true
+
+  override def prepareNextRound(): Unit =
+    nextRoundCalled = true
+
+  override def undo(): Unit =
+    undoCalled = true
+
+  override def redo(): Unit =
+    redoCalled = true
+
+  override def loadGame(): Unit =
+    loadCalled = true
+
+  override def isAllowedMove(
+                              playerId: PlayerID,
+                              cardIndex: Int,
+                              state: GameState
+                            ): Boolean = {
+    isAllowedMoveCalled = true
+    true
+  }
+
+  override def canSafelyExit: Boolean = true
+}
 
 class GameComponentSpec extends AnyWordSpec with Matchers {
 
-  // ---------------------------------------------------------
-  // Test Observer
-  // ---------------------------------------------------------
-  class TestObserver extends Observer {
-    var events: List[GameEvent] = Nil
-    override def update(event: GameEvent): Unit =
-      events ::= event
-  }
-
-  // ---------------------------------------------------------
-  // Deterministic Strategy
-  // ---------------------------------------------------------
-  object TestStrategy extends TrickStrategy {
-    override def winner(trick: Trick, trump: Option[CardColor]): (Int, Card) =
-      trick.played.head
-
-    override def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean =
-      true
-  }
-
-  // ---------------------------------------------------------
-  // Helper
-  // ---------------------------------------------------------
-  private def createGame(): (GameComponent, TestObserver) = {
-    val model: ModelInterface = new ModelComponent()
-    val control = new GameControl(model, TestStrategy)
-
-    val game = new GameComponent(control)
-    val obs  = new TestObserver
-
-    game.registerObserver(obs)
-    (game, obs)
-  }
-
-  // ---------------------------------------------------------
-  // Tests
-  // ---------------------------------------------------------
   "GameComponent" should {
 
-    "emit PlayerAmountRequested on startGame" in {
-      val (game, obs) = createGame()
+    "delegate init to GameControl" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
 
-      game.startGame()
+      game.init()
 
-      obs.events.exists(_.isInstanceOf[PlayerAmountRequested]) shouldBe true
+      control.initCalled shouldBe true
     }
 
-    "forward PlayerAmountSelected to GameControl" in {
-      val (game, obs) = createGame()
+    "delegate startGame with empty GameState" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
 
       game.startGame()
+
+      control.startCalledWith shouldBe Some(GameState.empty)
+    }
+
+    "delegate PlayerAmountSelected to submitPlayerAmount" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
+
       game.handleInput(PlayerAmountSelected(3))
 
-      obs.events.exists(_.isInstanceOf[PredictionsRequested]) shouldBe true
+      control.submittedPlayerAmount shouldBe Some(3)
     }
 
-    "forward PredictionsSubmitted to GameControl" in {
-      val (game, obs) = createGame()
+    "delegate PredictionsSubmitted to submitPredictions" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
 
-      game.startGame()
-      game.handleInput(PlayerAmountSelected(3))
-      game.handleInput(PredictionsSubmitted(Map(0 -> 0, 1 -> 0, 2 -> 0)))
+      game.handleInput(PredictionsSubmitted(Map(0 -> 1)))
 
-      obs.events.exists(_.isInstanceOf[TrickMoveRequested]) shouldBe true
+      control.predictionsSubmitted shouldBe true
     }
 
-    "emit StateChanged on Undo" in {
-      val (game, obs) = createGame()
+    "delegate TrickMovesSubmitted to playTrick" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
 
-      game.startGame()
+      game.handleInput(TrickMovesSubmitted(Map(0 -> 0)))
+
+      control.trickPlayed shouldBe true
+    }
+
+    "delegate ContinueAfterRound to prepareNextRound" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
+
+      game.handleInput(ContinueAfterRound)
+
+      control.nextRoundCalled shouldBe true
+    }
+
+    "delegate Undo and Redo" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
+
       game.handleInput(Undo)
-
-      obs.events.exists(_.isInstanceOf[StateChanged]) shouldBe true
-    }
-
-    "emit StateChanged on Redo" in {
-      val (game, obs) = createGame()
-
-      game.startGame()
       game.handleInput(Redo)
 
-      obs.events.exists(_.isInstanceOf[StateChanged]) shouldBe true
+      control.undoCalled shouldBe true
+      control.redoCalled shouldBe true
+    }
+
+    "delegate LoadGame" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
+
+      game.handleInput(LoadGame)
+
+      control.loadCalled shouldBe true
     }
 
     "delegate isAllowedMove to GameControl" in {
-      val (game, _) = createGame()
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
 
-      val state =
-        GameState(
-          amountOfPlayers = 1,
-          players = List(Player(0, hand = List(Card(CardColor.Red, 1)))),
-          deck = Deck(),
-          currentRound = 1,
-          totalRounds = 1,
-          currentTrick = Some(Trick(Map.empty))
-        )
+      val result =
+        game.isAllowedMove(0, 0, GameState.empty)
 
-      game.isAllowedMove(0, 0, state) shouldBe true
+      result shouldBe true
+      control.isAllowedMoveCalled shouldBe true
+    }
+
+    "delegate canSafelyExit to GameControl" in {
+      val control = new FakeGameControl
+      val game    = new GameComponent(control)
+
+      game.canSafelyExit shouldBe true
     }
   }
 }

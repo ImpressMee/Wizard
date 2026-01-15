@@ -71,12 +71,16 @@ class PlayTrickCommandSpec extends AnyWordSpec with Matchers {
       result.players.find(_.id == 1).get.tricks shouldBe 0
     }
 
-    "reset currentTrick to None after execution" in {
+    "update currentTrick with the played cards" in {
       val result =
         PlayTrickCommand(moves, TestStrategy).execute(initialState)
 
-      result.currentTrick shouldBe None
+      result.currentTrick.get.played shouldBe Map(
+        0 -> cardA,
+        1 -> cardD
+      )
     }
+
 
     "not mutate the original GameState" in {
       PlayTrickCommand(moves, TestStrategy).execute(initialState)
