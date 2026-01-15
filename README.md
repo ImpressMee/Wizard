@@ -85,7 +85,7 @@ $env:DISPLAY="host.docker.internal:0"
 
 ## 4. Use it
 ```
-git clone <repo-url>
+git clone https://github.com/ImpressMee/Wizard.git
 cd Wizard
 docker build -t wizard .
 docker run -it ^
