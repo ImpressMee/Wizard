@@ -18,6 +18,12 @@ https://coveralls.io/github/ImpressMee/Wizard
 #### Component Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
 
+#### Dependency Injection Branch
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+
+#### FileIO Branch
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+
 
 # Wizard – Docker GUI Setup Guide
 

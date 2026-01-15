@@ -51,17 +51,22 @@ class GuiView(game: GamePort) extends Observer {
       event match
         case PlayerAmountRequested(_) =>
           stage.scene = playerCountScene()
+
         case PredictionsRequested(state) =>
           predictionIndex = 0
           predictions = Map.empty
           stage.scene = predictionScene(state)
+
         case TrickMoveRequested(_, state) =>
           trickMoves = Map.empty
           stage.scene = gameBoardScene(state)
+
         case RoundFinished(state) =>
           stage.scene = roundSummaryScene(state)
+
         case GameFinished(winner, state) =>
           stage.scene = endScene(winner, state)
+
         case _ => ()
     }
 
@@ -81,23 +86,24 @@ class GuiView(game: GamePort) extends Observer {
 
   private def startScene(): Scene =
     styledScene(
-      new StackPane {
-        children = Seq(
-          new VBox {
-            styleClass += "start-background"
-            alignment = Pos.Center
-            spacing = 30
-            children = Seq(
-              new Label("WIZARD") { styleClass += "title" },
-              new Button("Start") {
-                styleClass += "button"
-                onAction = _ => game.startGame()
-              }
-            )
-          }
-        )
+      new BorderPane {
+        styleClass += "start-scene"
+        top = new VBox {
+          alignment = Pos.TopCenter
+          padding = Insets(40, 5, 20, 0)
+          children = Seq(
+            new Label("WIZARD") {
+              styleClass += "title"
+            }
+          )
+        }
+
+        center = new Button("Enter") {
+          onAction = _ => game.startGame()
+        }
       }
     )
+
 
 
   // =========================================================
@@ -107,7 +113,7 @@ class GuiView(game: GamePort) extends Observer {
   private def playerCountScene(): Scene =
     styledScene(
       new VBox {
-        styleClass += "game-background"
+        styleClass += "player-count-scene"
         alignment = Pos.Center
         spacing = 15
         children =
@@ -115,7 +121,7 @@ class GuiView(game: GamePort) extends Observer {
             styleClass += "pre-game-title"
           }) ++
             Seq(3, 4, 5, 6).map { n =>
-              new Button(s"$n Spieler") {
+              new Button(s"$n Players") {
                 onAction = _ => game.handleInput(PlayerAmountSelected(n))
               }
             } :+
@@ -134,7 +140,7 @@ class GuiView(game: GamePort) extends Observer {
     val player = state.players(predictionIndex)
     styledScene(
       new VBox {
-        styleClass += "game-background"
+        styleClass += "prediction-scene"
         alignment = Pos.Center
         spacing = 20
         children = Seq(
@@ -177,25 +183,22 @@ class GuiView(game: GamePort) extends Observer {
 
     styledScene(
       new BorderPane {
-        styleClass += "game-background"
+        styleClass += "playing-scene"
         top = new VBox {
           styleClass += "player-info"
           padding = Insets(10)
           children = Seq(
-            new Label(s"Runde: ${state.currentRound}"),
-            new Label(s"Trumpf: ${state.currentTrump.getOrElse("Kein")}"){
+            new Label(s"Round: ${state.currentRound}"),
+            new Label(s"Trump: ${state.currentTrump.getOrElse("ERROR")}"){
               styleClass += "trump-label"
             },
             new Label(s"Stich: ${state.completedTricks + 1}"),
-            new Label(s"Aktiver Spieler: Player ${activePlayer.id}")
+            new Label(s"Active Player: Player ${activePlayer.id}")
           )
         }
         center = new HBox {
           spacing = 20
           alignment = Pos.Center
-          prefHeight = 200
-          maxHeight = 200
-          styleClass += "playingfield"
           children =
             trickMoves.toSeq
               .sortBy(_._1)
@@ -210,7 +213,7 @@ class GuiView(game: GamePort) extends Observer {
           spacing = 10
           padding = Insets(0, 0, 60, 0)
           children = Seq(
-            new Label(s"Player ${activePlayer.id}, wähle eine Karte:") {
+            new Label(s"Player ${activePlayer.id}, Choose A Card:") {
               styleClass += "text-label"
               style = "-fx-font-weight: bold"
             },
@@ -263,15 +266,14 @@ class GuiView(game: GamePort) extends Observer {
                   styleClass += "text-label"
                   children = Seq(
                     new Label(s"Player ${p.id}"),
-                    new Label(s"tricks predicted: ${p.predictedTricks}"),
-                    new Label(s"actual tricks:    ${p.tricks}"),
-                    new Label(s"=> total points:  ${p.totalPoints}"),
-                    new Separator()
+                    new Label(s"Tricks Predicted: ${p.predictedTricks}"),
+                    new Label(s"Actual Tricks:    ${p.tricks}"),
+                    new Label(s"=> Total Points:  ${p.totalPoints}"),
                   )
                 }
               }
           },
-          new Button("Weiter") {
+          new Button("Continue") {
             onAction = _ => game.handleInput(ContinueAfterRound)
           }
         )
@@ -294,7 +296,6 @@ class GuiView(game: GamePort) extends Observer {
           new Label(s"Points: ${winner.totalPoints}") {
             styleClass += "text-label"
           },
-          new Separator(),
           new Label("Final scores:") {
             styleClass += "text-label"
           },
@@ -310,9 +311,11 @@ class GuiView(game: GamePort) extends Observer {
                   }
                 )
           },
-          new Separator(),
-          new Button("Ende") {
+          new Button("Play Again") {
             onAction = _ => showStart(stage)
+          },
+          new Button("Exit") {
+            onAction = _ => Platform.exit()
           }
         )
       }
@@ -341,19 +344,9 @@ class GuiView(game: GamePort) extends Observer {
     }
 
   private def cardNode(card: Card, cardWidth: Double): StackPane =
-
-    val label = new Label(
-      card.cardType match
-        case CardType.Normal(v) => s"${card.color} $v"
-        case CardType.Wizard => s"${card.color} Wizard"
-        case CardType.Joker => s"${card.color} Joker"
-    )
-    label.styleClass += "card-label"
-    StackPane.setAlignment(label, Pos.TopCenter)
-
     new StackPane {
       prefWidth = cardWidth
       prefHeight = cardWidth * 1.45
-      children = Seq(cardImage(card, cardWidth), label)
+      children = Seq(cardImage(card, cardWidth))
     }
 }

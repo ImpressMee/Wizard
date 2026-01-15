@@ -101,7 +101,7 @@ class TuiView extends Observer {
       // ===============================
       case TrickFinished(winnerId, _) =>
         println(
-          s"${Console.GREEN}///----Trick won by Player $winnerId----///${Console.RESET}"
+          s"${Console.GREEN}///---- Trick won by Player $winnerId ----///${Console.RESET}"
         )
 
       // ===============================
@@ -109,7 +109,7 @@ class TuiView extends Observer {
       // ===============================
       case RoundFinished(state) =>
         println(
-          s"\n${Console.MAGENTA}//////--Round Evaluation--//////${Console.RESET}"
+          s"\n${Console.MAGENTA}//////-- Round Evaluation --//////${Console.RESET}"
         )
         state.players.foreach { p =>
           println(
@@ -122,7 +122,7 @@ class TuiView extends Observer {
                |""".stripMargin
           )
         }
-        println("Press ENTER / click 'Weiter' in GUI to continue...")
+        println("Press ENTER / click 'Continue' in GUI to continue...")
 
       // ===============================
       // Game finished

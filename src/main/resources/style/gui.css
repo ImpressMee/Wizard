@@ -1,35 +1,45 @@
 /* ---------- GLOBAL ---------- */
 
 .root {
-    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-family: "Arial";
 }
 
 /* ---------- TITLES ---------- */
 
 .title {
-    -fx-font-size: 64px;
+    -fx-font-size: 90px;
     -fx-font-family: "Jokerman";
+    -fx-font-weight: bold;
 }
 
 .winner-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
 }
 
 .round-summary-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
 }
 
 .pre-game-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
 }
 /* ---------- BUTTONS ---------- */
 
+
 .button {
     -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    
+    -fx-background-repeat: repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-size: 400% 450%;
+    -fx-text-fill: black;
 }
+
 .button:hover {
     -fx-scale-x: 1.1;
     -fx-scale-y: 1.1;
@@ -46,7 +56,7 @@
 
     /* Holographic Gradient */
     -fx-background-color: linear-gradient(
-        from 0% 0% to 100% 100%,
+        from 0% 0% to 70% 70%,
         #00ffff26,
         #ff00ff26,
         #00ffff26
@@ -68,7 +78,7 @@
 
 
 .text-label {
-    -fx-font-size: 15px;
+    -fx-font-size: 18px;
 }
 .trump-label {
     -fx-font-weight: bold;
@@ -88,13 +98,6 @@
 
 .game-background {
      -fx-background-color: #d5e4f9;
-}
-
-.playingfield {
-    -fx-padding: 20;
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
-    -fx-background-color: #dfd6ef;
 }
 
 .center-row {
@@ -122,6 +125,34 @@
 
 .start-background {
     -fx-background-image: url("/cards/background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.prediction-scene {
+    -fx-background-image: url("/cards/prediction-scene-background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.start-scene {
+    -fx-background-image: url("/cards/start-scene-background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.player-count-scene {
+    -fx-background-image: url("/cards/player-count-scene-background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.playing-scene {
+    -fx-background-image: url("/cards/playing-scene-background.png");
     -fx-background-size: cover;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
