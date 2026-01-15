@@ -10,7 +10,7 @@ https://coveralls.io/github/ImpressMee/Wizard
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=pattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=pattern)
 
 #### undoPattern Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg)](https://coveralls.io/github/ImpressMee/Wizard)
 
 #### GUI Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=GUI)](https://coveralls.io/github/ImpressMee/Wizard?branch=GUI)
