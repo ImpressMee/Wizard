@@ -94,3 +94,20 @@ docker run -it ^
   -e JAVA_OPTS="-Dprism.order=sw" ^
   wizard
 ```
+
+## Copyright Disclaimer
+
+
+````
+Copyright Notice
+
+All images and graphics used in this project – except for the playing cards –
+were taken from publicly available internet sources.
+This project is a non-commercial educational project and is used for academic purposes only.
+All rights remain with their respective copyright holders.
+
+The playing cards were illustrated by @lelomaggelb (Instagram).
+Copyright for the cards belongs to the artist.
+They are used with her permission for this non-commercial project.
+
+````

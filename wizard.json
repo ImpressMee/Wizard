@@ -3,120 +3,89 @@
     "tricks" : 0,
     "hand" : [ {
       "type" : "normal",
-      "color" : "Yellow",
+      "color" : "Green",
       "value" : 9
     }, {
       "type" : "normal",
-      "color" : "Green",
-      "value" : 13
+      "color" : "Red",
+      "value" : 9
     }, {
       "type" : "normal",
-      "color" : "Yellow",
-      "value" : 8
+      "color" : "Red",
+      "value" : 2
     }, {
       "type" : "normal",
-      "color" : "Green",
-      "value" : 8
+      "color" : "Red",
+      "value" : 1
     } ],
     "id" : 0,
     "predictedTricks" : 0,
-    "totalPoints" : 60
+    "totalPoints" : 0
   }, {
     "tricks" : 0,
     "hand" : [ {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 4
+      "type" : "joker",
+      "color" : "Blue"
     }, {
       "type" : "normal",
       "color" : "Red",
-      "value" : 11
+      "value" : 12
     }, {
       "type" : "normal",
       "color" : "Green",
-      "value" : 2
+      "value" : 11
     }, {
-      "type" : "joker",
-      "color" : "Green"
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 4
     } ],
     "id" : 1,
     "predictedTricks" : 0,
-    "totalPoints" : -50
+    "totalPoints" : 10
   }, {
     "tricks" : 0,
     "hand" : [ {
       "type" : "normal",
-      "color" : "Blue",
-      "value" : 2
-    }, {
-      "type" : "normal",
       "color" : "Yellow",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
       "value" : 6
-    }, {
-      "type" : "joker",
-      "color" : "Blue"
-    } ],
-    "id" : 2,
-    "predictedTricks" : 0,
-    "totalPoints" : -40
-  } ],
-  "totalRounds" : 4,
-  "currentTrump" : "Yellow",
-  "deck" : {
-    "cards" : [ {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 7
     }, {
       "type" : "wizard",
       "color" : "Blue"
     }, {
       "type" : "normal",
-      "color" : "Red",
+      "color" : "Blue",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 2
+    } ],
+    "id" : 2,
+    "predictedTricks" : 0,
+    "totalPoints" : -60
+  } ],
+  "totalRounds" : 4,
+  "currentTrump" : "Green",
+  "deck" : {
+    "cards" : [ {
+      "type" : "normal",
+      "color" : "Green",
       "value" : 8
     }, {
       "type" : "normal",
       "color" : "Yellow",
-      "value" : 10
+      "value" : 7
     }, {
       "type" : "normal",
-      "color" : "Yellow",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Red",
+      "color" : "Green",
       "value" : 6
     }, {
       "type" : "normal",
       "color" : "Blue",
-      "value" : 1
+      "value" : 5
     }, {
       "type" : "normal",
       "color" : "Blue",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Green",
       "value" : 6
     }, {
       "type" : "normal",
@@ -124,8 +93,37 @@
       "value" : 13
     }, {
       "type" : "normal",
+      "color" : "Yellow",
+      "value" : 9
+    }, {
+      "type" : "normal",
       "color" : "Red",
-      "value" : 5
+      "value" : 11
+    }, {
+      "type" : "joker",
+      "color" : "Red"
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 12
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 12
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 1
+    }, {
+      "type" : "wizard",
+      "color" : "Yellow"
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 8
+    }, {
+      "type" : "joker",
+      "color" : "Green"
     }, {
       "type" : "normal",
       "color" : "Red",
@@ -133,126 +131,128 @@
     }, {
       "type" : "normal",
       "color" : "Green",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 11
-    }, {
-      "type" : "wizard",
-      "color" : "Yellow"
+      "value" : 10
     }, {
       "type" : "normal",
       "color" : "Blue",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 5
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 4
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 8
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 9
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 12
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
       "value" : 11
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 7
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 7
     }, {
       "type" : "normal",
       "color" : "Green",
       "value" : 1
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 13
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 6
     }, {
       "type" : "normal",
       "color" : "Blue",
       "value" : 8
     }, {
       "type" : "normal",
-      "color" : "Green",
+      "color" : "Blue",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
       "value" : 7
-    }, {
-      "type" : "joker",
-      "color" : "Red"
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 5
     }, {
       "type" : "wizard",
       "color" : "Green"
     }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 13
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 5
-    }, {
       "type" : "joker",
       "color" : "Yellow"
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 13
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 11
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 6
     }, {
       "type" : "wizard",
       "color" : "Red"
     }, {
       "type" : "normal",
+      "color" : "Yellow",
+      "value" : 4
+    }, {
+      "type" : "normal",
       "color" : "Green",
-      "value" : 9
+      "value" : 13
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 11
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 13
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 1
     }, {
       "type" : "normal",
       "color" : "Green",
       "value" : 3
     }, {
       "type" : "normal",
+      "color" : "Yellow",
+      "value" : 5
+    }, {
+      "type" : "normal",
       "color" : "Green",
       "value" : 5
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 3
     } ]
   },
   "amountOfPlayers" : 3,
