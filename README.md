@@ -9,20 +9,20 @@ https://coveralls.io/github/ImpressMee/Wizard
 #### Pattern Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=pattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=pattern)
 
-#### Pattern Branch
+#### undoPattern Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
 
 #### GUI Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=GUI)](https://coveralls.io/github/ImpressMee/Wizard?branch=GUI)
 
 #### Component Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=Component)](https://coveralls.io/github/ImpressMee/Wizard?branch=Component)
 
 #### Dependency Injection Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=di)](https://coveralls.io/github/ImpressMee/Wizard?branch=di)
 
 #### FileIO Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=FileIO)](https://coveralls.io/github/ImpressMee/Wizard?branch=FileIO)
 
 
 # Wizard – Docker GUI Setup Guide
