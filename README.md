@@ -9,5 +9,5 @@ https://coveralls.io/github/ImpressMee/Wizard
 #### Pattern Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=pattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=pattern)
 
-#### Pattern Branch
+#### undoPattern Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=undoPattern)](https://coveralls.io/github/ImpressMee/Wizard?branch=undoPattern)
