@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<game>
+        <meta>
+          <amountOfPlayers>3</amountOfPlayers>
+          <currentRound>2</currentRound>
+          <totalRounds>4</totalRounds>
+          <completedTricks>0</completedTricks>
+          <trump>Red</trump>
+        </meta>
+        <players><player>
+          <id>0</id>
+          <points>20</points>
+          <predicted>1</predicted>
+          <won>2</won>
+          <hand></hand>
+        </player><player>
+          <id>1</id>
+          <points>-20</points>
+          <predicted>1</predicted>
+          <won>0</won>
+          <hand></hand>
+        </player><player>
+          <id>2</id>
+          <points>-20</points>
+          <predicted>1</predicted>
+          <won>0</won>
+          <hand></hand>
+        </player></players>
+        <deck><card type="normal" color="Red" value="7"/><card type="normal" color="Yellow" value="6"/><card type="normal" color="Blue" value="7"/><card type="wizard" color="Blue"/><card type="normal" color="Blue" value="9"/><card type="joker" color="Yellow"/><card type="normal" color="Red" value="8"/><card type="normal" color="Yellow" value="4"/><card type="normal" color="Green" value="5"/><card type="normal" color="Red" value="1"/><card type="normal" color="Green" value="11"/><card type="normal" color="Blue" value="10"/><card type="normal" color="Red" value="4"/><card type="normal" color="Red" value="10"/><card type="wizard" color="Green"/><card type="normal" color="Yellow" value="7"/><card type="normal" color="Yellow" value="12"/><card type="normal" color="Blue" value="5"/><card type="normal" color="Blue" value="11"/><card type="normal" color="Red" value="5"/><card type="normal" color="Red" value="11"/><card type="wizard" color="Yellow"/><card type="normal" color="Green" value="2"/><card type="normal" color="Green" value="10"/><card type="normal" color="Green" value="9"/><card type="normal" color="Blue" value="4"/><card type="normal" color="Yellow" value="8"/><card type="normal" color="Green" value="8"/><card type="normal" color="Green" value="3"/><card type="normal" color="Red" value="9"/><card type="normal" color="Yellow" value="5"/><card type="normal" color="Green" value="6"/><card type="joker" color="Green"/><card type="normal" color="Yellow" value="13"/><card type="normal" color="Green" value="7"/><card type="normal" color="Red" value="2"/><card type="normal" color="Yellow" value="10"/><card type="normal" color="Green" value="13"/><card type="normal" color="Blue" value="13"/><card type="normal" color="Red" value="12"/><card type="wizard" color="Red"/><card type="normal" color="Green" value="4"/><card type="normal" color="Blue" value="1"/><card type="normal" color="Yellow" value="9"/><card type="joker" color="Blue"/><card type="normal" color="Green" value="1"/><card type="normal" color="Yellow" value="1"/><card type="normal" color="Blue" value="6"/><card type="normal" color="Green" value="12"/><card type="joker" color="Red"/><card type="normal" color="Yellow" value="3"/><card type="normal" color="Yellow" value="2"/><card type="normal" color="Yellow" value="11"/><card type="normal" color="Blue" value="3"/></deck>
+        
+      </game>

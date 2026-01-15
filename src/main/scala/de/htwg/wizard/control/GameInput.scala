@@ -44,3 +44,4 @@ case object ContinueAfterRound extends GameInput
 
 case object Undo extends GameInput
 case object Redo extends GameInput
+case object LoadGame extends GameInput

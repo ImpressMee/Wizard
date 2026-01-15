@@ -4,13 +4,16 @@ import scalafx.application.JFXApp3
 import com.google.inject.Guice
 import de.htwg.wizard.di.StandardModule
 import de.htwg.wizard.control.GamePort
+import de.htwg.wizard.model.modelComponent.GameState
+import de.htwg.wizard.persistence.xml.FileIOXML
 import de.htwg.wizard.view.{GuiView, TuiView}
 
 object Main extends JFXApp3{
 
   override def start(): Unit = {
 
-    // ---------------------------------------------------------
+    // -----------------------------------------
+    // ----------------
     // Dependency Injection (Composition Root)
     // ---------------------------------------------------------
     val injector =
@@ -18,7 +21,7 @@ object Main extends JFXApp3{
 
     val game: GamePort =
       injector.getInstance(classOf[GamePort])
-
+    
     // ---------------------------------------------------------
     // Views
     // ---------------------------------------------------------

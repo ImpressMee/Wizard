@@ -36,13 +36,28 @@ class StandardTrickStrategy extends TrickStrategy {
   }
 
   override def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean =
-    if trick.played.isEmpty then true
-    else
-      val lead =
-        trick.played.values.collectFirst { case c if isNormal(c) => c.color }
 
-      lead.forall { c =>
-        !player.hand.exists(h => isNormal(h) && h.color == c) ||
-          (isNormal(card) && card.color == c)
-      }
+    if isWizard(card) || isJoker(card) then
+      true
+
+    else if trick.played.isEmpty then
+      true
+
+    else
+      val leadColorOpt =
+        trick.played.values.collectFirst {
+          case c if isNormal(c) => c.color
+        }
+
+      leadColorOpt match
+        case None =>
+          true
+
+        case Some(leadColor) =>
+          if player.hand.exists(c => isNormal(c) && c.color == leadColor) then
+            isNormal(card) && card.color == leadColor
+          else
+            true
+
+
 }

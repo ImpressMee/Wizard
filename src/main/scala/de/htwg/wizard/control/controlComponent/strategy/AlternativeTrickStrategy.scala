@@ -38,13 +38,15 @@ class AlternativeTrickStrategy extends TrickStrategy:
               cards.last
   }
 
-  override def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean = {
+  override def isAllowedMove(card: Card, player: Player, trick: Trick): Boolean =
 
-    // First player in the trick may play any card
-    if trick.played.isEmpty then
+    if isWizard(card) || isJoker(card) then
       true
+
+    else if trick.played.isEmpty then
+      true
+
     else
-      // Determine lead color (first normal card played)
       val leadColorOpt =
         trick.played.values.collectFirst {
           case c if isNormal(c) => c.color
@@ -52,14 +54,12 @@ class AlternativeTrickStrategy extends TrickStrategy:
 
       leadColorOpt match
         case None =>
-          // Wizard or Joker led → no color obligation
           true
 
         case Some(leadColor) =>
-          // Player has no card of the lead color → free choice
-          if !player.hand.exists(c => isNormal(c) && c.color == leadColor) then
-            true
-          else
-            // Player must follow suit
+          if player.hand.exists(c => isNormal(c) && c.color == leadColor) then
             isNormal(card) && card.color == leadColor
-  }
+          else
+            true
+
+

@@ -17,6 +17,7 @@ trait GamePort {
   /** Starts the game with an initial state. */
   def startGame(): Unit
 
+  def init(): Unit
   /**
    * Unified entry point for all user interactions.
    * This decouples input handling from concrete UI implementations.
@@ -27,5 +28,5 @@ trait GamePort {
                      cardIndex: Int,
                      state: GameState
                    ): Boolean
-
+  def canSafelyExit: Boolean
 }

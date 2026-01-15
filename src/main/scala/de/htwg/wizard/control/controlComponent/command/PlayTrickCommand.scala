@@ -34,6 +34,6 @@ case class PlayTrickCommand(
 
     state.copy(
       players = updatedPlayers,
-      currentTrick = None,
+      currentTrick = Some(trick),
       completedTricks = state.completedTricks + 1
     )

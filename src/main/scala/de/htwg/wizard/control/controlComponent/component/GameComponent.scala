@@ -10,6 +10,9 @@ class GameComponent @Inject() (
                                 control: GameControl
                               ) extends GamePort {
 
+  override def init(): Unit =
+    control.init()
+
   override def registerObserver(observer: Observer): Unit =
     control.registerObserver(observer)
 
@@ -22,8 +25,9 @@ class GameComponent @Inject() (
       case PredictionsSubmitted(p) => control.submitPredictions(p)
       case TrickMovesSubmitted(m)  => control.playTrick(m)
       case ContinueAfterRound      => control.prepareNextRound()
-      case Undo                   => control.undo()
-      case Redo                   => control.redo()
+      case Undo                    => control.undo()
+      case Redo                    => control.redo()
+      case LoadGame                => control.loadGame()
       case _                      => ()
 
   override def isAllowedMove(
@@ -32,5 +36,9 @@ class GameComponent @Inject() (
                               state: GameState
                             ): Boolean =
     control.isAllowedMove(playerId, cardIndex, state)
+
+  override def canSafelyExit: Boolean =
+    control.canSafelyExit
 }
+  
 

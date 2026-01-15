@@ -1,8 +1,9 @@
 package de.htwg.wizard.control.controlComponent.command
 
+import de.htwg.wizard.control.controlComponent.command.Command
 import de.htwg.wizard.model.modelComponent.GameState
 
-object ScoreRoundCommand extends Command:
+object ScoreRoundCommand extends Command {
 
   override def execute(state: GameState): GameState = {
 
@@ -15,9 +16,7 @@ object ScoreRoundCommand extends Command:
             -10 * (p.tricks - p.predictedTricks).abs
 
         p.copy(
-          totalPoints     = p.totalPoints + delta,
-          predictedTricks = 0,
-          tricks          = 0
+          totalPoints = p.totalPoints + delta
         )
       }
 
@@ -27,3 +26,4 @@ object ScoreRoundCommand extends Command:
       completedTricks = 0
     )
   }
+}

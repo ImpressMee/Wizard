@@ -16,3 +16,8 @@ case class StateChanged(state: GameState) extends GameEvent
 case class PlayerAmountRequested(state: GameState) extends GameEvent
 case class PredictionsRequested(state: GameState) extends GameEvent
 case class TrickMoveRequested(trickNr: Int, state: GameState) extends GameEvent
+
+case class GameLoadAvailable(
+                              available: Boolean,
+                              state: GameState
+                            ) extends GameEvent

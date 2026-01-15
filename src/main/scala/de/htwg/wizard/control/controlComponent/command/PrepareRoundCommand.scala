@@ -1,10 +1,12 @@
 package de.htwg.wizard.control.controlComponent.command
 
-import de.htwg.wizard.model.*
+import de.htwg.wizard.control.controlComponent.command.Command
 import de.htwg.wizard.model.modelComponent.{CardType, Deck, GameState, Player}
-object PrepareRoundCommand extends Command:
 
-  def execute(state: GameState): GameState =
+object PrepareRoundCommand extends Command {
+
+  def execute(state: GameState): GameState = {
+
     val newRound = state.currentRound + 1
     val deck = Deck().shuffle()
 
@@ -23,8 +25,8 @@ object PrepareRoundCommand extends Command:
           val (hand, nd) = d.deal(newRound)
           (
             acc :+ p.copy(
-              hand = hand,
-              tricks = 0,
+              hand            = hand,
+              tricks          = 0,
               predictedTricks = 0
             ),
             nd
@@ -35,7 +37,9 @@ object PrepareRoundCommand extends Command:
       currentRound     = newRound,
       players          = players,
       deck             = restDeck,
-      currentTrump     = None,
+      currentTrump     = trump,
       currentTrick     = None,
       completedTricks  = 0
     )
+  }
+}
