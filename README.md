@@ -16,10 +16,10 @@ https://coveralls.io/github/ImpressMee/Wizard
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=GUI)](https://coveralls.io/github/ImpressMee/Wizard?branch=GUI)
 
 #### Component Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=Component)](https://coveralls.io/github/ImpressMee/Wizard?branch=Component)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=component)](https://coveralls.io/github/ImpressMee/Wizard?branch=component)
 
 #### Dependency Injection Branch
-[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=di)](https://coveralls.io/github/ImpressMee/Wizard?branch=di)
+[![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=di2)](https://coveralls.io/github/ImpressMee/Wizard?branch=di2)
 
 #### FileIO Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=FileIO)](https://coveralls.io/github/ImpressMee/Wizard?branch=FileIO)
