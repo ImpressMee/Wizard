@@ -101,11 +101,7 @@ class GuiView(game: GamePort) extends Observer {
   //FIO
   private val loadButton =
     new Button("Load Game") {
-      style =
-        "-fx-background-color: #1f7a1f;" + // waldgrün
-          "-fx-text-fill: white;" +
-          "-fx-font-size: 16px;" +
-          "-fx-font-weight: bold;"
+      styleClass += "load"
       onAction = _ => game.handleInput(LoadGame)
     }
 

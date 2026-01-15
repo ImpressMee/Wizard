@@ -28,6 +28,13 @@
 }
 /* ---------- BUTTONS ---------- */
 
+.load {
+    -fx-background-color: #1f7a1f;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+
+}
 
 .button {
     -fx-font-size: 15px;

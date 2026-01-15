@@ -25,6 +25,7 @@ object Main extends JFXApp3{
     // ---------------------------------------------------------
     // Views
     // ---------------------------------------------------------
+
     val gui = new GuiView(game)
     val tui = new TuiView()
 
