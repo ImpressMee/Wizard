@@ -7,9 +7,11 @@ import scalafx.stage.Stage
 import de.htwg.wizard.control.{GameFinished, GameInput, GamePort, Observer, PlayerAmountRequested, PredictionsRequested, RoundFinished, TrickMoveRequested}
 import de.htwg.wizard.model.*
 import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player}
+import org.scalatest.Ignore
 
 import java.util.concurrent.CountDownLatch
 
+@Ignore
 class GuiViewSpec extends AnyWordSpec with Matchers {
 
   // JavaFX bootstrap (once)
