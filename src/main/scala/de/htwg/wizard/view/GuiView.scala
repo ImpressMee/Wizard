@@ -169,38 +169,49 @@ class GuiView(game: GamePort) extends Observer {
 
   private def predictionScene(state: GameState): Scene =
     val player = state.players(predictionIndex)
-    styledScene(
-      new VBox {
-        styleClass += "prediction-scene"
-        alignment = Pos.Center
-        spacing = 20
-        children = Seq(
-          new Label(s"Player ${player.id}: How Many Tricks Will You Make?") {
-            styleClass += "pre-game-title"
-          },
-          new HBox {
-            styleClass += "center-row"
-            children = player.hand.map(card => cardNode(card, cardWidthHand))
-          },
-          new HBox {
-            alignment = Pos.Center
-            spacing = 10
-            children =
-              (0 to player.hand.size).map { n =>
-                new Button(n.toString) {
-                  onAction = _ =>
-                    predictions += player.id -> n
-                    predictionIndex += 1
-                    if predictionIndex < state.players.size then
-                      stage.scene = predictionScene(state)
-                    else
-                      game.handleInput(PredictionsSubmitted(predictions))
-                }
-              }
+      styledScene(
+        new BorderPane {
+          styleClass += "prediction-scene"
+          top = new Label(s"Trump: ${state.currentTrump.getOrElse("ERROR")}") {
+            styleClass += "pre-game-trump"
+            BorderPane.setAlignment(this, Pos.TopCenter)
+            BorderPane.setMargin(this, Insets(70, 0, 0, 0))
           }
-        )
-      }
-    )
+
+          center = new VBox {
+            alignment = Pos.Center
+            spacing = 70
+            children = Seq(
+              new Label(s"Player ${player.id}: How Many Tricks Will You Make?") {
+                styleClass += "pre-game-title"
+              },
+
+              new HBox {
+                styleClass += "center-row"
+                children = player.hand.map(card => cardNode(card, cardWidthHand))
+              },
+
+              new HBox {
+                alignment = Pos.Center
+                spacing = 10
+                children =
+                  (0 to player.hand.size).map { n =>
+                    new Button(n.toString) {
+                      onAction = _ =>
+                        predictions += player.id -> n
+                        predictionIndex += 1
+                        if predictionIndex < state.players.size then
+                          stage.scene = predictionScene(state)
+                        else
+                          game.handleInput(PredictionsSubmitted(predictions))
+                    }
+                  }
+              }
+            )
+          }
+        }
+      )
+
 
   // =========================================================
   // Game board

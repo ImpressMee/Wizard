@@ -26,6 +26,12 @@
     -fx-font-size: 23px;
     -fx-font-weight: bold;
 }
+
+.pre-game-trump {
+    -fx-font-size: 23px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
 /* ---------- BUTTONS ---------- */
 
 .load {
