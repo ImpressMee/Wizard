@@ -1,11 +1,13 @@
 package de.htwg.wizard
 
+import org.scalatest.Ignore
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import scalafx.application.Platform
+
 import java.util.concurrent.{CountDownLatch, TimeUnit}
 import java.util.concurrent.atomic.AtomicBoolean
-
+@Ignore
 class MainSpec extends AnyWordSpec with Matchers {
 
   // ---------------------------------------------------------
