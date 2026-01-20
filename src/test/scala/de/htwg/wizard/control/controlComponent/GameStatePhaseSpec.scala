@@ -1,10 +1,10 @@
-package de.htwg.wizard.control
+package de.htwg.wizard.control.controlComponent
 
 import de.htwg.wizard.control.controlComponent.{FinishState, InitState, PredictState, ScoreState, TrickState}
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
 import de.htwg.wizard.model.*
-import de.htwg.wizard.model.modelComponent.{Card, CardColor, Deck, GameState, Player}
+import de.htwg.wizard.model.modelComponent.*
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class GameStatePhaseSpec extends AnyWordSpec with Matchers {
 
