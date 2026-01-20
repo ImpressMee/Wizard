@@ -7,7 +7,8 @@ import scalafx.application.Platform
 
 import java.util.concurrent.{CountDownLatch, TimeUnit}
 import java.util.concurrent.atomic.AtomicBoolean
-@Ignore
+
+
 class MainSpec extends AnyWordSpec with Matchers {
 
   // ---------------------------------------------------------
