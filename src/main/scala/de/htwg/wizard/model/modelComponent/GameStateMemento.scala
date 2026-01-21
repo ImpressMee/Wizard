@@ -11,6 +11,9 @@ case class GameStateMemento(
                              currentTrump: Option[CardColor],
                              currentTrick: Option[Trick]
                            )
+
+
+
 /*
 1. GameState = Originator
    GameState contains the complete current game state

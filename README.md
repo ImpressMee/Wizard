@@ -91,11 +91,7 @@ $env:DISPLAY="host.docker.internal:0"
 git clone https://github.com/ImpressMee/Wizard.git
 cd Wizard
 docker build -t wizard .
-docker run -it ^
-  -e DISPLAY=host.docker.internal:0 ^
-  -e GDK_BACKEND=x11 ^
-  -e JAVA_OPTS="-Dprism.order=sw" ^
-  wizard
+docker run -it -e DISPLAY=host.docker.internal:0 -e GDK_BACKEND=x11 -e JAVA_OPTS="-Dprism.order=sw" wizard
 ```
 
 

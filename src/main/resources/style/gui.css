@@ -13,22 +13,22 @@
 }
 
 .winner-title {
-    -fx-font-size: 23px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .round-summary-title {
-    -fx-font-size: 23px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .pre-game-title {
-    -fx-font-size: 23px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .pre-game-trump {
-    -fx-font-size: 23px;
+    -fx-font-size: 18px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
@@ -91,11 +91,11 @@
 
 
 .text-label {
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 .trump-label {
     -fx-font-weight: bold;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 
 .card-label {
@@ -120,7 +120,7 @@
 
 .player-info {
     -fx-spacing: 5;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 
 .summary-box {

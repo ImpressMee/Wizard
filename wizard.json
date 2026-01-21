@@ -1,242 +1,237 @@
 {
-  "players" : [ ],
-  "totalRounds" : 0,
+  "players" : [ {
+    "tricks" : 1,
+    "hand" : [ ],
+    "id" : 0,
+    "predictedTricks" : 1,
+    "totalPoints" : 60
+  }, {
+    "tricks" : 1,
+    "hand" : [ ],
+    "id" : 1,
+    "predictedTricks" : 1,
+    "totalPoints" : 20
+  }, {
+    "tricks" : 0,
+    "hand" : [ ],
+    "id" : 2,
+    "predictedTricks" : 1,
+    "totalPoints" : -20
+  } ],
+  "totalRounds" : 4,
+  "currentTrump" : "Blue",
   "deck" : {
     "cards" : [ {
       "type" : "normal",
-      "color" : "Red",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 5
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 6
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 8
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 11
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Red",
-      "value" : 13
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 5
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 6
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 8
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 11
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Green",
-      "value" : 13
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 5
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 6
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 8
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 11
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 12
-    }, {
-      "type" : "normal",
-      "color" : "Blue",
-      "value" : 13
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 1
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 2
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 3
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 4
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 5
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 6
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 7
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 8
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 9
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 10
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 11
-    }, {
-      "type" : "normal",
-      "color" : "Yellow",
-      "value" : 12
-    }, {
-      "type" : "normal",
       "color" : "Yellow",
       "value" : 13
     }, {
       "type" : "wizard",
       "color" : "Red"
     }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 5
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 13
+    }, {
       "type" : "wizard",
-      "color" : "Green"
+      "color" : "Yellow"
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 11
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 6
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 1
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 9
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 7
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 12
     }, {
       "type" : "wizard",
       "color" : "Blue"
     }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 13
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 13
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 12
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 5
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 8
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 7
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 9
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 6
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 2
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 6
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 5
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 8
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 9
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 12
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 7
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 4
+    }, {
+      "type" : "joker",
+      "color" : "Blue"
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 8
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 8
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 7
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 12
+    }, {
       "type" : "wizard",
-      "color" : "Yellow"
+      "color" : "Green"
+    }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 9
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 11
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Green",
+      "value" : 4
     }, {
       "type" : "joker",
       "color" : "Red"
     }, {
+      "type" : "normal",
+      "color" : "Red",
+      "value" : 11
+    }, {
       "type" : "joker",
       "color" : "Green"
     }, {
-      "type" : "joker",
-      "color" : "Blue"
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 3
+    }, {
+      "type" : "normal",
+      "color" : "Blue",
+      "value" : 6
     }, {
       "type" : "joker",
       "color" : "Yellow"
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 10
+    }, {
+      "type" : "normal",
+      "color" : "Yellow",
+      "value" : 5
     } ]
   },
-  "amountOfPlayers" : 0,
-  "currentRound" : 0,
+  "amountOfPlayers" : 3,
+  "currentRound" : 2,
   "completedTricks" : 0
 }
