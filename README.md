@@ -104,7 +104,14 @@ docker run -it ^
 We were unfortunately not able to properly test GuiView and Main due to GitHub having troubles executing the tests.
 Thus we have decided to either not Test it at all or add a @Ignore annotation.
 Adding a @Ignore results in the tests not beeing executed and therefore not beeing included in the calculations.
+
+Anyhow, we do want to show you our local coverageReport. Feel free to confirm it by running it yourself:
+
+' sbt clean test coverageReport '
+' target -> scala-3.3.7 -> scoverage-report -> index.html '
+
 ```
+![img.png](img.png)
 
 ## Copyright Disclaimer
 

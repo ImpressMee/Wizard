@@ -148,5 +148,58 @@ class TuiViewSpec extends AnyWordSpec with Matchers {
         tui.update(StateChanged(baseState))
       }
     }
+
+    "print green card with green console color" in {
+      val tui = new TuiView
+
+      val state =
+        baseState.copy(
+          players = List(
+            Player(0, hand = List(Card(CardColor.Green, 5))),
+            Player(1, hand = List(Card(CardColor.Red, 3)))
+          )
+        )
+
+      val out = captureOut {
+        tui.update(PredictionsRequested(state))
+      }
+
+      out should include(Console.GREEN)
+    }
+
+    "print yellow card with yellow console color" in {
+      val tui = new TuiView
+
+      val state =
+        baseState.copy(
+          players = List(
+            Player(0, hand = List(Card(CardColor.Yellow, 7))),
+            Player(1, hand = List(Card(CardColor.Blue, 2)))
+          )
+        )
+
+      val out = captureOut {
+        tui.update(PredictionsRequested(state))
+      }
+
+      out should include(Console.YELLOW)
+    }
+
+    "print trump color on RoundStarted when trump is defined" in {
+      val tui = new TuiView
+
+      val stateWithTrump =
+        baseState.copy(
+          currentTrump = Some(CardColor.Green)
+        )
+
+      val out = captureOut {
+        tui.update(RoundStarted(1, stateWithTrump))
+      }
+
+      out should include("Trump color is:")
+      out should include("Green")
+    }
+
   }
 }

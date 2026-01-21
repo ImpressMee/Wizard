@@ -240,5 +240,82 @@ class GameControlSpec extends AnyWordSpec with Matchers {
       control.isAllowedMove(0, 99, state) shouldBe false
     }
 
+    "throw IllegalStateException when currentState is accessed before start" in {
+      val (control, _, _) = create()
+
+      an[IllegalStateException] shouldBe thrownBy {
+        control.submitPredictions(Map.empty)
+      }
+    }
+
+    "stay in TrickState when players still have cards after a trick" in {
+      val (control, obs, _) = create()
+
+      val state =
+        GameState(
+          amountOfPlayers = 2,
+          players = List(
+            Player(0, hand = List(Card(CardColor.Red, 1), Card(CardColor.Red, 2))),
+            Player(1, hand = List(Card(CardColor.Blue, 3), Card(CardColor.Blue, 4)))
+          ),
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1
+        )
+
+      control.start(state)
+      control.submitPredictions(Map(0 -> 0, 1 -> 0))
+      control.playTrick(Map(0 -> 0, 1 -> 0))
+
+      obs.events.exists {
+        case TrickMoveRequested(_, _) => true
+        case _ => false
+      } shouldBe true
+    }
+
+    "enter InitState when loading a state without players" in {
+      val (control, obs, _) = create()
+
+      control.loadGame()
+
+      obs.events.exists(_.isInstanceOf[PlayerAmountRequested]) shouldBe true
+    }
+
+    "allow safe exit in ScoreState and FinishState" in {
+      val (control, _, _) = create()
+
+      val state =
+        GameState(
+          amountOfPlayers = 1,
+          players = List(Player(0)),
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1
+        )
+
+      control.start(state)
+      control.prepareNextRound()
+
+      control.canSafelyExit shouldBe true
+    }
+
+    "continueAfterRound enters FinishState when no rounds remain" in {
+      val (control, obs, _) = create()
+
+      val state =
+        GameState(
+          amountOfPlayers = 1,
+          players = List(Player(0)),
+          deck = Deck(),
+          currentRound = 1,
+          totalRounds = 1
+        )
+
+      control.start(state)
+      control.continueAfterRound()
+
+      obs.events.exists(_.isInstanceOf[GameFinished]) shouldBe true
+    }
+
   }
 }

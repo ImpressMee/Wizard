@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch
 
 Complete test inside a comment, because github ignores the @ignore annotation
 which is why the coverall test fails everytime.
-
+*/
 @Ignore
 class GuiViewSpec extends AnyWordSpec with Matchers {
 
@@ -122,4 +122,3 @@ class GuiViewSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-*/

@@ -14,6 +14,7 @@ class MainSpec extends AnyWordSpec with Matchers {
   // ---------------------------------------------------------
   // JavaFX bootstrap (einmalig, nicht blockierend)
   // ---------------------------------------------------------
+
   private val fxStarted = new AtomicBoolean(false)
 
   private def initFx(): Unit =
