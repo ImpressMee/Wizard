@@ -1,5 +1,8 @@
 # Wizard
 https://coveralls.io/github/ImpressMee/Wizard
+
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ImpressMee_Wizard&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=ImpressMee_Wizard) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ImpressMee_Wizard&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ImpressMee_Wizard)
+
 #### Main Branch
 [![Coverage Status](https://coveralls.io/repos/github/ImpressMee/Wizard/badge.svg?branch=main)](https://coveralls.io/github/ImpressMee/Wizard?branch=main)
 
