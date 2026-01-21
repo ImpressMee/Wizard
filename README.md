@@ -98,6 +98,14 @@ docker run -it ^
   wizard
 ```
 
+
+## Information about the Coverage
+```
+We were unfortunately not able to properly test GuiView and Main due to GitHub having troubles executing the tests.
+Thus we have decided to either not Test it at all or add a @Ignore annotation.
+Adding a @Ignore results in the tests not beeing executed and therefore not beeing included in the calculations.
+```
+
 ## Copyright Disclaimer
 
 
