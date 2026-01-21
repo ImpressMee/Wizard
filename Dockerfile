@@ -10,7 +10,6 @@ RUN microdnf install -y \
     libXtst \
     libXi \
     libXrandr \
-    alsa-lib \
     mesa-libGL \
     mesa-dri-drivers \
  && microdnf clean all
