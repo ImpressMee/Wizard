@@ -120,7 +120,7 @@ were taken from publicly available internet sources.
 This project is a non-commercial educational project and is used for academic purposes only.
 All rights remain with their respective copyright holders.
 
-The playing cards were illustrated by @lelomaggelb (Instagram).
+The playing cards were illustrated by @lelomaggelb (https://lelomaggelblinks.carrd.co/).
 Copyright for the cards belongs to the artist.
 They are used with her permission for this non-commercial project.
 
